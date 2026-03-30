@@ -7,8 +7,19 @@
       <title>Visualizador ABC</title>
   </head>
     <body>
-        <div id="audio-controls"></div>
-        <div id="paper"></div>
+        <div class="root">
+            <div class="menu"></div>
+            <div class="toolbar"></div>
+
+            <div id="canvas" class="content table centered">
+                <div class="row">
+                    <div id="audio-controls" class="col"></div>
+                </div>
+                <div class="row">
+                    <div id="paper" class="col"></div>
+                </div>
+            </div>
+        </div>
         <script type="module" src="/src/main.js"></script>
     </body>
 </html>
