@@ -1,52 +1,33 @@
-// src/styles/main.scss
+// Variáveis básicas
+@use 'partials/variables' as *;
 @use 'partials/fam-icons';
+@use 'partials/workspace';
+@use 'partials/menu';
+@use 'partials/toolbox';
+@use 'partials/canvas';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  overflow: hidden; // Evita scroll na página toda
 }
-.root {
+
+#app {
+  display: grid;
+  grid-template-rows: $header-height 12fr;
+  height: 100vh;
+}
+.abcjs-inline-audio {
+  height: 26px;
+  padding: 0 5px;
+  background-color: #424242;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-.content {
-  width: 100%;
-  max-width: 1080px;
-}
-.centered {
-  text-align: center;
-}
-.table {
-  display: inline-table;
-  .caption {
-    display: table-caption;
-  }
-  .row {
-    display: table-row;
-    .col {
-      display: table-cell;
-    }
-  }
-}
-#paper {
-  background: white;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border-radius: 8px;
-}
-// Customizar cores do SVG gerado pelo abcjs
-.abcjs-note {
-  fill: #2c3e50;
-}
-/* No seu arquivo SCSS */
-
-.abcjs-note {
-  transition: fill 0.1s ease; // Transição suave para a cor
-}
-
-// Esta classe é adicionada dinamicamente pelo nosso onEvent
-.highlight-note {
-  fill: #3498db !important; // Azul brilhante
-  stroke: #2980b9;
-  stroke-width: 2px;
+  box-sizing: border-box;
+  border-radius: unset;
 }

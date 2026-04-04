@@ -1,0 +1,18 @@
+@use 'variables' as *;
+
+.top-menu {
+  border-bottom: 2px solid $border-color;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+    font-weight: bold;
+    cursor: pointer;
+
+    li:hover { color: #555; }
+  }
+}

@@ -1,0 +1,56 @@
+@use 'variables' as *;
+
+.canvas-area {
+  background: $bg-color;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: auto; // Scroll apenas aqui se o SVG crescer
+  .content {
+    width: 100%;
+    max-width: 1080px;
+  }
+  .centered {
+    text-align: center;
+  }
+  .table {
+    display: inline-table;
+    .caption {
+      display: table-caption;
+    }
+    .row {
+      display: table-row;
+      .col {
+        display: table-cell;
+      }
+    }
+  }
+  #paper {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ccc;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    svg {
+      width: 100%;
+      height: auto;
+    }
+  }
+  // Customizar cores do SVG gerado pelo abcjs
+  .abcjs-note {
+    fill: #2c3e50;
+  }
+  /* No seu arquivo SCSS */
+
+  .abcjs-note {
+    transition: fill 0.1s ease; // Transição suave para a cor
+  }
+
+  // Esta classe é adicionada dinamicamente pelo nosso onEvent
+  .highlight-note {
+    fill: #3498db !important; // Azul brilhante
+    stroke: #2980b9;
+    stroke-width: 2px;
+  }
+}

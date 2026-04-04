@@ -1,0 +1,63 @@
+import "abcjs/abcjs-audio.css";
+import abcjs from "abcjs";
+
+const margin5mm = 5 * 3.7795;
+
+// Função privada para limpar destaques
+const resetAll = () => {
+    const allNotes = document.querySelectorAll('.abcjs-note');
+    allNotes.forEach(n => n.classList.remove('highlight-note'));
+};
+
+// Função de callback para eventos de nota
+const onEvent = (event) => {
+    if (!event?.elements?.length) return;
+
+    let durationMs = (event.midiPitches?.[0]?.duration * 1000) || 200;
+
+    event.elements.forEach(group => {
+        group.forEach(el => {
+            el.classList.add('highlight-note');
+            el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+            setTimeout(() => el.classList.remove('highlight-note'), durationMs);
+        });
+    });
+};
+
+export const setupMusic = async (visualSelector, audioSelector, abcString) => {
+    // 1. Renderização Visual com TABLATURA
+    const visualObj = abcjs.renderAbc(visualSelector, abcString, {
+        responsive: "resize",
+        staffwidth: 794 - (margin5mm * 2),
+        paddingleft: margin5mm,
+        paddingright: margin5mm,
+        add_classes: true,
+        // Forçamos a renderização da tablatura vinculada à voz
+        visualTranspose: 0,
+        tablature: [
+            {
+                instrument: "guitar",
+                label: "Violão"
+            }
+        ]
+    })[0];
+
+    // 2. Configuração do Áudio
+    if (abcjs.synth.supportsAudio()) {
+        const synthControl = new abcjs.synth.SynthController();
+
+        synthControl.load(audioSelector, { onEvent, onFinished: resetAll }, {
+            displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true
+        });
+
+        const createSynth = new abcjs.synth.CreateSynth();
+        await createSynth.init({
+            visualObj,
+            options: { program: 24 } // Timbre de Violão (Nylon)
+        });
+
+        await synthControl.setTune(visualObj, false);
+    }
+
+    return visualObj;
+};

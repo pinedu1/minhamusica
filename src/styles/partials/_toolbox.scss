@@ -1,0 +1,28 @@
+@use 'variables' as *;
+
+.toolbox {
+  border-left: 2px solid $border-color;
+  display: flex;
+  flex-direction: column;
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    border-bottom: 2px solid $border-color;
+    font-weight: bold;
+
+    .close-btn {
+      background: none;
+      border: 1px solid $border-color;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+  }
+
+  &-content {
+    flex-grow: 1;
+    padding: 10px;
+  }
+}
