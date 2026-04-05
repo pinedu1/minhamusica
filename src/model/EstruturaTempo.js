@@ -27,7 +27,7 @@ export class EstruturaTempo {
      */
     toAbc() {
         const { quantidade, unidadeTempo } = this.#estruturaTempo;
-        return `${quantidade}/${unidadeTempo}`;
+        return `M:${quantidade}/${unidadeTempo}\n`;
     }
 
     /**

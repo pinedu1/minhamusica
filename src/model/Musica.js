@@ -1,8 +1,12 @@
 import { LinkedList } from './LinkedList.js';
 import { Prefacio } from "./Prefacio.js";
 import { EstruturaTempo } from './EstruturaTempo.js';
+import { Duracao } from './Duracao.js';
 import { Clave } from './Clave.js';
 import { ArmaduraClave } from './ArmaduraClave.js';
+import { Instrumento } from './Instrumento.js';
+import { TempoBase } from './TempoBase.js';
+import {ClaveTipo} from "./ClaveTipo.js";
 
 /**
  * Classe Raiz que representa uma obra musical completa.
@@ -17,7 +21,6 @@ export class Musica {
     #ritmo; // Ex: "Guarânia", "Pagode de Viola", "Cururu"
     /** @type {number} */
     #ano;
-
     /**
      * USAGE:
      * Define um Conto, Causo, Poesia antes do início da Musica
@@ -27,34 +30,12 @@ export class Musica {
      * this.#prefacio = new Prefacio(['Atras daquela pedra','Tinha um homem que tinha um cachorro', 'E ele tinha um cachorro que tinha um homem']);
      */
     #prefacio = null;
-
-
     /** * USAGE:
      * Lista duplamente ligada de compassos.
      * Proporciona inserção e remoção eficiente em qualquer ponto da obra.
      * @type {LinkedList}
      */
     #compassos;
-
-    /** * USAGE:
-     * Definições mestras que regem a obra.
-     * Compassos que possuem estas propriedades como 'null' herdarão estes valores.
-     */
-    #configuracoesGlobais = {
-        /** @type {number} - Identificador X: no ABC */
-        id: 1,
-        /** @type {EstruturaTempo} - M: */
-        tempo: new EstruturaTempo(4, 4),
-        /** @type {Clave} - V: ... clef= */
-        clave: new Clave('G', 2),
-        /** @type {ArmaduraClave} - K: */
-        armadura: new ArmaduraClave('C'),
-        /** @type {number} - BPM (Q:) */
-        bpm: 120,
-        /** @type {number} - MIDI Program (24 = Nylon Guitar) */
-        instrumentoMidi: 24
-    };
-
     /**
      * @param {string} titulo - Nome da obra.
      * @param {string} autor - Nome do compositor/maestro.
@@ -68,6 +49,80 @@ export class Musica {
         this.#ano = new Date().getFullYear(); [];
     }
 
+    /** * USAGE:
+     * Definições mestras que regem a obra.
+     * Compassos que possuem estas propriedades como 'null' herdarão estes valores.
+     */
+    #configuracoesGlobais = {
+        /** @type {number} - Identificador X: no ABC */
+        id: 1,
+        /** @type {EstruturaTempo} - M: */
+        tempo: new EstruturaTempo(4, 4),
+        /** @type {Clave} - V: ... clef= */
+        clave: new Clave( ClaveTipo.TREBLE, 2),
+        /** @type {ArmaduraClave} - K: */
+        armadura: new ArmaduraClave('C'),
+        /** @type {Instrumento} */
+        instrumento: Instrumento.VIOLAO_NYLON,
+        /** @type {Duracao} */
+        duracao: Duracao.SEMINIMA,
+        /** @type {TempoBase} */
+        bpm: new TempoBase(120, Duracao.SEMINIMA)
+    };
+    /**
+     * Gera a string ABC completa integrando metadados, prefácio e compassos.
+     * @returns {string}
+     */
+    toAbc() {
+        const global = this.#configuracoesGlobais;
+
+        let abc = `X:${global.id}\n`;
+        if ( this.#titulo ) {
+            abc += `T:${this.#titulo}\n`;
+        }
+        if ( this.#autor ) {
+            abc += `C:${this.#autor}\n`;
+        }
+        // 1. Prefácio (Diretivas %%text)
+        if (this.#prefacio) {
+            abc += this.#prefacio.toAbc();
+        }
+
+        // 2. Cabeçalho Técnico (Fallbacks Globais)
+        abc += global.tempo.toAbc();
+        abc += global.duracao.toAbc(); // Unidade de nota padrão
+        abc += global.bpm.toAbc();
+        abc += global.armadura.toAbc();
+
+        // 3. Definição de Voz padrão para Viola
+        abc += global.instrumento.toAbcVoice( global.clave );
+        abc += global.instrumento.toAbcMidi();
+
+        // 4. Corpo da Música (Iteração pela LinkedList)
+        abc += `V:1\n`;
+        for (const compasso of this.#compassos) {
+            abc += compasso.toAbc();
+        }
+
+        return abc;
+    }
+    // --- Getters ---
+
+    /** @returns {string} */
+    get titulo() { return this.#titulo; }
+
+    /** @returns {string} */
+    get autor() { return this.#autor; }
+
+    /** * Retorna a lista ligada completa.
+     * @returns {LinkedList}
+     */
+    get compassos() { return this.#compassos; }
+
+    /** * Atalho para o total de compassos na obra.
+     * @returns {number}
+     */
+    get total() { return this.#compassos.length; }
     /**
      * Adiciona um compasso ao final da obra.
      * USAGE:
@@ -82,7 +137,6 @@ export class Musica {
         this.#compassos.append(compasso);
         return compasso;
     }
-
     /**
      * Insere um compasso em uma posição específica, deslocando os sucessores.
      * USAGE:
@@ -98,7 +152,6 @@ export class Musica {
         this.#reindexarCompassos(n);
         return compasso;
     }
-
     /**
      * Substitui o conteúdo musical de um compasso específico.
      * USAGE:
@@ -116,7 +169,6 @@ export class Musica {
         }
         return false;
     }
-
     /**
      * Remove permanentemente um compasso da sequência.
      * USAGE:
@@ -133,7 +185,6 @@ export class Musica {
         }
         return false;
     }
-
     /**
      * Sincroniza o atributo interno #indice dos objetos Compasso com sua posição real na lista.
      * USAGE:
@@ -155,58 +206,6 @@ export class Musica {
             atual = atual.next;
             i++;
         }
-    }
-    // --- Getters ---
-
-    /** @returns {string} */
-    get titulo() { return this.#titulo; }
-
-    /** @returns {string} */
-    get autor() { return this.#autor; }
-
-    /** * Retorna a lista ligada completa.
-     * @returns {LinkedList}
-     */
-    get compassos() { return this.#compassos; }
-
-    /** * Atalho para o total de compassos na obra.
-     * @returns {number}
-     */
-    get total() { return this.#compassos.length; }
-
-    /**
-     * Gera a string ABC completa integrando metadados, prefácio e compassos.
-     * @returns {string}
-     */
-    toAbc() {
-        const global = this.#configuracoesGlobais;
-
-        let abc = `X:${global.id}\n`;
-        abc += `T:${this.#titulo}\n`;
-        abc += `C:${this.#autor}\n`;
-
-        // 1. Prefácio (Diretivas %%text)
-        if (this.#prefacio) {
-            abc += this.#prefacio.toAbc();
-        }
-
-        // 2. Cabeçalho Técnico (Fallbacks Globais)
-        abc += `M:${global.tempo.formatAbc}\n`;
-        abc += `L:1/8\n`; // Unidade de nota padrão
-        abc += `Q:1/4=${global.bpm}\n`;
-        abc += `K:${global.armadura.abc}\n`;
-
-        // 3. Definição de Voz padrão para Viola
-        abc += `V:1 nm="Viola" snm="Vla" clef=${global.clave.tipo === 'G' ? 'treble' : 'bass'}\n`;
-        abc += `%%MIDI program ${global.instrumentoMidi}\n`;
-
-        // 4. Corpo da Música (Iteração pela LinkedList)
-        abc += `V:1\n`;
-        for (const compasso of this.#compassos) {
-            abc += compasso.toAbc();
-        }
-
-        return abc;
     }
 
     /**

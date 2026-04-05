@@ -2,13 +2,13 @@ import { ClaveTipo } from './ClaveTipo.js';
 
 export class Clave {
     /** @type {keyof typeof ClaveTipo} */
-    #tipo = 'TREBLE';
+    #tipo = null;
 
     /** * Deslocamento de oitava (ex: -1 para violão/guitarra).
      * @type {number} */
     #oitava = 0;
 
-    constructor(tipo = 'TREBLE', oitava = 0) {
+    constructor(tipo = ClaveTipo.TREBLE, oitava = 0) {
         this.#tipo = tipo;
         this.#oitava = oitava;
     }
@@ -17,8 +17,8 @@ export class Clave {
      * Gera a string de configuração para o abcjs.
      * Ex: clef=treble-8 ou clef=bass
      */
-    toABC() {
-        const base = ClaveTipo[this.#tipo].valor;
+    toAbc() {
+        const base = this.#tipo.valor;
         if (this.#oitava === 0) return `clef=${base}`;
 
         // Se oitava for -1, o abcjs usa "-8"

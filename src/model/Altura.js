@@ -1,5 +1,4 @@
 import { AlturaMidi } from './AlturaMidi.js';
-
 /**
  * Representa a identidade física e tonal de uma nota.
  * Centraliza a relação entre o som (MIDI) e o símbolo (ABC) através de AlturaMidi.

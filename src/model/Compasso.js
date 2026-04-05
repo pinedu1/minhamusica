@@ -25,7 +25,7 @@ export class Compasso {
      * this.#notas = [
      * new Nota(AlturasMidi.E4, Duracao.METADE), // 2 tempos
      * new Pausa(Duracao.QUARTER),              // 1 tempo
-     * new Nota(AlturasMidi.G4, Duracao.QUARTER)  // 1 tempo
+     * new Nota(Altura.G4, Duracao.QUARTER)  // 1 tempo
      * ];
      */
     #notas = [];
@@ -48,7 +48,7 @@ export class Compasso {
      * @type {Clave | null}
      * @example
      * // Definindo Clave de Sol (Padrão para Viola):
-     * this.#clave = new Clave('G', 2); // Sol na 2ª linha
+     * this.#clave = new Clave( ClaveTipo.TREBLE, 2); // Sol na 2ª linha
      */
     #clave = null;
 
@@ -57,7 +57,10 @@ export class Compasso {
      * Define a tonalidade atual do compasso.
      * Se for null, o sistema assume a armadura do compasso anterior.
      * @type {ArmaduraClave | null}
-     */
+     * @example
+     * // Definindo Clave de Sol (Padrão para Viola):
+     * this.#armaduraClave = new ArmaduraClave( Tonalidade.C, 'maior');
+     * */
     #armaduraClave = null;
 
     /**
@@ -188,4 +191,37 @@ export class Compasso {
     get indice() { return this.#indice; }
     get notas() { return this.#notas; }
     get estruturaTempo() { return this.#estruturaTempo; }
+    toAbc() {
+        let abc = "";
+
+        // 1. Mudanças Estruturais Locais (Inline)
+        // Se este compasso define uma nova métrica ou clave, o ABC permite mudar "no meio" da linha
+        if (this.#estruturaTempo) abc += this.#estruturaTempo.toAbc();
+        if (this.#clave) abc += `[V:1 clef=${this.#clave.toAbc()}]`;
+        if (this.#armaduraClave) abc += this.#armaduraClave.toAbc();
+
+        // 2. Processamento de Acordes e Notas
+        // Aqui assumimos que notas e acordes podem estar em posições rítmicas diferentes.
+        // Uma abordagem simples é iterar pelas notas:
+        this.#notas.forEach((nota, idx) => {
+            // Verifica se existe um acorde para esta posição rítmica
+            if (this.#acordes) {
+                const acordeAqui = this.#acordes.find(a => a.posicao === idx); // Simplificando por índice
+                if (acordeAqui) abc += `"${acordeAqui.cifra}"`;
+            }
+
+            // Adiciona a nota (que já deve saber seu sufixo de duração)
+            abc += nota.toAbc();
+        });
+
+        // 3. Fechamento do Compasso (Barra)
+        // Se #tipoBarra for null, usamos a barra simples '|'
+        const barra = this.#tipoBarra ? this.#tipoBarra : "|";
+        abc += barra;
+
+        // 4. Quebra de linha (se for o fim de um sistema)
+        if (this.#quebraDeLinha) abc += "\n";
+
+        return abc;
+    }
 }
