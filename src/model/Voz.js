@@ -1,16 +1,19 @@
 import { HasteDirecao } from './HasteDirecao.js';
-import { Nota } from './Nota.js'; // Importação necessária para o JSDoc reconhecer o tipo
+import { Nota } from './Nota.js';
+import { Acorde } from './Acorde.js'; // Importação necessária para o novo tipo
 
 export class Voz {
     /** @type {string|number} */
     #id;
 
     /** * USAGE:
-     * Lista ordenada de instâncias da classe Nota que compõem esta camada rítmica.
-     * garantindo que toda nota sempre pertença a uma voz (mesmo em músicas monofônicas).
-     * @type {Array<Nota>}
+     * Lista ordenada de elementos rítmicos (instâncias de Nota ou Acorde).
+     * Esta coleção representa a linha do tempo melódica desta voz.
+     * Elementos dentro de um Acorde soam simultaneamente, enquanto Elementos
+     * na lista #elementos soam sequencialmente.
+     * @type {Array<Nota | Acorde>}
      */
-    #notas = [];
+    #elementos = [];
 
     /** @type {string|null} */
     #nome = null;
@@ -23,18 +26,24 @@ export class Voz {
         this.#nome = nome;
         this.#direcaoHaste = direcaoHaste;
     }
-    setId( idVoz ) {
+
+    setId(idVoz) {
         this.#id = idVoz;
     }
-    /** * Adiciona uma Nota a esta voz.
-     * @param {Nota} nota
+
+    /** * Adiciona uma Nota ou um Acorde a esta voz.
+     * @param {Nota | Acorde} item
      */
-    adicionarNota(nota) {
-        this.#notas.push(nota);
+    adicionarElemento(item) {
+        this.#elementos.push(item);
     }
 
+    /**
+     * Retorna a lista de elementos (Notas e Acordes) da voz.
+     * @returns {Array<Nota | Acorde>}
+     */
     get notas() {
-        return this.#notas;
+        return this.#elementos;
     }
 
     get id() {

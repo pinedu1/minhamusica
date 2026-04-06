@@ -498,8 +498,8 @@ export class Compasso {
     }
 
     /**
-     * Adiciona uma nota ao final de uma voz do compasso.
-     * @param {Nota} n - Objeto Nota a ser adicionado.
+     * Adiciona uma nota|acorde ao final de uma voz do compasso.
+     * @param {Nota|Acorde} n - Objeto Nota a ser adicionado.
      * @param {number} [idVoz=0] - Índice da voz. Padrão é 0 (Primeira voz).
      */
     notaAppend(n, idVoz = 0) {
@@ -509,7 +509,7 @@ export class Compasso {
 
     /**
      * Insere uma nota em um índice específico dentro de uma voz, empurrando as outras.
-     * @param {Nota} n - Objeto Nota a ser inserido.
+     * @param {Nota|Acorde} n - Objeto Nota a ser inserido.
      * @param {number} index - Posição (índice da nota) onde será inserida.
      * @param {number} [idVoz=0] - Índice da voz. Padrão é 0.
      */
@@ -525,7 +525,7 @@ export class Compasso {
 
     /**
      * Substitui a nota existente em um índice específico dentro de uma voz.
-     * @param {Nota} n - Novo objeto Nota.
+     * @param {Nota|Acorde} n - Novo objeto Nota.
      * @param {number} index - Posição da nota a ser substituída.
      * @param {number} [idVoz=0] - Índice da voz. Padrão é 0.
      */
@@ -552,5 +552,42 @@ export class Compasso {
             throw new Error(`Índice de nota ${index} inválido para exclusão na Voz ${idVoz}.`);
         }
         notasVoz.splice(index, 1);
+    }
+    /**
+     * Adiciona um acorde ao final de uma voz do compasso.
+     * @param {Acorde} n - Objeto Nota a ser adicionado.
+     * @param {number} [idVoz=0] - Índice da voz. Padrão é 0 (Primeira voz).
+     */
+    acordeAppend(a, idVoz = 0) {
+        this.notaAppend(a, idVoz);
+    }
+
+    /**
+     * Insere um acorde em um índice específico dentro de uma voz, empurrando as outras.
+     * @param {Acorde} a - Objeto Nota a ser inserido.
+     * @param {number} index - Posição (índice da nota) onde será inserida.
+     * @param {number} [idVoz=0] - Índice da voz. Padrão é 0.
+     */
+    acordeInsert(a, index, idVoz = 0) {
+        this.acordeInsert(a, index, idVoz );
+    }
+
+    /**
+     * Substitui a nota existente em um índice específico dentro de uma voz.
+     * @param {Acorde} a - Novo objeto Acorde.
+     * @param {number} index - Posição da nota a ser substituída.
+     * @param {number} [idVoz=0] - Índice da voz. Padrão é 0.
+     */
+    acordeUpdate(a, index, idVoz = 0) {
+        this.notaUpdate(a, index, idVoz );
+    }
+
+    /**
+     * Remove um acorde em um índice específico dentro de uma voz.
+     * @param {number} index - Posição da nota a ser removida.
+     * @param {number} [idVoz=0] - Índice da voz. Padrão é 0.
+     */
+    acordeDelete(index, idVoz = 0) {
+        this.notaDelete(index, idVoz );
     }
 }

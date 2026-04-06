@@ -20,8 +20,8 @@ export class FluxoMusicalParser {
         let acumuladoNoCompasso = 0;
 
         // Regex para capturar os tokens musicais
-        const TOKEN_REGEX = /([\^=_]*[A-Ga-g][,']*)([\d/]*)([-]?)/g;
-        //const TOKEN_REGEX = /([\^=_]*[A-Ga-g][,']*?)([\d/]*)([-]?)/g;
+        //const TOKEN_REGEX = /([\^=_]*[A-Ga-g][,']*)([\d/]*)([-]?)/g;
+        const TOKEN_REGEX = /\[([^\]]+)\]([\d/]*)([-]?)|([\^=_]*[A-Ga-g][,']*)([\d/]*)([-]?)/g;
         let match;
         while ((match = TOKEN_REGEX.exec(textoFull)) !== null) {
             const [_, alturaStr, duracaoStr, ligadura] = match;
