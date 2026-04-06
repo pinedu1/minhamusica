@@ -16,14 +16,31 @@ export class ArmaduraClave {
         this.#tonalidade = tonalidade;
         this.#modo = modo;
     }
+    /**
+     * Retorna apenas o valor cru da tonalidade (Ex: "C", "Am", "G#m").
+     * Útil como método auxiliar interno.
+     * @returns {string}
+     */
+    get #valorFormatado() {
+        const sufixo = this.#modo === 'menor' ? 'm' : '';
+        return `${Tonalidade[this.#tonalidade].valor}${sufixo}`;
+    }
 
     /**
      * Gera a string compatível com o campo K: do abcjs.
      * @example "E", "Am", "G#m"
      */
     toAbc() {
-        const sufixo = this.#modo === 'menor' ? 'm' : '';
-        return `K:${Tonalidade[this.#tonalidade].valor}${sufixo}`;
+        return `K:${this.#valorFormatado}\n`;
+    }
+    /**
+     * Gera a string para alterações no meio da pauta (dentro do Compasso).
+     * Padrão: [K:Valor] embutido entre colchetes.
+     * @example "[K:Am]"
+     * @returns {string}
+     */
+    toCompasso() {
+        return `[K:${this.#valorFormatado}]`;
     }
 
     get info() {

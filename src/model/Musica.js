@@ -6,7 +6,7 @@ import { Clave } from './Clave.js';
 import { ArmaduraClave } from './ArmaduraClave.js';
 import { Instrumento } from './Instrumento.js';
 import { TempoBase } from './TempoBase.js';
-import {ClaveTipo} from "./ClaveTipo.js";
+import { ClaveTipo } from "./ClaveTipo.js";
 
 /**
  * Classe Raiz que representa uma obra musical completa.
@@ -59,7 +59,7 @@ export class Musica {
         /** @type {EstruturaTempo} - M: */
         tempo: new EstruturaTempo(4, 4),
         /** @type {Clave} - V: ... clef= */
-        clave: new Clave( ClaveTipo.TREBLE, 2),
+        clave: new Clave( ClaveTipo.TREBLE, 1),
         /** @type {ArmaduraClave} - K: */
         armadura: new ArmaduraClave('C'),
         /** @type {Instrumento} */
@@ -92,12 +92,12 @@ export class Musica {
         abc += global.tempo.toAbc();
         abc += global.duracao.toAbc(); // Unidade de nota padrão
         abc += global.bpm.toAbc();
-        abc += global.armadura.toAbc();
 
         // 3. Definição de Voz padrão para Viola
         abc += global.instrumento.toAbcVoice( global.clave );
         abc += global.instrumento.toAbcMidi();
 
+        abc += global.armadura.toAbc();
         // 4. Corpo da Música (Iteração pela LinkedList)
         abc += `V:1\n`;
         for (const compasso of this.#compassos) {

@@ -63,7 +63,7 @@ export class FluxoMusicalParser {
                     novaNota.ligada = true;
                 }
 
-                compassoAtual.notas.push(novaNota);
+                compassoAtual.notaAppend(novaNota);
 
                 // Blindando a soma para evitar falhas de precisão no JS
                 acumuladoNoCompasso = Number((acumuladoNoCompasso + valorDestaParte).toFixed(8));
@@ -141,7 +141,6 @@ export class FluxoMusicalParser {
         return "1/4"; // Ou outro valor padrão de fallback
     }
     static #resolverAltura(str) {
-        const a = Object.values(AlturaMidiEnum).find(a => a.abcjs === str) || AlturaMidiEnum.C4;
-        return new Altura(a);
+        return Altura.resolverAltura(str);
     }
 }

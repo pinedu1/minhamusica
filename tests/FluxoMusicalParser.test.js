@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Musica } from '../model/Musica.js';
-import { FluxoMusicalParser } from './FluxoMusicalParser.js';
-import { EstruturaTempo } from '../model/EstruturaTempo.js';
-import { Duracao } from '../model/Duracao.js';
+import { Musica } from '../src/model/Musica.js';
+import { FluxoMusicalParser } from '../src/parser/FluxoMusicalParser.js';
+import { EstruturaTempo } from '../src/model/EstruturaTempo.js';
+import { Duracao } from '../src/model/Duracao.js';
 
 describe('Parser Musica - Integração ABC', () => {
     let minhaMusica;

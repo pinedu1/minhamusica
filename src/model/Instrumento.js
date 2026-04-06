@@ -19,7 +19,7 @@ class InstrumentoBase {
      */
     toAbcVoice(clave) {
         const clefPart = clave ? clave.toAbc() : '';
-        return `V:1 nm="${this.titulo}" snm="${this.abrev}" ${clefPart}\n`;
+        return `V:1 name="${this.titulo}" sname="${this.abrev}" ${clefPart}\n`;
     }
 }
 

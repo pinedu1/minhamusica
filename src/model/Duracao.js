@@ -1,21 +1,70 @@
 /**
  * Classe base para as durações rítmicas.
  */
-class DuracaoBase {
+/**
+ * Classe base para as durações rítmicas.
+ */
+export class DuracaoBase {
     constructor(config) {
         Object.assign(this, config);
     }
 
     /**
-     * Retorna o sufixo da nota para o padrão ABC.
+     * Retorna o identificador global de duração (Field L) para o padrão ABC.
+     * USAGE: Usado no cabeçalho ou nas propriedades estruturais do compasso.
+     * @returns {string} Ex: "L:1/4\n"
      */
     toAbc() {
-        return this.abc;
+        return `L:${this.abc}\n`;
     }
 
-    getValor() {
-        return this.valor;
+    /**
+     * @param {number} referencia - O valor da unidade L: (Ex: 0.5 para 1/8)
+     * @returns {string} O sufixo ABC calculado dinamicamente
+     */
+    toNota(referencia = 0.5) {
+        // Calculamos a razão entre a nota atual e a referência
+        // Ex: Semínima(1.0) / Colcheia(0.5) = 2
+        // Ex: Semicolcheia(0.25) / Colcheia(0.5) = 0.5
+        const razao = this.valor / referencia;
+
+        // Se a nota for exatamente igual à referência (Ex: Colcheia com L:1/8)
+        if (razao === 1) return "";
+
+        // Se for um número inteiro (Ex: 2, 4, 8)
+        if (Number.isInteger(razao)) {
+            return `${razao}`;
+        }
+
+        // Se for uma fração (Ex: 0.5 vira "/", 0.25 vira "/4")
+        return this.#converterParaFracaoAbc(razao);
     }
+
+    /**
+     * Método auxiliar para converter números decimais em frações padrão ABC
+     */
+    #converterParaFracaoAbc(decimal) {
+        if (decimal === 0.5) return "/"; // Atalho ABC para /2
+
+        // Para outros casos, buscamos uma representação fracionária simples
+        // Usamos uma aproximação para evitar erros de ponto flutuante
+        const denominador = Math.round(1 / decimal);
+        if (denominador > 1) {
+            return `/${denominador}`;
+        }
+
+        // Para notas pontuadas (ex: 1.5, 0.75), calculamos numerador/denominador
+        // Ex: Razão 1.5 (Semínima Pontuada vs Colcheia) -> "3/2"
+        const n = decimal * 2;
+        if (Number.isInteger(n)) {
+            return `${n}/2`;
+        }
+
+        return decimal.toString(); // Fallback
+    }
+
+    getValor() { return this.valor; }
+
     getTempo() {
         return this.abc;
     }
@@ -27,71 +76,40 @@ class DuracaoBase {
  */
 export const Duracao = Object.freeze({
     // --- NOTAS LONGAS ---
-    QUADRUPLA:      new DuracaoBase({ nome: 'Semibreve Quádrupla', valor: 16.0, abc: '4/1' }),
-    BREVE:          new DuracaoBase({ nome: 'Breve',              valor: 8.0,  abc: '2/1' }),
-    SEMIBREVE:      new DuracaoBase({ nome: 'Semibreve',          valor: 4.0,  abc: '1/1' }),
-    MINIMA:         new DuracaoBase({ nome: 'Mínima',             valor: 2.0,  abc: '1/2' }),
+    QUADRUPLA:      new DuracaoBase({ nome: 'Semibreve Quádrupla', valor: 16.0, abc: '32/1' }),
+    BREVE:          new DuracaoBase({ nome: 'Breve',              valor: 8.0,  abc: '16/1' }),
+    SEMIBREVE:      new DuracaoBase({ nome: 'Semibreve',          valor: 4.0,  abc: '8/1'  }),
+    WHOLE:          new DuracaoBase({ nome: 'Semibreve',          valor: 4.0,  abc: '8/1'  }),
+    MINIMA:         new DuracaoBase({ nome: 'Mínima',             valor: 2.0,  abc: '4/1'  }),
+    HALF:           new DuracaoBase({ nome: 'Mínima',             valor: 2.0,  abc: '4/1'  }),
 
     // --- NOTAS MÉDIAS ---
-    SEMINIMA:       new DuracaoBase({ nome: 'Semínima',           valor: 1.0,  abc: '1/4' }),
-    COLCHEIA:       new DuracaoBase({ nome: 'Colcheia',           valor: 0.5,  abc: '1/8' }),
+    SEMINIMA:       new DuracaoBase({ nome: 'Semínima',           valor: 1.0,  abc: '2/1'  }),
+    QUARTER:        new DuracaoBase({ nome: 'Semínima',           valor: 1.0,  abc: '2/1'  }),
+    COLCHEIA:       new DuracaoBase({ nome: 'Colcheia',           valor: 0.5,  abc: '1/1'  }),
+    EIGHTH:         new DuracaoBase({ nome: 'Colcheia',           valor: 0.5,  abc: '1/1'  }),
 
     // --- SUBDIVISÕES ---
-    SEMICOLCHEIA:   new DuracaoBase({ nome: 'Semicolcheia',       valor: 0.25,     abc: '1/16' }),
-    FUSA:           new DuracaoBase({ nome: 'Fusa',               valor: 0.125,    abc: '1/32' }),
-    SEMIFUSA:       new DuracaoBase({ nome: 'Semifusa',           valor: 0.0625,   abc: '1/64' }),
-    BISSEMIFUSA:    new DuracaoBase({ nome: 'Bissemifusa',        valor: 0.03125,  abc: '1/128' }),
-    QUADRISSIFUSA:  new DuracaoBase({ nome: 'Quadrissifusa',      valor: 0.015625, abc: '1/256' }),
-// --- NOTAS PONTUADAS E TEMPOS COMPOSTOS BASE 2 ---
-    SEMIBREVE_PONTUADA:    new DuracaoBase({ nome: 'Semibreve Pontuada',    valor: 6.0,  abc: '3/2' }),
-    COMPOSTO_5_2:          new DuracaoBase({ nome: 'Composto 5/2',          valor: 10.0, abc: '5/2' }),
-    COMPOSTO_7_2:          new DuracaoBase({ nome: 'Composto 7/2',          valor: 14.0, abc: '7/2' }),
+    SEMICOLCHEIA:   new DuracaoBase({ nome: 'Semicolcheia',       valor: 0.25,     abc: '1/2'  }),
+    SIXTEENTH:      new DuracaoBase({ nome: 'Semicolcheia',       valor: 0.25,     abc: '1/2'  }),
+    FUSA:           new DuracaoBase({ nome: 'Fusa',               valor: 0.125,    abc: '1/4'  }),
+    SEMIFUSA:       new DuracaoBase({ nome: 'Semifusa',           valor: 0.0625,   abc: '1/8'  }),
+    BISSEMIFUSA:    new DuracaoBase({ nome: 'Bissemifusa',        valor: 0.03125,  abc: '1/16' }),
+    QUADRISSIFUSA:  new DuracaoBase({ nome: 'Quadrissifusa',      valor: 0.015625, abc: '1/32' }),
 
-// --- NOTAS PONTUADAS E TEMPOS COMPOSTOS BASE 4 ---
-    MINIMA_PONTUADA:       new DuracaoBase({ nome: 'Mínima Pontuada',       valor: 3.0,  abc: '3/4' }),
-    COMPOSTO_5_4:          new DuracaoBase({ nome: 'Composto 5/4',          valor: 5.0,  abc: '5/4' }),
-    COMPOSTO_7_4:          new DuracaoBase({ nome: 'Composto 7/4',          valor: 7.0,  abc: '7/4' }),
+    // --- PONTUADAS (Baseadas em 1/8) ---
+    SEMIBREVE_PONTUADA:    new DuracaoBase({ nome: 'Semibreve Pontuada',    valor: 6.0,  abc: '12/1' }),
+    MINIMA_PONTUADA:       new DuracaoBase({ nome: 'Mínima Pontuada',       valor: 3.0,  abc: '6/1'  }),
+    SEMINIMA_PONTUADA:     new DuracaoBase({ nome: 'Semínima Pontuada',     valor: 1.5,  abc: '3/1'  }),
+    COLCHEIA_PONTUADA:     new DuracaoBase({ nome: 'Colcheia Pontuada',     valor: 0.75, abc: '3/2'  }),
+    SEMICOLCHEIA_PONTUADA: new DuracaoBase({ nome: 'Semicolcheia Pontuada', valor: 0.375, abc: '3/4'  }),
 
-// --- NOTAS PONTUADAS E TEMPOS COMPOSTOS BASE 8 ---
-    SEMINIMA_PONTUADA:     new DuracaoBase({ nome: 'Semínima Pontuada',     valor: 1.5,  abc: '3/8' }),
-    COMPOSTO_5_8:          new DuracaoBase({ nome: 'Composto 5/8',          valor: 2.5,  abc: '5/8' }),
-    COMPOSTO_7_8:          new DuracaoBase({ nome: 'Composto 7/8',          valor: 3.5,  abc: '7/8' }),
-    COMPOSTO_9_8:          new DuracaoBase({ nome: 'Composto 9/8',          valor: 4.5,  abc: '9/8' }),
+    // --- TERCINAS (Relativas à colcheia) ---
+    TERCINA_MINIMA:        new DuracaoBase({ nome: 'Tercina de Mínima',     valor: 1.33333333, abc: '8/3' }),
+    TERCINA_SEMINIMA:      new DuracaoBase({ nome: 'Tercina de Semínima',   valor: 0.66666667, abc: '4/3' }),
+    TERCINA_COLCHEIA:      new DuracaoBase({ nome: 'Tercina de Colcheia',   valor: 0.33333333, abc: '2/3' }),
 
-// --- NOTAS PONTUADAS E TEMPOS COMPOSTOS BASE 16 ---
-    COLCHEIA_PONTUADA:     new DuracaoBase({ nome: 'Colcheia Pontuada',     valor: 0.75, abc: '3/16' }),
-    COMPOSTO_5_16:         new DuracaoBase({ nome: 'Composto 5/16',         valor: 1.25, abc: '5/16' }),
-    COMPOSTO_7_16:         new DuracaoBase({ nome: 'Composto 7/16',         valor: 1.75, abc: '7/16' }),
-
-// --- NOTAS PONTUADAS E TEMPOS COMPOSTOS BASE 32 ---
-    SEMICOLCHEIA_PONTUADA: new DuracaoBase({ nome: 'Semicolcheia Pontuada', valor: 0.375, abc: '3/32' }),
-    COMPOSTO_5_32:         new DuracaoBase({ nome: 'Composto 5/32',         valor: 0.625, abc: '5/32' }),
-    COMPOSTO_7_32:         new DuracaoBase({ nome: 'Composto 7/32',         valor: 0.875, abc: '7/32' }),
-
-// --- QUIÁLTERAS / TERCINAS (Opcional, se precisar do valor exato) ---
-    TERCINA_MINIMA:        new DuracaoBase({ nome: 'Tercina de Mínima',     valor: 1.33333333, abc: '1/3' }),
-    TERCINA_SEMINIMA:      new DuracaoBase({ nome: 'Tercina de Semínima',   valor: 0.66666667, abc: '1/6' }),
-    TERCINA_COLCHEIA:      new DuracaoBase({ nome: 'Tercina de Colcheia',   valor: 0.33333333, abc: '1/12' }),
-
-    // --- MÉTODOS DO ENUM ---
-
-    /**
-     * Busca uma duração pelo valor numérico (tempos).
-     * @param {number} valor 
-     * @returns {DuracaoBase|undefined}
-     */
-    getByValor(valor) {
-        // Usamos um limiar de tolerância para comparação de ponto flutuante
-        return this.list().find(d => Math.abs(d.getValor() - valor) < 0.000001);
-    },
-    getByTempo( tempoString ) {
-        var x = this.list().find(d => d.getTempo() === tempoString);
-        return x;
-    },
-    /**
-     * Lista todas as durações como um array.
-     */
-    list() {
-        return Object.values(this).filter(d => d instanceof DuracaoBase);
-    }
+    // Métodos auxiliares permanecem iguais...
+    list() { return Object.values(this).filter(d => d instanceof DuracaoBase); },
+    getByValor(valor) { return this.list().find(d => Math.abs(d.getValor() - valor) < 0.000001); }
 });

@@ -17,6 +17,17 @@ export class EstruturaTempo {
             unidadeTempo: Math.abs(Math.round(d)) || 4
         };
     }
+    /**
+     * Retorna a representação da fórmula de compasso para o padrão ABC.
+     * USAGE:
+     * Utilizado tanto no cabeçalho global (M:4/4) quanto em mudanças
+     * de métrica no meio da partitura [M:3/4].
+     * @returns {string} Ex: "4/4", "3/4", "2/2"
+     * */
+    get #valorFormatado() {
+        const { quantidade, unidadeTempo } = this.#estruturaTempo;
+        return `${quantidade}/${unidadeTempo}`;
+    }
 
     /**
      * Retorna a representação da fórmula de compasso para o padrão ABC.
@@ -26,8 +37,17 @@ export class EstruturaTempo {
      * @returns {string} Ex: "4/4", "3/4", "2/2"
      */
     toAbc() {
-        const { quantidade, unidadeTempo } = this.#estruturaTempo;
-        return `M:${quantidade}/${unidadeTempo}\n`;
+        return `M:${this.#valorFormatado}\n`;
+    }
+    /**
+     * Retorna a representação da fórmula de compasso para o padrão ABC.
+     * USAGE:
+     * Utilizado tanto no cabeçalho global (M:4/4) quanto em mudanças
+     * de métrica no meio da partitura [M:3/4].
+     * @returns {string} Ex: "4/4", "3/4", "2/2"
+     */
+    toCompasso() {
+        return `[M:${this.#valorFormatado}]`;
     }
 
     /**

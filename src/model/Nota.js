@@ -95,6 +95,41 @@ export class Nota {
     // Getters essenciais
     get altura() { return this.#altura; }
     get duracao() { return this.#duracao; }
-    get abc() { return this.#altura.abc; }
     get midi() { return this.#altura.midi; }
+    /**
+     * Renderiza a nota e todos os seus modificadores rítmicos/visuais no padrão ABC.
+     * @returns {string}
+     */
+    toAbc() {
+        let abcString = "";
+
+        // 1. Modificadores de prefixo (Técnica de palhetada e Articulações)
+        if (this.#tecnica) abcString += this.#tecnica;
+        if (this.#articulacoes && this.#articulacoes.length > 0) {
+            abcString += this.#articulacoes.join("");
+        }
+
+        // 2. Ghost Note (Nota Fantasma/Abafada)
+        // O abcjs processa !style=x! desenhando a cabeça da nota como um "X"
+        if (this.#ghostNote) {
+            abcString += "!style=x!";
+        }
+
+        // 3. Altura Base (utilizando o getter que busca this.#altura.abc)
+        if (this.#altura) {
+            abcString += this.#altura.abc;
+        }
+
+        // 4. Duração (Verifica se é um Enum com .valor ou se já é uma string crua)
+        if (this.#duracao) {
+            abcString += this.#duracao.toNota();
+        }
+
+        // 5. Ligadura (Tie) - Obrigatoriamente o último caractere da nota
+        if (this.#ligada) {
+            abcString += "-";
+        }
+
+        return abcString;
+    }
 }

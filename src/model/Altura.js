@@ -1,4 +1,4 @@
-import { AlturaMidi } from './AlturaMidi.js';
+import {AlturaMidi, AlturaMidiEnum} from './AlturaMidi.js';
 /**
  * Representa a identidade física e tonal de uma nota.
  * Centraliza a relação entre o som (MIDI) e o símbolo (ABC) através de AlturaMidi.
@@ -60,4 +60,9 @@ export class Altura {
         const nomes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         return nomes[this.midi % 12];
     }
+    static resolverAltura(str) {
+        const a = Object.values(AlturaMidiEnum).find(a => a.abcjs === str) || AlturaMidiEnum.C4;
+        return new Altura(a);
+    }
+
 }

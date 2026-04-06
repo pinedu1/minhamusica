@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Musica } from './Musica.js'; // Ajuste o caminho conforme sua estrutura
-import { Compasso } from './Compasso.js'; // Assumindo que exista
+import { Musica } from './src/model/Musica.js'; // Ajuste o caminho conforme sua estrutura
+import { Compasso } from './src/model/Compasso.js'; // Assumindo que exista
 
 describe('Classe Musica - Integração ABC', () => {
     let minhaMusica;

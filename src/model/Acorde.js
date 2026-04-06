@@ -3,7 +3,7 @@
  */
 export class Acorde {
     /** @type {string} - Ex: "E", "Am", "D7" */
-    #fundamental;
+    #cifra;
     /** @type {string | null} - Ex: "G#" em E/G# */
     #baixo;
     /** @type {number} - Posição rítmica no compasso */
@@ -14,8 +14,8 @@ export class Acorde {
      * @param {number} posicao - Momento rítmico (0 = início).
      * @param {string | null} baixo - Nota do baixo se for invertido.
      */
-    constructor(fundamental, posicao = 0, baixo = null) {
-        this.#fundamental = fundamental;
+    constructor(cifra, posicao = 0, baixo = null) {
+        this.#cifra = fundamental;
         this.#posicao = posicao;
         this.#baixo = baixo;
     }
@@ -25,7 +25,7 @@ export class Acorde {
      * @example "E/G#", "Am7"
      */
     get texto() {
-        return this.#baixo ? `${this.#fundamental}/${this.#baixo}` : this.#fundamental;
+        return this.#baixo ? `${this.#cifra}/${this.#baixo}` : this.#cifra;
     }
 
     /**
