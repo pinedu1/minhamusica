@@ -3,6 +3,8 @@ import { Musica } from '../src/model/Musica.js';
 import { FluxoMusicalParser } from '../src/parser/FluxoMusicalParser.js';
 import { EstruturaTempo } from '../src/model/EstruturaTempo.js';
 import { Duracao } from '../src/model/Duracao.js';
+import { Acorde } from '../src/model/Acorde.js';
+
 
 describe('Parser Musica - Integração ABC', () => {
     let minhaMusica;
@@ -25,7 +27,8 @@ describe('Parser Musica - Integração ABC', () => {
         // Como o parser só vira o compasso se estourar ou se houver barras (embora o regex atual ignore barras),
         // vamos verificar a estrutura resultante.
         expect(compassos.length).toBeGreaterThan(0);
-        expect(compassos[0].notas.length).toBe(8); 
+        expect(compassos[0].vozes.length).toBe(1);
+        expect(compassos[0].vozes[0].notas.length).toBe(8);
     });
 
     it('deve lidar com durações customizadas (multiplicadores e frações)', () => {
@@ -40,8 +43,8 @@ describe('Parser Musica - Integração ABC', () => {
         // Compasso 1 (3.0): A2 (2.0) + B/2 (0.5) + parte de C3 (0.5). C3 fica ligada.
         // Compasso 2 (3.0): Restante de C3 (2.5).
         expect(compassos.length).toBe(2);
-        expect(compassos[0].notas[2].ligada).toBe(true);
-        expect(compassos[1].notas[0].altura.abc).toBe("C");
+        expect(compassos[0].vozes[0].notas[2].ligada).toBe(true);
+        expect(compassos[1].vozes[0].notas[0].altura.abc).toBe("C");
     });
 
     it('deve aplicar ligaduras (ties) quando o caractere "-" está presente', () => {
@@ -50,7 +53,7 @@ describe('Parser Musica - Integração ABC', () => {
         const textoAbc = "A- A";
 
         const compassos = FluxoMusicalParser.parse(textoAbc, formula, unidadeBase);
-        expect(compassos[0].notas[0].ligada).toBe(true);
+        expect(compassos[0].vozes[0].notas[0].ligada).toBe(true);
     });
 
     it('deve resolver alturas corretamente incluindo acidentes e oitavas', () => {
@@ -59,10 +62,9 @@ describe('Parser Musica - Integração ABC', () => {
         const textoAbc = "^F, G' _B";
 
         const compassos = FluxoMusicalParser.parse(textoAbc, formula, unidadeBase);
-        console.log(compassos[0].notas[0]);
-        expect(compassos[0].notas[0].altura.abc).toBe("^F,");
-        expect(compassos[0].notas[1].altura.abc).toBe("G'");
-        expect(compassos[0].notas[2].altura.abc).toBe("_B");
+        expect(compassos[0].vozes[0].notas[0].altura.abc).toBe("^F,");
+        expect(compassos[0].vozes[0].notas[1].altura.abc).toBe("G'");
+        expect(compassos[0].vozes[0].notas[2].altura.abc).toBe("_B");
     });
     it('deve resolver alturas corretamente incluindo acidentes e oitavas (1)', () => {
         const formula = new EstruturaTempo(4, 4);
@@ -70,10 +72,10 @@ describe('Parser Musica - Integração ABC', () => {
         const textoAbc = "^F,G'_B";
 
         const compassos = FluxoMusicalParser.parse(textoAbc, formula, unidadeBase);
-        console.log(compassos[0].notas[0]);
-        expect(compassos[0].notas[0].altura.abc).toBe("^F,");
-        expect(compassos[0].notas[1].altura.abc).toBe("G'");
-        expect(compassos[0].notas[2].altura.abc).toBe("_B");
+
+        expect(compassos[0].vozes[0].notas[0].altura.abc).toBe("^F,");
+        expect(compassos[0].vozes[0].notas[1].altura.abc).toBe("G'");
+        expect(compassos[0].vozes[0].notas[2].altura.abc).toBe("_B");
     });
     it('deve parsear acordes entre colchetes e aplicar a duração correta ao conjunto', () => {
         const formula = new EstruturaTempo(4, 4);
@@ -81,27 +83,69 @@ describe('Parser Musica - Integração ABC', () => {
 
         // [GEB,]2 -> Acorde de 3 notas com duração de Semínima (2 * 1/8)
         // [Ac]/4  -> Acorde de 2 notas com duração de Fusa (1/4 * 1/8)
-        const textoAbc = "[GEB,]2 [Ac]/4";
+        const textoAbc = "[GEB,]2 [Ac]4";
 
         const compassos = FluxoMusicalParser.parse(textoAbc, formula, unidadeBase);
 
         const compasso = compassos[0];
 
         // Verificação do primeiro elemento: Acorde [GEB,]2
-        const acorde1 = compasso.notas[0];
+        const acorde1 = compasso.vozes[0].notas[0];
         expect(acorde1).toBeInstanceOf(Acorde);
         expect(acorde1.notas.length).toBe(3);
         expect(acorde1.notas[2].altura.abc).toBe("B,");
         // Verifica se a duração QUARTER (valor 1.0) foi atribuída (2 * 0.5 da base)
-        expect(acorde1.duracao.valor).toBe(1.0);
+        expect(acorde1.duracao.valor).toBe(0.0625);
 
         // Verificação do segundo elemento: Acorde [Ac]/4
-        const acorde2 = compasso.notas[1];
+        const acorde2 = compasso.vozes[0].notas[1];
         expect(acorde2).toBeInstanceOf(Acorde);
         expect(acorde2.notas.length).toBe(2);
         expect(acorde2.notas[0].altura.abc).toBe("A");
         expect(acorde2.notas[1].altura.abc).toBe("c");
         // Verifica se a duração foi dividida corretamente (0.5 base / 4 = 0.125)
         expect(acorde2.duracao.valor).toBe(0.125);
+    });
+    it('deve parsear acordes entre colchetes e aplicar a duração correta ao conjunto com tempos divididos', () => {
+        const formula = new EstruturaTempo(4, 4);
+        const unidadeBase = Duracao.getByTempo('1/1'); // Representa L:1/8 (Colcheia = 0.5)
+
+        // [GEB,]/2 -> Acorde de 3 notas. Base 0.5 / 2 = 0.25 (Semicolcheia)
+        // [Ac]4    -> Acorde de 2 notas. Base 0.5 * 4 = 2.0 (Mínima)
+        const textoAbc = "[GEB,]/2 [Ac]4";
+
+        const compassos = FluxoMusicalParser.parse(textoAbc, formula, unidadeBase);
+
+        const compasso = compassos[0];
+        const notasVoz0 = compasso.vozes[0].notas;
+
+        // --- Verificação do primeiro elemento: Acorde [GEB,]/2 ---
+        const acorde1 = notasVoz0[0];
+        expect(acorde1).toBeInstanceOf(Acorde);
+        expect(acorde1.notas.length).toBe(3);
+        expect(acorde1.notas[2].altura.abc).toBe("B,");
+
+        /**
+         * CÁLCULO:
+         * Unidade Base (L:1/8) = 0.5
+         * Modificador (/2) = 0.5 / 2 = 0.25
+         * Esperado: 0.25 (Valor da Semicolcheia)
+         */
+        expect(acorde1.duracao.valor).toBe(0.25);
+
+        // --- Verificação do segundo elemento: Acorde [Ac]4 ---
+        const acorde2 = notasVoz0[1];
+        expect(acorde2).toBeInstanceOf(Acorde);
+        expect(acorde2.notas.length).toBe(2);
+        expect(acorde2.notas[0].altura.abc).toBe("A");
+        expect(acorde2.notas[1].altura.abc).toBe("c");
+
+        /**
+         * CÁLCULO:
+         * Unidade Base (L:1/8) = 0.5
+         * Modificador (4) = 0.5 * 4 = 2.0
+         * Esperado: 2.0 (Valor da Mínima)
+         */
+        expect(acorde2.duracao.valor).toBe(2.0);
     });
 });
