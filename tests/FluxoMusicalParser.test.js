@@ -75,4 +75,33 @@ describe('Parser Musica - Integração ABC', () => {
         expect(compassos[0].notas[1].altura.abc).toBe("G'");
         expect(compassos[0].notas[2].altura.abc).toBe("_B");
     });
+    it('deve parsear acordes entre colchetes e aplicar a duração correta ao conjunto', () => {
+        const formula = new EstruturaTempo(4, 4);
+        const unidadeBase = Duracao.getByTempo('1/8'); // L:1/8
+
+        // [GEB,]2 -> Acorde de 3 notas com duração de Semínima (2 * 1/8)
+        // [Ac]/4  -> Acorde de 2 notas com duração de Fusa (1/4 * 1/8)
+        const textoAbc = "[GEB,]2 [Ac]/4";
+
+        const compassos = FluxoMusicalParser.parse(textoAbc, formula, unidadeBase);
+
+        const compasso = compassos[0];
+
+        // Verificação do primeiro elemento: Acorde [GEB,]2
+        const acorde1 = compasso.notas[0];
+        expect(acorde1).toBeInstanceOf(Acorde);
+        expect(acorde1.notas.length).toBe(3);
+        expect(acorde1.notas[2].altura.abc).toBe("B,");
+        // Verifica se a duração QUARTER (valor 1.0) foi atribuída (2 * 0.5 da base)
+        expect(acorde1.duracao.valor).toBe(1.0);
+
+        // Verificação do segundo elemento: Acorde [Ac]/4
+        const acorde2 = compasso.notas[1];
+        expect(acorde2).toBeInstanceOf(Acorde);
+        expect(acorde2.notas.length).toBe(2);
+        expect(acorde2.notas[0].altura.abc).toBe("A");
+        expect(acorde2.notas[1].altura.abc).toBe("c");
+        // Verifica se a duração foi dividida corretamente (0.5 base / 4 = 0.125)
+        expect(acorde2.duracao.valor).toBe(0.125);
+    });
 });

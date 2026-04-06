@@ -96,6 +96,10 @@ export class Nota {
     get altura() { return this.#altura; }
     get duracao() { return this.#duracao; }
     get midi() { return this.#altura.midi; }
+    // Setter para permitir que o Parser altere a ligadura durante a quebra de compasso
+    set ligada(valor) { this.#ligada = !!valor; }
+    get ligada() { return this.#ligada; }
+
     /**
      * Renderiza a nota e todos os seus modificadores rítmicos/visuais no padrão ABC.
      * @returns {string}
@@ -131,5 +135,17 @@ export class Nota {
         }
 
         return abcString;
+    }
+    /**
+     * USAGE: Método de fábrica para criar uma nota a partir de strings brutas.
+     * Encapsula a lógica de resolução de altura e associação de duração.
+     * * @param {string} alturaStr - A string da nota (ex: "^F,", "c'")
+     * @param {DuracaoBase} duracaoObjeto - Instância do Enum Duracao já calculada
+     * @param {boolean} ligada - Estado da ligadura original
+     * @returns {Nota}
+     */
+    static resolverNota(alturaStr, duracaoObjeto, ligada = false) {
+        const alturaObjeto = Altura.resolverAltura(alturaStr);
+        return new Nota(alturaObjeto, duracaoObjeto, [], null, false, ligada);
     }
 }
