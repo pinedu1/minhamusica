@@ -3,7 +3,7 @@ import { Nota } from '../model/Nota.js';
 import { EstruturaTempo } from '../model/EstruturaTempo.js';
 import { Duracao } from '../model/Duracao.js';
 import { Altura } from '../model/Altura.js';
-import { AlturaMidi } from '../model/AlturaMidi.js';
+import { AlturaMidiEnum } from '../model/AlturaMidi.js';
 
 export class FluxoMusicalParser {
     /**
@@ -20,36 +20,63 @@ export class FluxoMusicalParser {
         let acumuladoNoCompasso = 0;
 
         // Regex para capturar os tokens musicais
-        const TOKEN_REGEX = /([\^=_]*[A-Ga-g][,']*?)([\d/]*)([-]?)/g;
+        const TOKEN_REGEX = /([\^=_]*[A-Ga-g][,']*)([\d/]*)([-]?)/g;
+        //const TOKEN_REGEX = /([\^=_]*[A-Ga-g][,']*?)([\d/]*)([-]?)/g;
         let match;
-
         while ((match = TOKEN_REGEX.exec(textoFull)) !== null) {
             const [_, alturaStr, duracaoStr, ligadura] = match;
 
-            // Calcula o valor real da nota baseado em L:
-            const valorNota = this.#calcularDuracaoReal(duracaoStr, unidadeBase);
+            let valorRestanteNota = this.#calcularDuracaoReal(duracaoStr, unidadeBase);
+            const altura = this.#resolverAltura(alturaStr);
 
-            // REGRA DE OURO: E se a nota for maior que o espaço restante?
-            // (Aqui poderíamos implementar o 'Tie' automático, mas vamos simplificar
-            // assumindo que as notas cabem ou encerram o compasso)
+// ... código anterior do regex ...
 
-            const novaNota = new Nota(this.#resolverAltura(alturaStr), Duracao.getByValor( valorNota ) );
-            if (ligadura === '-') novaNota.ligada = true;
+            while (valorRestanteNota > 0) {
+                const espacoDisponivel = Number((valorMaximo - acumuladoNoCompasso).toFixed(8));
 
-            compassoAtual.notas.push(novaNota);
-            acumuladoNoCompasso += valorNota;
+                if (espacoDisponivel <= 0) {
+                    compassos.push(compassoAtual);
+                    const novoIndice = compassos.length;
+                    compassoAtual = new Compasso(novoIndice, { estruturaTempo: formula });
+                    acumuladoNoCompasso = 0;
+                    continue;
+                }
 
-            // Se o compasso encheu (ou transbordou)
-            if (acumuladoNoCompasso >= valorMaximo) {
-                compassos.push(compassoAtual);
+                // Calcula o valor em ponto flutuante da fatia
+                let valorDestaParte = Math.min(valorRestanteNota, espacoDisponivel);
 
-                // Abre o próximo compasso
-                const novoIndice = compassos.length;
-                compassoAtual = new Compasso(novoIndice, { estruturaTempo: formula });
-                acumuladoNoCompasso = 0;
+                // --- A MUDANÇA ENTRA AQUI ---
+                // Converte o float de volta para a string ABC que o seu método espera
+                const tempoStringFormatada = this.#converterFloatParaTempoString(valorDestaParte);
+
+                // Instancia usando a busca por texto
+                const duracaoConvertida = Duracao.getByTempo(tempoStringFormatada);
+
+                if (!duracaoConvertida) {
+                    console.error(`Erro: Duração string '${tempoStringFormatada}' não encontrada no Enum.`);
+                }
+
+                const novaNota = new Nota(altura, duracaoConvertida);
+                // ----------------------------
+
+                if (valorRestanteNota > espacoDisponivel || ligadura === '-') {
+                    novaNota.ligada = true;
+                }
+
+                compassoAtual.notas.push(novaNota);
+
+                // Blindando a soma para evitar falhas de precisão no JS
+                acumuladoNoCompasso = Number((acumuladoNoCompasso + valorDestaParte).toFixed(8));
+                valorRestanteNota = Number((valorRestanteNota - valorDestaParte).toFixed(8));
+
+                if (acumuladoNoCompasso >= valorMaximo) {
+                    compassos.push(compassoAtual);
+                    const novoIndice = compassos.length;
+                    compassoAtual = new Compasso(novoIndice, { estruturaTempo: formula });
+                    acumuladoNoCompasso = 0;
+                }
             }
         }
-
         // Adiciona o último compasso se ele tiver notas (mesmo que incompleto)
         if (compassoAtual.notas.length > 0) {
             compassos.push(compassoAtual);
@@ -90,9 +117,31 @@ export class FluxoMusicalParser {
         }
         return parseFloat(str) * unidadeBase.valor;
     }
+    static #converterFloatParaTempoString(valorDecimal) {
+        const tolerancia = 0.0001; // Lida com o lixo de ponto flutuante do JS
 
+        // Testa os denominadores comuns da música: semibreve(1) até semifusa(64)
+        for (let denominador of [1, 2, 4, 8, 16, 32, 64]) {
+            let numerador = valorDecimal * denominador;
+
+            // Verifica se chegamos a um numerador inteiro (ex: 0.25 * 4 = 1.0)
+            if (Math.abs(Math.round(numerador) - numerador) < tolerancia) {
+                numerador = Math.round(numerador);
+
+                // Ajuste aqui conforme os padrões literais do seu Enum Duracao!
+                // Exemplo: se o valor inteiro for 1, seu enum usa "1/1" ou "1"?
+                if (numerador === 1 && denominador === 1) return "1/1"; // ou "1"
+
+                return `${numerador}/${denominador}`; // Retorna "1/4", "1/2", "3/8", etc.
+            }
+        }
+
+        // Fallback caso a fração seja muito bizarra (notas tercinadas complexas)
+        console.warn(`Não foi possível converter a duração decimal ${valorDecimal} para string.`);
+        return "1/4"; // Ou outro valor padrão de fallback
+    }
     static #resolverAltura(str) {
-        const a = Object.values(AlturaMidi).find(a => a.abcjs === str) || AlturaMidi.C4;
+        const a = Object.values(AlturaMidiEnum).find(a => a.abcjs === str) || AlturaMidiEnum.C4;
         return new Altura(a);
     }
 }

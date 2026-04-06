@@ -41,4 +41,19 @@ export class EstruturaTempo {
     get estruturaTempo() {
         return this.#estruturaTempo;
     }
+    get quantidade() {
+        return this.#estruturaTempo.quantidade;
+    }
+
+    get unidadeTempo() {
+        return this.#estruturaTempo.unidadeTempo;
+    }
+
+    /**
+     * Retorna o valor total do compasso em tempos (beats).
+     * @returns {number}
+     */
+    getValorTotal() {
+        return this.#estruturaTempo.quantidade;
+    }
 }

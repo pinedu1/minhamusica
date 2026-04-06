@@ -41,7 +41,7 @@ export class Altura {
      * @returns {string}
      */
     get abc() {
-        return this.#alturaMidi.abc;
+        return this.#alturaMidi.abcjs;
     }
 
     /**

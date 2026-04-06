@@ -1,4 +1,4 @@
-class AlturaMid {
+export class AlturaMidi {
     constructor(midi, abcjs) {
         this.midi = midi;
         this.abcjs = abcjs;
@@ -8,39 +8,25 @@ class AlturaMid {
  * Dicionário estático de instâncias de AlturaMidi.
  * Organizado por oitava científica.
  */
-export const AlturaMidi = Object.freeze({
-    // --- Oitava 2 (Grave - Bordões da Viola) ---
-    C2:  new AlturaMid(36, "C,,"),  Cs2: new AlturaMid(37, "^C,,"),
-    D2:  new AlturaMid(38, "D,,"),  Ds2: new AlturaMid(39, "^D,,"),
-    E2:  new AlturaMid(40, "E,,"),  F2:  new AlturaMid(41, "F,,"),
-    Fs2: new AlturaMid(42, "^F,,"), G2:  new AlturaMid(43, "G,,"),
-    Gs2: new AlturaMid(44, "^G,,"), A2:  new AlturaMid(45, "A,,"),
-    As2: new AlturaMid(46, "^A,,"), B2:  new AlturaMid(47, "B,,"),
-
-    // --- Oitava 3 ---
-    C3:  new AlturaMid(48, "C,"),   Cs3: new AlturaMid(49, "^C,"),
-    D3:  new AlturaMid(50, "D,"),   Ds3: new AlturaMid(51, "^D,"),
-    E3:  new AlturaMid(52, "E,"),   F3:  new AlturaMid(53, "F,"),
-    Fs3: new AlturaMid(54, "^F,"),  G3:  new AlturaMid(55, "G,"),
-    Gs3: new AlturaMid(56, "^G,"),  A3:  new AlturaMid(57, "A,"),
-    As3: new AlturaMid(58, "^A,"),  B3:  new AlturaMid(59, "B,"),
-
-    // --- Oitava 4 (Dó Central = 60) ---
-    C4:  new AlturaMid(60, "C"),    Cs4: new AlturaMid(61, "^C"),
-    D4:  new AlturaMid(62, "D"),    Ds4: new AlturaMid(63, "^D"),
-    E4:  new AlturaMid(64, "E"),    F4:  new AlturaMid(65, "F"),
-    Fs4: new AlturaMid(66, "^F"),   G4:  new AlturaMid(67, "G"),
-    Gs4: new AlturaMid(68, "^G"),   A4:  new AlturaMid(69, "A"),
-    As4: new AlturaMid(70, "^A"),   B4:  new AlturaMid(71, "B"),
-
-    // --- Oitava 5 (Agudas / Primas) ---
-    C5:  new AlturaMid(72, "c"),    Cs5: new AlturaMid(73, "^c"),
-    D5:  new AlturaMid(74, "d"),    Ds5: new AlturaMid(75, "^d"),
-    E5:  new AlturaMid(76, "e"),    F5:  new AlturaMid(77, "f"),
-    Fs5: new AlturaMid(78, "^f"),   G5:  new AlturaMid(79, "g"),
-    Gs5: new AlturaMid(80, "^g"),   A5:  new AlturaMid(81, "a"),
-    As5: new AlturaMid(82, "^a"),   B5:  new AlturaMid(83, "b"),
-
-    // --- Oitava 6 (Extremo Agudo) ---
-    C6:  new AlturaMid(84, "c'"),   E6:  new AlturaMid(88, "e'")
+export const AlturaMidiEnum = Object.freeze({
+    //  Oitava 1 (Sub-grave)                      Oitava 2                                  Oitava 3                                  Oitava 4 (Central)                        Oitava 5 (Primas)                         Oitava 5 (Alias Maiúsculo)                Oitava 6 (Agudas)                         Oitava 6 (Alias Maiúsculo)                Oitava 7 (Super Agudas)                   Oitava 7 (Alias Maiúsculo)                Oitava 8 (Extremo)                        Oitava 8 (Alias Maiúsculo)
+    C1      : new AlturaMidi( 24, "C,,,"  ), C2      : new AlturaMidi( 36, "C,,"   ), C3      : new AlturaMidi( 48, "C,"    ), C4      : new AlturaMidi( 60, "C"     ), C5      : new AlturaMidi( 72, "c"     ), C5_ALT  : new AlturaMidi( 72, "C'"    ), C6      : new AlturaMidi( 84, "c'"    ), C6_ALT  : new AlturaMidi( 84, "C''"   ), C7      : new AlturaMidi( 96, "c''"   ), C7_ALT  : new AlturaMidi( 96, "C'''"  ), C8      : new AlturaMidi(108, "c'''"  ), C8_ALT  : new AlturaMidi(108, "C''''" ),
+    Cb1     : new AlturaMidi( 23, "_C,,," ), Cb2     : new AlturaMidi( 35, "_C,,"  ), Cb3     : new AlturaMidi( 47, "_C,"   ), Cb4     : new AlturaMidi( 59, "_C"    ), Cb5     : new AlturaMidi( 71, "_c"    ), Cb5_ALT : new AlturaMidi( 71, "_C'"   ), Cb6     : new AlturaMidi( 83, "_c'"   ), Cb6_ALT : new AlturaMidi( 83, "_C''"  ), Cb7     : new AlturaMidi( 95, "_c''"  ), Cb7_ALT : new AlturaMidi( 95, "_C'''" ), Cb8     : new AlturaMidi(107, "_c'''" ), Cb8_ALT : new AlturaMidi(107, "_C''''"),
+    Cs1     : new AlturaMidi( 25, "^C,,," ), Cs2     : new AlturaMidi( 37, "^C,,"  ), Cs3     : new AlturaMidi( 49, "^C,"   ), Cs4     : new AlturaMidi( 61, "^C"    ), Cs5     : new AlturaMidi( 73, "^c"    ), Cs5_ALT : new AlturaMidi( 73, "^C'"   ), Cs6     : new AlturaMidi( 85, "^c'"   ), Cs6_ALT : new AlturaMidi( 85, "^C''"  ), Cs7     : new AlturaMidi( 97, "^c''"  ), Cs7_ALT : new AlturaMidi( 97, "^C'''" ), Cs8     : new AlturaMidi(109, "^c'''" ), Cs8_ALT : new AlturaMidi(109, "^C''''"),
+    Db1     : new AlturaMidi( 25, "_D,,," ), Db2     : new AlturaMidi( 37, "_D,,"  ), Db3     : new AlturaMidi( 49, "_D,"   ), Db4     : new AlturaMidi( 61, "_D"    ), Db5     : new AlturaMidi( 73, "_d"    ), Db5_ALT : new AlturaMidi( 73, "_D'"   ), Db6     : new AlturaMidi( 85, "_d'"   ), Db6_ALT : new AlturaMidi( 85, "_D''"  ), Db7     : new AlturaMidi( 97, "_d''"  ), Db7_ALT : new AlturaMidi( 97, "_D'''" ), Db8     : new AlturaMidi(109, "_d'''" ), Db8_ALT : new AlturaMidi(109, "_D''''"),
+    D1      : new AlturaMidi( 26, "D,,,"  ), D2      : new AlturaMidi( 38, "D,,"   ), D3      : new AlturaMidi( 50, "D,"    ), D4      : new AlturaMidi( 62, "D"     ), D5      : new AlturaMidi( 74, "d"     ), D5_ALT  : new AlturaMidi( 74, "D'"    ), D6      : new AlturaMidi( 86, "d'"    ), D6_ALT  : new AlturaMidi( 86, "D''"   ), D7      : new AlturaMidi( 98, "d''"   ), D7_ALT  : new AlturaMidi( 98, "D'''"  ), D8      : new AlturaMidi(110, "d'''"  ), D8_ALT  : new AlturaMidi(110, "D''''" ),
+    Ds1     : new AlturaMidi( 27, "^D,,," ), Ds2     : new AlturaMidi( 39, "^D,,"  ), Ds3     : new AlturaMidi( 51, "^D,"   ), Ds4     : new AlturaMidi( 63, "^D"    ), Ds5     : new AlturaMidi( 75, "^d"    ), Ds5_ALT : new AlturaMidi( 75, "^D'"   ), Ds6     : new AlturaMidi( 87, "^d'"   ), Ds6_ALT : new AlturaMidi( 87, "^D''"  ), Ds7     : new AlturaMidi( 99, "^d''"  ), Ds7_ALT : new AlturaMidi( 99, "^D'''" ), Ds8     : new AlturaMidi(111, "^d'''" ), Ds8_ALT : new AlturaMidi(111, "^D''''"),
+    Eb1     : new AlturaMidi( 27, "_E,,," ), Eb2     : new AlturaMidi( 39, "_E,,"  ), Eb3     : new AlturaMidi( 51, "_E,"   ), Eb4     : new AlturaMidi( 63, "_E"    ), Eb5     : new AlturaMidi( 75, "_e"    ), Eb5_ALT : new AlturaMidi( 75, "_E'"   ), Eb6     : new AlturaMidi( 87, "_e'"   ), Eb6_ALT : new AlturaMidi( 87, "_E''"  ), Eb7     : new AlturaMidi( 99, "_e''"  ), Eb7_ALT : new AlturaMidi( 99, "_E'''" ), Eb8     : new AlturaMidi(111, "_e'''" ), Eb8_ALT : new AlturaMidi(111, "_E''''"),
+    E1      : new AlturaMidi( 28, "E,,,"  ), E2      : new AlturaMidi( 40, "E,,"   ), E3      : new AlturaMidi( 52, "E,"    ), E4      : new AlturaMidi( 64, "E"     ), E5      : new AlturaMidi( 76, "e"     ), E5_ALT  : new AlturaMidi( 76, "E'"    ), E6      : new AlturaMidi( 88, "e'"    ), E6_ALT  : new AlturaMidi( 88, "E''"   ), E7      : new AlturaMidi(100, "e''"   ), E7_ALT  : new AlturaMidi(100, "E'''"  ), E8      : new AlturaMidi(112, "e'''"  ), E8_ALT  : new AlturaMidi(112, "E''''" ),
+    Fb1     : new AlturaMidi( 28, "_F,,," ), Fb2     : new AlturaMidi( 40, "_F,,"  ), Fb3     : new AlturaMidi( 52, "_F,"   ), Fb4     : new AlturaMidi( 64, "_F"    ), Fb5     : new AlturaMidi( 76, "_f"    ), Fb5_ALT : new AlturaMidi( 76, "_F'"   ), Fb6     : new AlturaMidi( 88, "_f'"   ), Fb6_ALT : new AlturaMidi( 88, "_F''"  ), Fb7     : new AlturaMidi(100, "_f''"  ), Fb7_ALT : new AlturaMidi(100, "_F'''" ), Fb8     : new AlturaMidi(112, "_f'''" ), Fb8_ALT : new AlturaMidi(112, "_F''''"),
+    F1      : new AlturaMidi( 29, "F,,,"  ), F2      : new AlturaMidi( 41, "F,,"   ), F3      : new AlturaMidi( 53, "F,"    ), F4      : new AlturaMidi( 65, "F"     ), F5      : new AlturaMidi( 77, "f"     ), F5_ALT  : new AlturaMidi( 77, "F'"    ), F6      : new AlturaMidi( 89, "f'"    ), F6_ALT  : new AlturaMidi( 89, "F''"   ), F7      : new AlturaMidi(101, "f''"   ), F7_ALT  : new AlturaMidi(101, "F'''"  ), F8      : new AlturaMidi(113, "f'''"  ), F8_ALT  : new AlturaMidi(113, "F''''" ),
+    Fs1     : new AlturaMidi( 30, "^F,,," ), Fs2     : new AlturaMidi( 42, "^F,,"  ), Fs3     : new AlturaMidi( 54, "^F,"   ), Fs4     : new AlturaMidi( 66, "^F"    ), Fs5     : new AlturaMidi( 78, "^f"    ), Fs5_ALT : new AlturaMidi( 78, "^F'"   ), Fs6     : new AlturaMidi( 90, "^f'"   ), Fs6_ALT : new AlturaMidi( 90, "^F''"  ), Fs7     : new AlturaMidi(102, "^f''"  ), Fs7_ALT : new AlturaMidi(102, "^F'''" ), Fs8     : new AlturaMidi(114, "^f'''" ), Fs8_ALT : new AlturaMidi(114, "^F''''"),
+    Gb1     : new AlturaMidi( 30, "_G,,," ), Gb2     : new AlturaMidi( 42, "_G,,"  ), Gb3     : new AlturaMidi( 54, "_G,"   ), Gb4     : new AlturaMidi( 66, "_G"    ), Gb5     : new AlturaMidi( 78, "_g"    ), Gb5_ALT : new AlturaMidi( 78, "_G'"   ), Gb6     : new AlturaMidi( 90, "_g'"   ), Gb6_ALT : new AlturaMidi( 90, "_G''"  ), Gb7     : new AlturaMidi(102, "_g''"  ), Gb7_ALT : new AlturaMidi(102, "_G'''" ), Gb8     : new AlturaMidi(114, "_g'''" ), Gb8_ALT : new AlturaMidi(114, "_G''''"),
+    G1      : new AlturaMidi( 31, "G,,,"  ), G2      : new AlturaMidi( 43, "G,,"   ), G3      : new AlturaMidi( 55, "G,"    ), G4      : new AlturaMidi( 67, "G"     ), G5      : new AlturaMidi( 79, "g"     ), G5_ALT  : new AlturaMidi( 79, "G'"    ), G6      : new AlturaMidi( 91, "g'"    ), G6_ALT  : new AlturaMidi( 91, "G''"   ), G7      : new AlturaMidi(103, "g''"   ), G7_ALT  : new AlturaMidi(103, "G'''"  ), G8      : new AlturaMidi(115, "g'''"  ), G8_ALT  : new AlturaMidi(115, "G''''" ),
+    Gs1     : new AlturaMidi( 32, "^G,,," ), Gs2     : new AlturaMidi( 44, "^G,,"  ), Gs3     : new AlturaMidi( 56, "^G,"   ), Gs4     : new AlturaMidi( 68, "^G"    ), Gs5     : new AlturaMidi( 80, "^g"    ), Gs5_ALT : new AlturaMidi( 80, "^G'"   ), Gs6     : new AlturaMidi( 92, "^g'"   ), Gs6_ALT : new AlturaMidi( 92, "^G''"  ), Gs7     : new AlturaMidi(104, "^g''"  ), Gs7_ALT : new AlturaMidi(104, "^G'''" ), Gs8     : new AlturaMidi(116, "^g'''" ), Gs8_ALT : new AlturaMidi(116, "^G''''"),
+    Ab1     : new AlturaMidi( 32, "_A,,," ), Ab2     : new AlturaMidi( 44, "_A,,"  ), Ab3     : new AlturaMidi( 56, "_A,"   ), Ab4     : new AlturaMidi( 68, "_A"    ), Ab5     : new AlturaMidi( 80, "_a"    ), Ab5_ALT : new AlturaMidi( 80, "_A'"   ), Ab6     : new AlturaMidi( 92, "_a'"   ), Ab6_ALT : new AlturaMidi( 92, "_A''"  ), Ab7     : new AlturaMidi(104, "_a''"  ), Ab7_ALT : new AlturaMidi(104, "_A'''" ), Ab8     : new AlturaMidi(116, "_a'''" ), Ab8_ALT : new AlturaMidi(116, "_A''''"),
+    A1      : new AlturaMidi( 33, "A,,,"  ), A2      : new AlturaMidi( 45, "A,,"   ), A3      : new AlturaMidi( 57, "A,"    ), A4      : new AlturaMidi( 69, "A"     ), A5      : new AlturaMidi( 81, "a"     ), A5_ALT  : new AlturaMidi( 81, "A'"    ), A6      : new AlturaMidi( 93, "a'"    ), A6_ALT  : new AlturaMidi( 93, "A''"   ), A7      : new AlturaMidi(105, "a''"   ), A7_ALT  : new AlturaMidi(105, "A'''"  ), A8      : new AlturaMidi(117, "a'''"  ), A8_ALT  : new AlturaMidi(117, "A''''" ),
+    As1     : new AlturaMidi( 34, "^A,,," ), As2     : new AlturaMidi( 46, "^A,,"  ), As3     : new AlturaMidi( 58, "^A,"   ), As4     : new AlturaMidi( 70, "^A"    ), As5     : new AlturaMidi( 82, "^a"    ), As5_ALT : new AlturaMidi( 82, "^A'"   ), As6     : new AlturaMidi( 94, "^a'"   ), As6_ALT : new AlturaMidi( 94, "^A''"  ), As7     : new AlturaMidi(106, "^a''"  ), As7_ALT : new AlturaMidi(106, "^A'''" ), As8     : new AlturaMidi(118, "^a'''" ), As8_ALT : new AlturaMidi(118, "^A''''"),
+    Bb1     : new AlturaMidi( 34, "_B,,," ), Bb2     : new AlturaMidi( 46, "_B,,"  ), Bb3     : new AlturaMidi( 58, "_B,"   ), Bb4     : new AlturaMidi( 70, "_B"    ), Bb5     : new AlturaMidi( 82, "_b"    ), Bb5_ALT : new AlturaMidi( 82, "_B'"   ), Bb6     : new AlturaMidi( 94, "_b'"   ), Bb6_ALT : new AlturaMidi( 94, "_B''"  ), Bb7     : new AlturaMidi(106, "_b''"  ), Bb7_ALT : new AlturaMidi(106, "_B'''" ), Bb8     : new AlturaMidi(118, "_b'''" ), Bb8_ALT : new AlturaMidi(118, "_B''''"),
+    B1      : new AlturaMidi( 35, "B,,,"  ), B2      : new AlturaMidi( 47, "B,,"   ), B3      : new AlturaMidi( 59, "B,"    ), B4      : new AlturaMidi( 71, "B"     ), B5      : new AlturaMidi( 83, "b"     ), B5_ALT  : new AlturaMidi( 83, "B'"    ), B6      : new AlturaMidi( 95, "b'"    ), B6_ALT  : new AlturaMidi( 95, "B''"   ), B7      : new AlturaMidi(107, "b''"   ), B7_ALT  : new AlturaMidi(107, "B'''"  ), B8      : new AlturaMidi(119, "b'''"  ), B8_ALT  : new AlturaMidi(119, "B''''" )
 });
