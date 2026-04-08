@@ -1,151 +1,93 @@
 import { Altura } from './Altura.js';
 import { Duracao } from './Duracao.js';
-import { Articulacao } from './Articulacao.js';
-import { TecnicaPalhetada } from './TecnicaPalhetada.js';
+import { EstruturaTempo } from './EstruturaTempo.js';
 
+/**
+ * Representa uma nota musical com inteligência de contexto rítmico.
+ */
 export class Nota {
-    /** * USAGE:
-     * Instância da classe Altura que encapsula a lógica MIDI e a string ABC.
-     * @type {Altura}
-     */
+    /** @type {Altura} */
     #altura;
-
-    /** * USAGE:
-     * Valor rítmico da nota baseado no Enum Duracao (ex: Duracao.QUARTER.valor).
-     * Representa o multiplicador ou divisor de tempo para o motor abcjs.
-     * @type {Duracao}
-     * @example
-     * // Para uma Mínima (2 tempos):
-     * this.#duracao = Duracao.METADE.valor; // Resulta em "C2" no ABC
-     */
+    /** @type {Duracao|EstruturaTempo|null} - Tempo rítmico da nota */
     #duracao;
-
-    /** * USAGE:
-     * Coleção de ornamentos e símbolos de articulação aplicados à nota.
-     * Os valores devem ser extraídos de Articulacao[CHAVE].abc.
-     * @type {Array<Articulacao>}
-     * @example
-     * // Nota com Staccato e Acento:
-     * this.#articulacoes = [Articulacao.STACCATO.abc, Articulacao.ACCENT.abc];
-     */
-    #articulacoes = [];
-
-    /** * USAGE:
-     * Define a direção da palhetada ou técnica de ataque.
-     * Deve ser atribuído usando TecnicaPalhetada[CHAVE].abc.
-     * Essencial para a rítmica do Pagode de Viola e Cururu.
-     * @type {TecnicaPalhetada | null}
-     * @example
-     * this.#tecnica = TecnicaPalhetada.BAIXO.abc; // Renderiza 'v' sobre a nota
-     */
-    #tecnica = null;
-
-    /** * USAGE:
-     * Objeto de metadados visuais calculado para renderização no Canvas.
-     * Armazena a largura (width) ocupada pela nota e o seu deslocamento (offset)
-     * horizontal em relação ao início do compasso.
-     * @type {Dimensoes | null}
-     * @example
-     * // Utilizado pelo motor de desenho para evitar sobreposição:
-     * if (this.#dimensoes) {
-     * ctx.drawNote(this.abc, this.#dimensoes.x, this.#dimensoes.y);
-     * }
-     */
-    #dimensoes = null;
-
-    /** * @type {boolean} - Se true, a nota aparece entre parênteses (x)
-     * Comum em notas de passagem ou notas "fantasma" no ponteado.
-     */
-    #ghostNote = false;
-
-    /** * @type {boolean} - Indica se a nota está ligada à nota anterior (Tie)
-     * Representado pelo símbolo '-' no ABC.
-     */
-    #ligada = false;
+    /** @type {Object} - Opções de contexto (Compasso, Musica, Articulações, etc) */
+    #options;
 
     /**
-     * CONSTRUTOR EXPLÍCITO
-     *
-     * @param {Altura} altura - Instância obrigatória de Altura.
-     * @param {Duracao} duracao - Instância obrigatória de Duracao.
-     * @param {Array<Articulacao>} articulacoes - Lista de articulações (default []).
-     * @param {TecnicaPalhetada|null} tecnica - Técnica de palhetada (default null).
-     * @param {boolean} ghostNote - Se é nota fantasma (default false).
-     * @param {boolean} ligada - Se está ligada (default false).
+     * USAGE: Cria uma nota. Se 'duracao' for null, ela buscará o fallback no 'options'.
+     * 
+     * @param {Altura} altura - Objeto de altura musical.
+     * @param {Duracao|EstruturaTempo|null} [duracao=null] - Duração específica da nota.
+     * @param {Object} [options={}] - Contexto superior e modificadores.
+     * @param {Compasso} [options.compasso] - Referência ao compasso pai (busca L: e M:).
+     * @param {Musica} [options.musica] - Referência à música pai (busca L: e M:).
+     * @param {Array} [options.articulacoes=[]] - Lista de ornamentos.
+     * @param {boolean} [options.ligada=false] - Se está ligada (-).
+     * @throws {Error} Se não houver informação rítmica mínima na nota ou no contexto.
      */
-    constructor(
-        altura,
-        duracao,
-        articulacoes = [],
-        tecnica = null,
-        ghostNote = false,
-        ligada = false
-    ) {
+    constructor(altura, duracao = null, options = {}) {
         this.#altura = altura;
         this.#duracao = duracao;
-        this.#articulacoes = articulacoes;
-        this.#tecnica = tecnica;
-        this.#ghostNote = ghostNote;
-        this.#ligada = ligada;
+        this.#options = {
+            articulacoes: [],
+            tecnica: null,
+            ghostNote: false,
+            ligada: false,
+            compasso: null,
+            musica: null,
+            ...options
+        };
 
-        // Inicializa como null, aguardando o cálculo do motor de layout
-        this.#dimensoes = null;
+        // --- VALIDAÇÃO DE SEGURANÇA RÍTMICA ---
+        // A nota só pode ser instanciada se houver como calcular sua duração.
+        const temContexto = this.#duracao || 
+                           this.#options.compasso ||
+                           this.#options.musica;
+
+        if (!temContexto) {
+             throw new Error("Falha ao criar Nota: É necessário informar uma duração rítmica ou fornecer um contexto (Compasso/Musica) que contenha a unidade base (L:).");
+        }
     }
 
-    // Getters essenciais
-    get altura() { return this.#altura; }
-    get duracao() { return this.#duracao; }
-    get midi() { return this.#altura.midi; }
-    // Setter para permitir que o Parser altere a ligadura durante a quebra de compasso
-    set ligada(valor) { this.#ligada = !!valor; }
-    get ligada() { return this.#ligada; }
-
     /**
-     * Renderiza a nota e todos os seus modificadores rítmicos/visuais no padrão ABC.
+     * USAGE: Gera o ABC resolvendo o fallback da unidade base (L:).
      * @returns {string}
      */
     toAbc() {
         let abcString = "";
+        if (this.#options.tecnica) abcString += this.#options.tecnica;
+        if (this.#options.articulacoes.length > 0) abcString += this.#options.articulacoes.join("");
+        if (this.#options.ghostNote) abcString += "!style=x!";
+        
+        abcString += this.#altura.abc;
 
-        // 1. Modificadores de prefixo (Técnica de palhetada e Articulações)
-        if (this.#tecnica) abcString += this.#tecnica;
-        if (this.#articulacoes && this.#articulacoes.length > 0) {
-            abcString += this.#articulacoes.join("");
+        // 2. Resolve a duração rítmica da nota
+        let duracaoFinal;
+        if (this.#duracao instanceof Duracao) {
+            duracaoFinal = this.#duracao;
+        } else if (this.#options.compasso) {
+            const cp = this.#options.compasso;
+            duracaoFinal = new Duracao(cp.estruturaTempo, cp.unidadeBase);
+        } else if (this.#options.musica) {
+            const ms = this.#options.musica;
+            duracaoFinal = new Duracao(ms.formula, ms.unidadeBase);
+        } else {
+            throw new Error("Falha Renderizar a Nota. É preciso da estrutura de tempo!");
         }
 
-        // 2. Ghost Note (Nota Fantasma/Abafada)
-        // O abcjs processa !style=x! desenhando a cabeça da nota como um "X"
-        if (this.#ghostNote) {
-            abcString += "!style=x!";
-        }
+        abcString += duracaoFinal.toAbc();
 
-        // 3. Altura Base (utilizando o getter que busca this.#altura.abc)
-        if (this.#altura) {
-            abcString += this.#altura.abc;
-        }
-
-        // 4. Duração (Verifica se é um Enum com .valor ou se já é uma string crua)
-        if (this.#duracao) {
-            abcString += this.#duracao.toNota();
-        }
-
-        // 5. Ligadura (Tie) - Obrigatoriamente o último caractere da nota
-        if (this.#ligada) {
-            abcString += "-";
-        }
-
+        if (this.#options.ligada) abcString += "-";
         return abcString;
     }
-    /**
-     * USAGE: Método de fábrica para criar uma nota a partir de strings brutas.
-     * Encapsula a lógica de resolução de altura e associação de duração.
-     * * @param {string} alturaStr - A string da nota (ex: "^F,", "c'")
-     * @param {DuracaoBase} duracaoObjeto - Instância do Enum Duracao já calculada
-     * @param {boolean} ligada - Estado da ligadura original
-     * @returns {Nota}
-     */
-    static resolverNota(alturaStr, duracaoObjeto, ligada = false) {
-        const alturaObjeto = Altura.resolverAltura(alturaStr);
-        return new Nota(alturaObjeto, duracaoObjeto, [], null, false, ligada);
+
+    // Getters para compatibilidade
+    get altura() { return this.#altura; }
+    get duracao() { return this.#duracao; }
+    get ligada() { return this.#options.ligada; }
+    set ligada(valor) { this.#options.ligada = !!valor; }
+
+    static resolverNota(alturaStr, duracao = null, options = {}) {
+        return new Nota(Altura.resolverAltura(alturaStr), duracao, options);
     }
 }

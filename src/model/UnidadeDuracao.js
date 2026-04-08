@@ -1,9 +1,9 @@
-export class EstruturaTempo {
+export class UnidadeDuracao {
     /** @type {{quantidade: number, unidadeTempo: number}} */
-    #estruturaTempo;
+    #unidadeDuracao;
 
     constructor(quantidade = 4, unidadeTempo = 4) {
-        this.setEstruturaTempo(quantidade, unidadeTempo);
+        this.setUnidadeDuracao(quantidade, unidadeTempo);
     }
 
     /**
@@ -11,25 +11,26 @@ export class EstruturaTempo {
      * @param {number} n - quantidade (numerador)
      * @param {number} d - unidadeTempo (denominador)
      */
-    setEstruturaTempo(n, d) {
-        this.#estruturaTempo = {
+    setUnidadeDuracao(n, d) {
+        this.#unidadeDuracao = {
             quantidade: Math.abs(Math.round(n)) || 4,
             unidadeTempo: Math.abs(Math.round(d)) || 4
         };
     }
     get razao() {
-        return this.#estruturaTempo.quantidade / this.#estruturaTempo.unidadeTempo;
+        return this.#unidadeDuracao.quantidade / this.#unidadeDuracao.unidadeTempo;
     }
+
     get #valorFormatado() {
-        const { quantidade, unidadeTempo } = this.#estruturaTempo;
+        const { quantidade, unidadeTempo } = this.#unidadeDuracao;
         return `${quantidade}/${unidadeTempo}`;
     }
 
     /**
-     * USAGE: Gera M:4/4
+     * USAGE: Gera L:1/4
      */
     toAbc() {
-        return `M:${this.#valorFormatado}\n`;
+        return `L:${this.#valorFormatado}\n`;
     }
 
     /**
@@ -39,8 +40,8 @@ export class EstruturaTempo {
         return `[M:${this.#valorFormatado}]`;
     }
 
-    get quantidade() { return this.#estruturaTempo.quantidade; }
-    get unidadeTempo() { return this.#estruturaTempo.unidadeTempo; }
+    get quantidade() { return this.#unidadeDuracao.quantidade; }
+    get unidadeTempo() { return this.#unidadeDuracao.unidadeTempo; }
 
     /**
      * USAGE: Retorna o valor total do compasso na escala 1.0 = Semibreve.
@@ -48,6 +49,6 @@ export class EstruturaTempo {
      * @returns {number}
      */
     getValorTotal() {
-        return this.#estruturaTempo.quantidade / this.#estruturaTempo.unidadeTempo;
+        return this.#unidadeDuracao.quantidade / this.#unidadeDuracao.unidadeTempo;
     }
 }

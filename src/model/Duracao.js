@@ -1,189 +1,143 @@
+import { EstruturaTempo } from './EstruturaTempo.js';
+import { UnidadeDuracao } from './UnidadeDuracao.js';
+
 /**
- * Classe base para as durações rítmicas.
+ * Classe responsável por calcular e armazenar a duração rítmica de uma nota
+ * em relação a uma unidade base (L:).
  */
-export class DuracaoBase {
-    constructor(config) {
-        Object.assign(this, config);
-    }
+export class Duracao {
+    /** @type {EstruturaTempo} - Estrutua de Pulsos da Obra: 4/4, 3/4, 6/8 */
+    #estruturaTempo;
+    /** @type {UnidadeDuracao} - Tamanho do Pulso da Obra: 1/4, 1/8, 1/16, etc.*/
+    #unidadePulso;
 
     /**
-     * Retorna o identificador global de duração (Field L) para o padrão ABC.
-     * USAGE: Usado no cabeçalho ou nas propriedades estruturais do compasso.
-     * @returns {string} Ex: "L:1/4\n"
+     * USAGE: Cria uma duração resolvida para uma nota.
+     * 
+     * @param {EstruturaTempo} tempoNota - O tempo rítmico da nota (ex: 1/4 para semínima).
+     * @param {UnidadeDuracao} unidadeBase - A unidade base L: (ex: 1/8 para colcheia).
+     * @example
+     * // Uma Mínima (2/4) em um contexto de Colcheia (1/8)
+     * const d = new Duracao(new EstruturaTempo(2, 4), new EstruturaTempo(1, 8));
+     * console.log(d.abc); // "4"
+     */
+    constructor(tempoNota, unidadeBase) {
+        if ( !(tempoNota instanceof EstruturaTempo) ) {
+            throw new Error("Duracao requer instâncias de EstruturaTempo.");
+        }
+        if ( !(unidadeBase instanceof UnidadeDuracao)) {
+            throw new Error("UnidadeBase requer instâncias de UnidadeDuracao.");
+        }
+        this.#estruturaTempo = tempoNota;
+        this.#unidadePulso = unidadeBase;
+    }
+    /**
+     * Converte um número decimal em uma fração simplificada em formato de string.
+     * @param {number} decimal - O número decimal (ex: 0.5, 0.25, 0.75, 1.5)
+     * @returns {string} - A fração formatada (ex: "1/2", "1/4", "3/4", "3/2")
+     */
+    #paraFracao(decimal) {
+        // 1. Se já for um número inteiro, retorna ele mesmo
+        if (Number.isInteger(decimal)) {
+            return decimal.toString();
+        }
+
+        // 2. Descobre quantas casas decimais o número possui
+        const strDecimal = decimal.toString();
+        const casasDecimais = strDecimal.split('.')[1].length;
+
+        // 3. Monta a fração base multiplicando por potências de 10
+        // Ex: 0.75 vira numerador 75 e denominador 100
+        const multiplicador = Math.pow(10, casasDecimais);
+        let numerador = Math.round(decimal * multiplicador);
+        let denominador = multiplicador;
+
+        // 4. Função interna para calcular o Máximo Divisor Comum (MDC)
+        const calcularMDC = (a, b) => {
+            while (b !== 0) {
+                let resto = a % b;
+                a = b;
+                b = resto;
+            }
+            return a;
+        };
+
+        // 5. Encontra o MDC entre o numerador e o denominador
+        const mdc = calcularMDC(numerador, denominador);
+
+        // 6. Retorna a fração simplificada
+        return `${numerador / mdc}/${denominador / mdc}`;
+    };
+
+    #calculaPulsos(f, u) {
+        // 1. Qual é o valor matemático de 1 BATIDA do metrônomo (Pulso)?
+        // Pega-se sempre 1 dividido pelo denominador da Fórmula (M)
+        const valorDeUmPulso = 1 / f.unidadeTempo;
+        // Ex: Em 4/4, o pulso é 1/4 = 0.25
+        // Ex: Em 6/8, o pulso é 1/8 = 0.125
+
+        // 2. Qual é a duração matemática da nossa Unidade Base (L)?
+        const valorDaBase = u.quantidade / u.unidadeTempo;
+        // Ex: L: 1/4 = 0.25
+        // Ex: L: 1/8 = 0.125
+
+        // 3. A FÓRMULA MÁGICA: Quantos pulsos a nossa base ocupa?
+        const quantidadeDePulsos = valorDaBase / valorDeUmPulso;
+
+        return quantidadeDePulsos;
+    }
+    #calculaRazao() {
+        return this.#estruturaTempo.razao / this.#unidadePulso.razao;
+    }
+    /**
+     * Converte um valor decimal de pulsos para o modificador de duração do ABC.
+     * @returns {string} - A string formatada para o ABC (ex: "3/4", "/2", "", "2")
      */
     toAbc() {
-        return `L:${this.abc}\n`;
-    }
+        const pulsos = this.#calculaPulsos(this.#estruturaTempo, this.#unidadePulso);
+        const fracaoPulsos = this.#paraFracao(pulsos);
+        const fracaoEstruturaTempo = this.#paraFracao(this.#estruturaTempo.razao);
+        const fracaoUnidadeBase = this.#paraFracao(this.#unidadePulso.razao);
+        const razao = this.#calculaRazao();
+        const fracaoRazao = this.#paraFracao(razao);
+        // 1. Caso base: 1 pulso não leva modificador
+        if (pulsos === 1) return "";
 
-    /**
-     * @param {number} referencia - O valor da unidade L: (Ex: 0.5 para 1/8)
-     * @returns {string} O sufixo ABC calculado dinamicamente
-     */
-    toNota(referencia = 0.5) {
-        // Calculamos a razão entre a nota atual e a referência
-        // Ex: Semínima(1.0) / Colcheia(0.5) = 2
-        // Ex: Semicolcheia(0.25) / Colcheia(0.5) = 0.5
-        const razao = this.valor / referencia;
+        // 2. Números inteiros maiores (ex: 2, 3, 4) não precisam de fração
+        if (Number.isInteger(pulsos)) return pulsos.toString();
 
-        // Se a nota for exatamente igual à referência (Ex: Colcheia com L:1/8)
-        if (razao === 1) return "";
+        // 2.5. Números inteiros maiores (ex: 2, 3, 4) não precisam de fração
+        if (Number.isInteger(razao)) return razao.toString();
 
-        // Se for um número inteiro (Ex: 2, 4, 8)
-        if (Number.isInteger(razao)) {
-            return `${razao}`;
-        }
+        // 3. Converter decimal em fração
+        // O denominador máximo é 64 (cobre até as semifusas/quartifusas na partitura)
+        const maxDenominator = 64;
+        let numerator = 0;
+        let denominator = 1;
+        let minError = Infinity;
 
-        // Se for uma fração (Ex: 0.5 vira "/", 0.25 vira "/4")
-        return this.#converterParaFracaoAbc(razao);
-    }
+        // Busca a fração que melhor representa o decimal
+        for (let d = 2; d <= maxDenominator; d++) {
+            const n = Math.round(pulsos * d);
+            const error = Math.abs(pulsos - (n / d));
 
-    /**
-     * Método auxiliar para converter números decimais em frações padrão ABC
-     */
-    #converterParaFracaoAbc(decimal) {
-        if (decimal === 0.5) return "/"; // Atalho ABC para /2
-
-        // Para outros casos, buscamos uma representação fracionária simples
-        // Usamos uma aproximação para evitar erros de ponto flutuante
-        const denominador = Math.round(1 / decimal);
-        if (denominador > 1) {
-            return `/${denominador}`;
-        }
-
-        // Para notas pontuadas (ex: 1.5, 0.75), calculamos numerador/denominador
-        // Ex: Razão 1.5 (Semínima Pontuada vs Colcheia) -> "3/2"
-        const n = decimal * 2;
-        if (Number.isInteger(n)) {
-            return `${n}/2`;
-        }
-
-        return decimal.toString(); // Fallback
-    }
-    /**
-     * Traduz modificadores de duração do padrão ABC para valores rítmicos reais.
-     * * O retorno é o produto do multiplicador da string pelo valor decimal da unidade base (L:).
-     * * @param {string} str - O sufixo de duração da nota (ex: "3", "3/2", "/2").
-     * @param {DuracaoBase} unidadeBase - Objeto contendo o valor da unidade padrão (ex: L:1/8 = 0.5).
-     * @returns {number} Valor real da nota em tempos (beats).
-     * * @example
-     * // SITUAÇÃO 1: Ausência de modificador (Nota Padrão)
-     * // Entrada: str = "", unidadeBase = {valor: 0.5} (L:1/8)
-     * // Retorno: 0.5 (A nota dura exatamente uma Colcheia)
-     * * // SITUAÇÃO 2: Multiplicador Inteiro ou Fração Explícita (Aumento/Pontuado)
-     * // Entrada: str = "3/2", unidadeBase = {valor: 1.0} (L:1/4)
-     * // Retorno: 1.5 (Uma Semínima pontuada: 1.0 * 1.5)
-     * * // SITUAÇÃO 3: Subdivisão por Barras (Encurtamento)
-     * // Entrada: str = "/4", unidadeBase = {valor: 0.5} (L:1/8)
-     * // Retorno: 0.125 (Uma Fusa: 0.5 dividido por 4)
-     */
-    static calcularDuracaoReal(str, unidadeBase) {
-        // unidadeBase.valor para L:1/8 é 0.5
-        if (!str) return unidadeBase.valor;
-
-        // Lógica de frações (ex: "3/2", "/2", "2")
-        if (str === "/") return unidadeBase.valor / 2;
-        if (str.startsWith("/")) {
-            return unidadeBase.valor / (parseInt(str.substring(1)) || 2);
-        }
-        if (str.includes("/")) {
-            const [n, d] = str.split("/").map(Number);
-            return (n / (d || 2)) * unidadeBase.valor;
-        }
-        return parseFloat(str) * unidadeBase.valor;
-    }
-    static converterFloatParaTempoString(valorDecimal) {
-        const tolerancia = 0.0001; // Lida com o lixo de ponto flutuante do JS
-
-        // Testa os denominadores comuns da música: semibreve(1) até semifusa(64)
-        for (let denominador of [1, 2, 4, 8, 16, 32, 64]) {
-            let numerador = valorDecimal * denominador;
-
-            // Verifica se chegamos a um numerador inteiro (ex: 0.25 * 4 = 1.0)
-            if (Math.abs(Math.round(numerador) - numerador) < tolerancia) {
-                numerador = Math.round(numerador);
-
-                // Ajuste aqui conforme os padrões literais do seu Enum Duracao!
-                // Exemplo: se o valor inteiro for 1, seu enum usa "1/1" ou "1"?
-                if (numerador === 1 && denominador === 1) return "1/1"; // ou "1"
-
-                return `${numerador}/${denominador}`; // Retorna "1/4", "1/2", "3/8", etc.
+            if (error < minError) {
+                numerator = n;
+                denominator = d;
+                minError = error;
             }
+
+            if (error === 0) break; // Encontrou a fração exata (ex: 0.75 cravou em 3/4), sai do loop
         }
 
-        // Fallback caso a fração seja muito bizarra (notas tercinadas complexas)
-        console.warn(`Não foi possível converter a duração decimal ${valorDecimal} para string.`);
-        return "1/4"; // Ou outro valor padrão de fallback
-    }
+        // 4. Formatação final específica para o parser ABC
+        if (numerator === 1) {
+            // Para 1/2, 1/4, etc. O ABC aceita tanto "/" quanto "/2",
+            // mas retornar "/2" mantém a clareza que você pediu.
+            return `/${denominator}`;
+        }
 
-    getValor() { return this.valor; }
-
-    getTempo() {
-        return this.abc;
+        // Para 3/4, 3/2, etc.
+        return `${numerator}/${denominator}`;
     }
 }
-
-
-/**
- * Enum para as durações rítmicas em Português-BR.
- * Baseado na unidade L:1/8 (Colcheia).
- */
-export const Duracao = Object.freeze({
-    // --- NOTAS LONGAS ---
-    QUADRUPLA:      new DuracaoBase({ nome: 'Semibreve Quádrupla', valor: 16.0, abc: '32/1' }),
-    BREVE:          new DuracaoBase({ nome: 'Breve',              valor: 8.0,  abc: '16/1' }),
-    SEMIBREVE:      new DuracaoBase({ nome: 'Semibreve',          valor: 4.0,  abc: '8/1'  }),
-    WHOLE:          new DuracaoBase({ nome: 'Semibreve',          valor: 4.0,  abc: '8/1'  }),
-    MINIMA:         new DuracaoBase({ nome: 'Mínima',             valor: 2.0,  abc: '4/1'  }),
-    HALF:           new DuracaoBase({ nome: 'Mínima',             valor: 2.0,  abc: '4/1'  }),
-
-    // --- NOTAS MÉDIAS ---
-    SEMINIMA:       new DuracaoBase({ nome: 'Semínima',           valor: 1.0,  abc: '2/1'  }),
-    QUARTER:        new DuracaoBase({ nome: 'Semínima',           valor: 1.0,  abc: '2/1'  }),
-    COLCHEIA:       new DuracaoBase({ nome: 'Colcheia',           valor: 0.5,  abc: '1/1'  }),
-    EIGHTH:         new DuracaoBase({ nome: 'Colcheia',           valor: 0.5,  abc: '1/1'  }),
-
-    // --- SUBDIVISÕES ---
-    SEMICOLCHEIA:   new DuracaoBase({ nome: 'Semicolcheia',       valor: 0.25,     abc: '1/2'  }),
-    SIXTEENTH:      new DuracaoBase({ nome: 'Semicolcheia',       valor: 0.25,     abc: '1/2'  }),
-    FUSA:           new DuracaoBase({ nome: 'Fusa',               valor: 0.125,    abc: '1/4'  }),
-    SEMIFUSA:       new DuracaoBase({ nome: 'Semifusa',           valor: 0.0625,   abc: '1/8'  }),
-    BISSEMIFUSA:    new DuracaoBase({ nome: 'Bissemifusa',        valor: 0.03125,  abc: '1/16' }),
-    QUADRISSIFUSA:  new DuracaoBase({ nome: 'Quadrissifusa',      valor: 0.015625, abc: '1/32' }),
-
-    // --- PONTUADAS (Baseadas em 1/8) ---
-    SEMIBREVE_PONTUADA:    new DuracaoBase({ nome: 'Semibreve Pontuada',    valor: 6.0,  abc: '12/1' }),
-    MINIMA_PONTUADA:       new DuracaoBase({ nome: 'Mínima Pontuada',       valor: 3.0,  abc: '6/1'  }),
-    SEMINIMA_PONTUADA:     new DuracaoBase({ nome: 'Semínima Pontuada',     valor: 1.5,  abc: '3/1'  }),
-    COLCHEIA_PONTUADA:     new DuracaoBase({ nome: 'Colcheia Pontuada',     valor: 0.75, abc: '3/2'  }),
-    SEMICOLCHEIA_PONTUADA: new DuracaoBase({ nome: 'Semicolcheia Pontuada', valor: 0.375, abc: '3/4'  }),
-
-    // --- TERCINAS (Relativas à colcheia) ---
-    TERCINA_MINIMA:        new DuracaoBase({ nome: 'Tercina de Mínima',     valor: 1.33333333, abc: '8/3' }),
-    TERCINA_SEMINIMA:      new DuracaoBase({ nome: 'Tercina de Semínima',   valor: 0.66666667, abc: '4/3' }),
-    TERCINA_COLCHEIA:      new DuracaoBase({ nome: 'Tercina de Colcheia',   valor: 0.33333333, abc: '2/3' }),
-    /**
-     * Busca uma duração rítmica baseada na string de tempo ABC.
-     * @param {string} tempoString - O valor da coluna abc (ex: "2/1", "1/2", "3/4")
-     * @returns {DuracaoBase|undefined}
-     */
-    getByTempo(tempoString) {
-        // Normaliza a entrada para evitar erros de busca (opcional)
-        if (!tempoString) return undefined;
-
-        return this.list().find(d => d.getTempo() === tempoString);
-    },
-
-    /**
-     * Lista todas as durações como um array de objetos DuracaoBase.
-     */
-    list() {
-        return Object.values(this).filter(d => d instanceof DuracaoBase);
-    },
-
-    /**
-     * Busca uma duração pelo valor numérico (tempos).
-     */
-    getByValor(valor) {
-        return this.list().find(d => Math.abs(d.getValor() - valor) < 0.000001);
-    }
-});

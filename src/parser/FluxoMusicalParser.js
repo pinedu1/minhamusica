@@ -1,15 +1,22 @@
 import { Compasso } from '../model/Compasso.js';
 import { Nota } from '../model/Nota.js';
 import { EstruturaTempo } from '../model/EstruturaTempo.js';
-import {Duracao, DuracaoBase} from '../model/Duracao.js';
+import { Duracao, DuracaoBase } from '../model/Duracao.js';
 import { Acorde } from '../model/Acorde.js';
 
+/**
+ * Utilitário responsável por converter strings de texto ABC em objetos musicais,
+ * gerenciando a estrutura de compassos e a rítmica associada.
+ */
 export class FluxoMusicalParser {
     /**
-     * @param {string} textoFull - A string completa (ex: "A/d/e/ f d/ c B F/G/ [cde]/")
+     * USAGE: Transforma uma string ABC em uma matriz de compassos, 
+     * gerenciando automaticamente o transbordo rítmico (Tie) entre compassos.
+     * 
+     * @param {string} textoFull - A string completa (ex: "A B c d | e f g a")
      * @param {EstruturaTempo} formula - Objeto M: (ex: 4/4)
-     * @param {Duracao} unidadeBase - Objeto L: (ex: 1/8)
-     * @returns {Compasso[]} Matriz de objetos Compasso
+     * @param {DuracaoBase|EstruturaTempo} unidadeBase - A unidade L: (ex: 1/8)
+     * @returns {Compasso[]} Matriz de objetos Compasso.
      */
     static parse(textoFull, formula, unidadeBase) {
         const compassos = [];
@@ -24,8 +31,8 @@ export class FluxoMusicalParser {
         while ((match = TOKEN_REGEX.exec(textoFull)) !== null) {
             const [
                 fullMatch,
-                corpoAcorde, durAcorde, ligAcorde, // Grupo 1, 2, 3
-                corpoNota, durNota, ligNota        // Grupo 4, 5, 6
+                corpoAcorde, durAcorde, ligAcorde, // Grupo 1, 2, 3 (Acorde)
+                corpoNota, durNota, ligNota        // Grupo 4, 5, 6 (Nota)
             ] = match;
 
             const isAcorde = !!corpoAcorde;
@@ -33,8 +40,10 @@ export class FluxoMusicalParser {
             const duracaoStr = isAcorde ? durAcorde : durNota;
             const temLigaduraOriginal = (isAcorde ? ligAcorde : ligNota) === '-';
 
-            let valorRestante = DuracaoBase.calcularDuracaoReal(duracaoStr, unidadeBase);
+            // 1. Calcula o valor rítmico absoluto do token.
+            let valorRestante = Duracao.calcularDuracaoReal(duracaoStr, unidadeBase);
 
+            // 2. Loop de Transbordo (Automatic Tie)
             while (valorRestante > 0) {
                 const espacoDisponivel = Number((valorMaximo - acumuladoNoCompasso).toFixed(8));
 
@@ -46,20 +55,21 @@ export class FluxoMusicalParser {
                 }
 
                 let valorDestaParte = Math.min(valorRestante, espacoDisponivel);
-                const tempoStr = DuracaoBase.converterFloatParaTempoString(valorDestaParte);
-                const duracaoObjeto = Duracao.getByTempo(tempoStr) || Duracao.COLCHEIA;
+                
+                // Tenta encontrar a duração absoluta no contexto.
+                const contexto = (unidadeBase instanceof DuracaoBase) ? unidadeBase.parent : null;
+                const duracaoObjeto = contexto 
+                    ? (contexto.getByValor(valorDestaParte) || valorDestaParte)
+                    : valorDestaParte;
 
-                // --- DELEGAÇÃO DE CRIAÇÃO ---
                 let elemento;
                 if (isAcorde) {
-                    // Acorde se resolve sozinho
-                    elemento = Acorde.resolverNotas(conteudoBruto, duracaoObjeto);
+                    elemento = Acorde.resolverNotas(conteudoBruto, duracaoObjeto, unidadeBase);
                 } else {
-                    // Nota se resolve sozinha
-                    elemento = Nota.resolverNota(conteudoBruto, duracaoObjeto);
+                    elemento = Nota.resolverNota(conteudoBruto, duracaoObjeto, unidadeBase);
                 }
 
-                // Lógica de ligadura (se for cortada pelo compasso ou se já tinha o '-')
+                // REGRA DE OURO: Ativa a ligadura se a nota transbordar ou se já possuía uma.
                 if (valorRestante > espacoDisponivel || temLigaduraOriginal) {
                     elemento.ligada = true;
                 }
