@@ -1,8 +1,4 @@
 /**
- * Enum completo das 12 Tonalidades (Armaduras de Clave).
- * @enum {{valor: string, acidentes: number, tipo: '#'|'b'|'n'}}
- */
-/**
  * Enum completo das Tonalidades (Armaduras de Clave) organizado por grupo.
  * @enum {{valor: string, acidentes: number, tipo: '#'|'b'|'n'}}
  */

@@ -13,7 +13,7 @@ import { MarcaExpressao } from './MarcaExpressao.js';
 /**
  * Representa um compasso musical, contendo notas, acordes, e metadados rítmicos/estruturais.
  */
-export class Compasso {
+export class Compasso_old {
     /** @type {number} */
     #indice = 0;
 
