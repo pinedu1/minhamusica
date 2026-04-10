@@ -1,6 +1,5 @@
 import { NotaFrequencia } from "./NotaFrequencia.js";
-import { TempoNota } from "../tempo/TempoNota.js";
-import { TempoPadrao } from "../tempo/TempoPadrao.js";
+import { TempoDuracao } from "../tempo/TempoDuracao.js";
 
 /**
  * Representa uma nota musical completa, integrando altura, duração e atributos de execução.
@@ -8,16 +7,18 @@ import { TempoPadrao } from "../tempo/TempoPadrao.js";
 export class Nota {
     /** @type {NotaFrequencia} */
     #altura;
-    /** @type {TempoNota} */
+    /** @type {TempoDuracao} */
     #duracao;
     /** @type {Object} */
     #options;
-    /** @type {TempoPadrao} */
-    #tempoReferencia;
+    /**
+     * Unidade de Tempo herada dos objetos pai
+     * @type {TempoDuracao} */
+    #unidadeTempo;
 
     /**
      * @param {NotaFrequencia} altura
-     * @param {TempoNota} duracao
+     * @param {TempoDuracao} duracao
      * @param {Object} [options={}]
      */
     constructor(altura, duracao, options = {}) {
@@ -26,82 +27,144 @@ export class Nota {
         this.#options = {
             obra: null,
             compasso: null,
-            tempoReferencia: null,
+            unidadeTempo: null,
+            
+            // ACENTUAÇÃO
             acento: false,
             marcato: false,
+
+            // ARTICULAÇÕES DE DURAÇÃO
             staccato: false,
             staccatissimo: false,
             tenuto: false,
+
+            // TÉCNICAS E LIGADURAS
             hammerOn: false,
             pullOff: false,
             ligada: false,
+
+            // ORNAMENTOS
             mordente: false,
             upperMordent: false,
             trinado: false,
+            roll: false,
+
+            // OUTROS
             fermata: false,
             ghostNote: false,
-            graceNote: null, // Pode ser false, null ou Array<Nota>
-            roll: false,
+            graceNote: null,
             arpeggio: false,
-            dedilhado: null, 
+            dedilhado: null,
+            
+            sustenido: false, // Propriedade b.1
+            beQuad: false,    // Propriedade b.2
             ...options
         };
 
-        // Validação da propriedade graceNote
         const gn = this.#options.graceNote;
         if (gn !== false && gn !== null && !Array.isArray(gn)) {
-            throw new TypeError("Falha ao criar Nota: 'graceNote' deve ser false, null ou um Array de instâncias de Nota.");
-        }
-        if (Array.isArray(gn) && gn.some(n => !(n instanceof Nota))) {
-            throw new TypeError("Falha ao criar Nota: Todos os elementos em 'graceNote' devem ser instâncias de Nota.");
+            throw new TypeError("Falha ao criar Nota: 'graceNote' deve ser false, null ou Array<Nota>.");
         }
 
-        this.tempoReferencia =
-            this.#options.tempoReferencia || 
-            this.#options.compasso?.tempoReferencia || 
+        this.unidadeTempo =
+            this.#options.unidadeTempo || 
+            this.#options.compasso?.unidadeTempo || 
             this.#options.obra?.unidadeTempo;
     }
+
     /**
-     * USAGE: Gera a string ABC para graceNotes. Apenas com Frequencia e duração da nota
-     * @returns {string}
+     * USAGE: Helper para criação rápida de Nota a partir de um JSON.
+     * Ex: Nota.create({ freq: "C", tempo: "1/4", duracao: "1/4", sustenido: true })
+     */
+    static create(config = {}) {
+        let { freq, tempo, duracao, unidadeTempo, ...options } = config;
+        
+        if (!freq) throw new Error("A propriedade 'freq' é obrigatória no create().");
+        
+        const freqObj = NotaFrequencia.getByAbc(freq);
+        if (!freqObj) throw new Error(`NotaFrequencia não encontrada para: ${freq}`);
+        
+        tempo = tempo || "1";
+        let duracaoObj;
+        if (tempo instanceof TempoDuracao) {
+            duracaoObj = tempo;
+        } else {
+            const parts = tempo.toString().split("/");
+            const num = parseInt(parts[0]) || 1;
+            const den = parseInt(parts[1]) || 1;
+            duracaoObj = new TempoDuracao(num, den);
+        }
+
+        const refTempo = duracao || unidadeTempo;
+        if (refTempo) {
+            if (refTempo instanceof TempoDuracao) {
+                options.unidadeTempo = refTempo;
+            } else {
+                const rParts = refTempo.toString().split("/");
+                const rNum = parseInt(rParts[0]) || 1;
+                const rDen = parseInt(rParts[1]) || 1;
+                options.unidadeTempo = new TempoDuracao(rNum, rDen);
+            }
+        }
+
+        return new Nota(freqObj, duracaoObj, options);
+    }
+
+    /**
+     * USAGE: Gera string ABC simplificada para notas de adorno.
      */
     toGraceNote() {
-        let abc = this.#altura.abc;
+        let abc = "";
+        if (this.#options.sustenido) abc += "^";
+        if (this.#options.beQuad) abc += "=";
+        abc += this.#altura.abc;
         abc += this.#formatarDuracaoAbc();
         return abc;
     }
+
     /**
-     * USAGE: Gera a string ABC completa processando todos os atributos.
-     * @param {boolean} [ignorarDecoracaoOrnamento=false] - Se true, renderiza apenas altura e duração.
+     * USAGE: Gera a string ABC completa processando todos os atributos de execução.
+     * @param {boolean} [isAcorde=false] - Se true, simplifica a saída para dentro de colchetes.
      * @returns {string}
      */
     toAbc( isAcorde = false ) {
         let abc = "";
         const opt = this.#options;
         
+        // Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
         if ( isAcorde === true ) {
-            return this.#altura.abc;
+            if (opt.sustenido) abc += "^";
+            if (opt.beQuad) abc += "=";
+            abc += this.#altura.abc;
+            return abc;
         }
 
         // 1. PREFIXOS (Decoradores e Ornamentos)
         if (opt.ghostNote) abc += "!style=x!";
         if (opt.fermata) abc += "!fermata!";
         if (opt.arpeggio) abc += "!arpeggio!";
-        
+
+        // Acentuação (Exclusiva)
         if (opt.marcato) abc += "!marcato!";
         else if (opt.acento) abc += "!accent!";
 
+        // Articulações (Exclusiva)
         if (opt.staccatissimo) abc += "!staccatissimo!";
         else if (opt.staccato) abc += ".";
         else if (opt.tenuto) abc += "!tenuto!";
+        
+        // Acidentes locais
+        if (opt.sustenido) abc += "^";
+        if (opt.beQuad) abc += "=";
 
+        // Ornamentos (Exclusiva)
         if (opt.trinado) abc += "!trill!";
         else if (opt.mordente) abc += "!mordent!";
         else if (opt.upperMordent) abc += "!uppermordent!";
         
         if (opt.roll) abc += "~";
 
-        // Grace Notes (Notas de adorno) resolvidas via método privado
+        // Grace Notes (Adornos)
         abc += this.#toGraceNotes();
 
         // 2. ALTURA DA NOTA
@@ -113,6 +176,7 @@ export class Nota {
         // 4. SUFIXOS (Dedilhado e Ligaduras)
         if (opt.dedilhado) abc += `$"${opt.dedilhado}"`;
 
+        // Ligaduras (Prolongamento/Tie)
         if (opt.ligada || opt.hammerOn || opt.pullOff) {
             abc += "-";
         }
@@ -121,15 +185,11 @@ export class Nota {
     }
 
     /**
-     * USAGE: Transforma a matriz de notas de adorno em uma string ABC enfileirada.
      * @private
-     * @returns {string}
      */
     #toGraceNotes() {
         const gn = this.#options.graceNote;
         if (!Array.isArray(gn) || gn.length === 0) return "";
-
-        // Enfileira o toAbc de cada nota de adorno, forçando ignorar decorações nelas
         const notasGraceAbc = gn.map(nota => nota.toGraceNote()).join('');
         return `{${notasGraceAbc}}`;
     }
@@ -138,7 +198,10 @@ export class Nota {
      * @private
      */
     #formatarDuracaoAbc() {
-        const razao = this.#duracao.razao / this.#tempoReferencia.razao;
+        // Substituído para usar o método toNota() da classe TempoDuracao se houver uma forma adequada
+        // A proporção de tempo é: (Duração da Nota / Unidade Base)
+        const razao = this.#duracao.razao / this.#unidadeTempo.razao;
+
         if (Math.abs(razao - 1) < 0.000001) return "";
 
         if (Number.isInteger(Number(razao.toFixed(8)))) {
@@ -147,36 +210,26 @@ export class Nota {
 
         const d = Number(razao.toFixed(8));
         if (d === 0.5) return "/";
-        
-        const denominador = Math.round(1 / d);
-        if (Math.abs((1 / denominador) - d) < 0.000001) {
-            return `/${denominador}`;
-        }
-
-        return razao.toString();
+        const den = Math.round(1 / d);
+        return Math.abs((1 / den) - d) < 0.000001 ? `/${den}` : razao.toString();
     }
 
+    // Getters / Setters
     get altura() { return this.#altura; }
     set altura(val) {
-        if (!(val instanceof NotaFrequencia)) {
-            throw new Error("Falha ao definir Nota: 'altura' deve ser NotaFrequencia.");
-        }
+        if (!(val instanceof NotaFrequencia)) throw new Error("A altura deve ser NotaFrequencia.");
         this.#altura = val;
     }
-
     get duracao() { return this.#duracao; }
     set duracao(val) {
-        if (!(val instanceof TempoNota)) {
-            throw new Error("Falha ao definir Nota: 'duracao' deve ser TempoNota.");
-        }
+        if (!(val instanceof TempoDuracao)) throw new Error("A duração deve ser TempoDuracao.");
         this.#duracao = val;
     }
-
-    get tempoReferencia() { return this.#tempoReferencia; }
-    set tempoReferencia( tempo ) {
-        if (!(tempo instanceof TempoPadrao)) {
-            throw new Error("Falha ao criar Nota: 'tempoReferencia' (L:) não encontrado.");
-        }
-        this.#tempoReferencia = tempo;
+    get unidadeTempo() { return this.#unidadeTempo; }
+    set unidadeTempo( tempo ) {
+        if (!(tempo instanceof TempoDuracao)) throw new Error("A unidadeTempo deve ser TempoDuracao.");
+        this.#unidadeTempo = tempo;
     }
+    get ligada() { return this.#options.ligada; }
+    set ligada(val) { this.#options.ligada = !!val; }
 }
