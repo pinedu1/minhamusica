@@ -15,6 +15,7 @@ const initApp = async () => {
         // Agora podemos configurar seus cliques customizados:
         const svgElement = document.querySelector('#paper svg');
 
+/*
         if (svgElement) {
             svgElement.addEventListener('click', (e) => {
                 const rect = svgElement.getBoundingClientRect();
@@ -30,6 +31,7 @@ const initApp = async () => {
                 svgElement.appendChild(circle);
             });
         }
+*/
 
     } catch (error) {
         console.error("Falha ao carregar a música:", error);

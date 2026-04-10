@@ -39,7 +39,22 @@ export const setupMusic = async (visualSelector, audioSelector, abcString) => {
                 instrument: "guitar",
                 label: "Violão"
             }
-        ]
+        ],
+        clickListener: (abcElem, tuneNumber, classes, analysis, drag, mouseEvent) => {
+            console.log("Você clicou em um elemento!");
+            console.log("Classes do SVG:", classes);
+
+            // Verifica se é uma nota
+            if (abcElem.el_type === "note") {
+                console.log("Duração:", abcElem.duration);
+                console.log("Pitches (Frequências):", abcElem.pitches);
+            }
+
+            // Verifica se é uma pausa
+            if (abcElem.el_type === "rest") {
+                console.log("Clicou em uma pausa!");
+            }
+        }
     })[0];
 
     // 2. Configuração do Áudio
