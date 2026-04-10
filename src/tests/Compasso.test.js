@@ -105,6 +105,20 @@ describe('Classe Compasso', () => {
 
             expect(compasso.toAbc()).toBe('[M:4/4]"Am"C2 "^p"E2|');
         });
+        it('deve adicionar anotações e cifras corretamente aos elementos Tempo3', () => {
+            const compasso = Compasso.create({
+                elementos: [{ freq: "C", tempo: "1/2" }, { freq: "E", tempo: "1/2" }],
+                metrica: "4/4",
+                options: { duracao: "1/4" }
+            });
+            compasso.addCifra("Am", 0);
+            compasso.addAnotacao("p", 0, "_"); // ^p sobre a segunda nota
+            const result = compasso.toAbc();
+            console.log("----------------------------------");
+            console.log(result);
+            console.log("----------------------------------");
+            expect(result).toBe('[M:4/4]"Am"C2 "^p"E2|');
+        });
     });
 
     describe('Helper estático Compasso.create() com JSON', () => {
