@@ -46,9 +46,9 @@ export class Compasso {
      * Nota: Está nota não pode ser usada no metodo toAbc() do Compasso
      * ela será manipulada no Objeto pai Voz, e dará o out da sequencia de letras dos seus compassos
      * Estou apenas utilizando compasso como repositório de sua letra, para facilitar o toAbc() do Voz, em plotar este dado
-     * @type {string|null}
+     * @type {Array<string>}
      * */
-    #letra = null;
+    #letra = [];
 
     /**
      * USAGE: Construtor do Compasso. Inicializa o conteúdo e valida metadados.
@@ -62,7 +62,6 @@ export class Compasso {
             cifras: options.cifras || [],
             mudancaDeTom: null,
             unidadeTempo: null,
-            letra: null,
             ...options
         };
 
@@ -74,7 +73,7 @@ export class Compasso {
         this.barraInicial = options.barraInicial || TipoBarra.NONE;
         this.barraFinal = options.barraFinal || TipoBarra.STANDARD;
         this.mudancaDeTom = options.mudancaDeTom || null;
-        this.letra = options.letra || null;
+        this.letra = options.letra || [];
 
         // Tenta pegar a unidadeTempo local, depois de voz ou obra
         if (this.#options.unidadeTempo) {
@@ -336,18 +335,22 @@ export class Compasso {
      * Usage: Letra pertencente ao compasso
      * Nota: Está nota não pode ser usada no metodo toAbc() do Compasso
      * ela será manipulada no Objeto pai Voz, e dará o out da sequencia de letras dos seus compassos
-     * @return {string|null}
+     * @return {Array<string>}
      * */
     get letra() { return this.#letra; }
+    
     /**
      * Usage: Letra pertencente ao compasso
      * Nota: Está nota não pode ser usada no metodo toAbc() do Compasso
      * ela será manipulada no Objeto pai Voz, e dará o out da sequencia de letras dos seus compassos
      *
-     * @param {string|null} letra
+     * @param {Array<string>} letra
      * @return {void}
      * */
     set letra( letra ) {
+        if (!Array.isArray(letra)) {
+            throw new TypeError("Compasso: A propriedade 'letra' deve ser um Array de strings.");
+        }
         this.#letra = letra;
     }
 }
