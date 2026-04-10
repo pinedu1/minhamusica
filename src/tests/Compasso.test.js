@@ -117,7 +117,7 @@ describe('Classe Compasso', () => {
             console.log("----------------------------------");
             console.log(result);
             console.log("----------------------------------");
-            expect(result).toBe('[M:4/4]"Am"C2 "^p"E2|');
+            expect(result).toBe('[M:4/4]"Am""_p"C2 E2|');
         });
     });
 
