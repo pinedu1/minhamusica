@@ -1,81 +1,127 @@
 import { describe, it, expect } from 'vitest';
 import { Acorde } from '../model/nota/Acorde.js';
 import { Nota } from '../model/nota/Nota.js';
-import { NotaFrequencia } from '../model/nota/NotaFrequencia.js';
-import { TempoNota } from '../model/tempo/TempoNota.js';
-import { TempoPadrao } from '../model/tempo/TempoPadrao.js';
+import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
 
 describe('Classe Acorde', () => {
-    
-    // Preparação de dados básicos
-    const doCentral = NotaFrequencia.getByAbc("C");
-    const miCentral = NotaFrequencia.getByAbc("E");
-    const solCentral = NotaFrequencia.getByAbc("G");
-    
-    const semina = new TempoNota(1, 4);
-    const colcheiaRef = new TempoPadrao(1, 8); // L: 1/8 (0.125)
 
-    // Helper para criar as notas internas (elas precisam de tempoReferencia por regra da Classe Nota)
-    const criarNotas = () => [
-        new Nota(doCentral, semina, { tempoReferencia: colcheiaRef }),
-        new Nota(miCentral, semina, { tempoReferencia: colcheiaRef }),
-        new Nota(solCentral, semina, { tempoReferencia: colcheiaRef })
-    ];
+    const ref14 = new TempoDuracao(1, 4); // L: 1/4
 
-    it('deve renderizar um acorde básico entre colchetes com duração (ex: [CEG]2)', () => {
-        const acorde = new Acorde(criarNotas(), semina, { tempoReferencia: colcheiaRef });
-        // Razão: 0.25 / 0.125 = 2
-        expect(acorde.toAbc()).toBe("[CEG]2");
-    });
-
-    it('deve aplicar arpeggio e marcato globalmente ao acorde', () => {
-        const acorde = new Acorde(criarNotas(), semina, { 
-            tempoReferencia: colcheiaRef,
-            arpeggio: true,
-            marcato: true
-        });
-        expect(acorde.toAbc()).toBe("!arpeggio!!marcato![CEG]2");
-    });
-
-    it('deve enfileirar grace notes antes do acorde', () => {
-        const notaAdorno = new Nota(NotaFrequencia.getByAbc("D"), new TempoNota(1, 16), { tempoReferencia: colcheiaRef });
-        
-        const acorde = new Acorde(criarNotas(), semina, { 
-            tempoReferencia: colcheiaRef,
-            graceNote: [notaAdorno]
-        });
-        
-        // Adorno D(1/16) em L:1/8 vira D/
-        expect(acorde.toAbc()).toBe("{D/}[CEG]2");
-    });
-
-    it('deve ignorar decorações individuais das notas internas', () => {
-        // Criamos uma nota interna que tem staccato próprio
-        const notaComStaccato = new Nota(doCentral, semina, { 
-            tempoReferencia: colcheiaRef,
-            staccato: true 
-        });
-        
-        const acorde = new Acorde([notaComStaccato], semina, { tempoReferencia: colcheiaRef });
-        
-        // O staccato da nota interna não deve aparecer no acorde, apenas a altura
-        expect(acorde.toAbc()).toBe("[C]2");
-    });
-
-    it('deve lançar TypeError se graceNote for inválido', () => {
-        expect(() => {
-            new Acorde(criarNotas(), semina, { 
-                tempoReferencia: colcheiaRef,
-                graceNote: {} 
+    describe('Funcionalidades Básicas e Renderização ABC', () => {
+        it('deve gerar a string ABC agrupando as notas com colchetes e aplicando sufixo de duração fora', () => {
+            const acorde = Acorde.create({
+                notas: [{ freq: "C" }, { freq: "E" }, { freq: "G" }],
+                tempo: "1/4",
+                unidadeTempo: ref14
             });
-        }).toThrow("Falha ao criar Acorde: 'graceNote' deve ser false, null ou um Array de instâncias de Nota.");
+            const result = acorde.toAbc();
+            console.log("-----------------");
+            console.log(result);
+            console.log("-----------------");
+            expect(acorde).toBe("[CEG]");
+        });
+
+        it('deve formatar acidentes de notas corretamente dentro do acorde', () => {
+            const acorde = Acorde.create({
+                notas: [{ freq: "C", sustenido: true }, { freq: "E," }],
+                tempo: "1/4",
+                duracao: "1/4" // usando duracao como alias para unidadeTempo
+            });
+            expect(acorde.toAbc()).toBe("[^CE,]");
+        });
+
+        it('deve calcular corretamente a duração global do acorde', () => {
+            // duração: 1/2, referência: 1/4 -> razao 2
+            const acorde = Acorde.create({
+                notas: [{ freq: "C" }, { freq: "E" }],
+                tempo: "1/2",
+                unidadeTempo: ref14
+            });
+            expect(acorde.toAbc()).toBe("[CE]2");
+        });
+
+        it('deve calcular divisor (/) global para o acorde quando menor que a unidadeTempo', () => {
+            // duração: 1/8, referência: 1/4 -> razao 1/2 (/)
+            const acorde = Acorde.create({
+                notas: [{ freq: "C" }, { freq: "G" }],
+                tempo: "1/8",
+                unidadeTempo: ref14
+            });
+            expect(acorde.toAbc()).toBe("[CG]/");
+        });
+
+        it('deve renderizar prefixos globais de execução (fermata, staccato)', () => {
+            const acorde = Acorde.create({
+                notas: [{ freq: "C" }, { freq: "E" }],
+                tempo: "1/4",
+                unidadeTempo: ref14,
+                fermata: true,
+                staccato: true
+            });
+            expect(acorde.toAbc()).toBe("!fermata!.[CE]");
+        });
+
+        it('deve aplicar grace notes globais antes do acorde', () => {
+            const adorno = Nota.create({ freq: "D", tempo: "1/16", unidadeTempo: ref14 });
+            const acorde = Acorde.create({
+                notas: [{ freq: "C" }, { freq: "E" }],
+                tempo: "1/4",
+                unidadeTempo: ref14,
+                graceNote: [adorno]
+            });
+            expect(acorde.toAbc()).toBe("{D/4}[CE]");
+        });
+
+        it('deve instanciar grace notes a partir de JSON via create() do Acorde', () => {
+            const acorde = Acorde.create({
+                notas: [{ freq: "F" }, { freq: "A" }],
+                tempo: "1/4",
+                duracao: "1/4",
+                graceNote: [{ freq: "G", tempo: "1/16" }]
+            });
+            expect(acorde.toAbc()).toBe("{G/4}[FA]");
+        });
+
+        it('deve aplicar sufixos (ligadura e dedilhado) ao final do acorde', () => {
+            const acorde = Acorde.create({
+                notas: [{ freq: "C" }],
+                tempo: "1/4",
+                unidadeTempo: ref14,
+                ligada: true,
+                dedilhado: "1"
+            });
+            expect(acorde.toAbc()).toBe("[C]$\"1\"-");
+        });
     });
 
-    it('deve aplicar ligadura de prolongamento ao final do acorde', () => {
-        const acorde = new Acorde(criarNotas(), semina, { 
-            tempoReferencia: colcheiaRef,
-            ligada: true
+    describe('Helper estático Acorde.create()', () => {
+        it('deve lançar erro se a propriedade notas não for um array no objeto de config', () => {
+            expect(() => {
+                Acorde.create({ tempo: "1/4", unidadeTempo: ref14 });
+            }).toThrow("A propriedade 'notas' é obrigatória e deve ser um array no create() de Acorde.");
         });
-        expect(acorde.toAbc()).toBe("[CEG]2-");
+
+        it('deve aceitar instâncias pré-existentes de Nota no array do JSON', () => {
+            const n1 = Nota.create({ freq: "C", tempo: "1/4", unidadeTempo: ref14 });
+            const n2 = Nota.create({ freq: "E", tempo: "1/4", unidadeTempo: ref14 });
+            const acorde = Acorde.create({
+                notas: [n1, n2],
+                tempo: "1/4",
+                unidadeTempo: ref14
+            });
+            expect(acorde.toAbc()).toBe("[CE]");
+        });
+
+        it('deve instanciar um Acorde baseado inteiramente em strings', () => {
+            const acorde = Acorde.create({
+                notas: [{ freq: "C", sustenido: true }, { freq: "E," }],
+                tempo: "1/2",
+                duracao: "1/4"
+            });
+            
+            expect(acorde).toBeInstanceOf(Acorde);
+            expect(acorde.notas[0]).toBeInstanceOf(Nota);
+            expect(acorde.toAbc()).toBe("[^CE,]2");
+        });
     });
 });

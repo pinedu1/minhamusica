@@ -15,10 +15,12 @@
   "devDependencies": {
     "sass": "^1.98.0",
     "vite": "^8.0.7",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.2",
+    "zod-to-json-schema": "^3.25.2"
   },
   "dependencies": {
     "abcjs": "^6.6.2",
-    "html2pdf.js": "^0.14.0"
+    "html2pdf.js": "^0.14.0",
+    "zod": "^4.3.6"
   }
 }

@@ -66,10 +66,7 @@ export class Nota {
             throw new TypeError("Falha ao criar Nota: 'graceNote' deve ser false, null ou Array<Nota>.");
         }
 
-        this.unidadeTempo =
-            this.#options.unidadeTempo || 
-            this.#options.compasso?.unidadeTempo || 
-            this.#options.obra?.unidadeTempo;
+        this.unidadeTempo = this.#options.unidadeTempo;
     }
 
     /**
@@ -83,8 +80,9 @@ export class Nota {
         
         const freqObj = NotaFrequencia.getByAbc(freq);
         if (!freqObj) throw new Error(`NotaFrequencia não encontrada para: ${freq}`);
-        
-        tempo = tempo || "1";
+
+        //if (!tempo) throw new Error(`Nota.create: Você deve informar o tempo da nota. Exemplo: tempo: "1/4"`);
+
         let duracaoObj;
         if (tempo instanceof TempoDuracao) {
             duracaoObj = tempo;
@@ -200,7 +198,7 @@ export class Nota {
     #formatarDuracaoAbc() {
         // Substituído para usar o método toNota() da classe TempoDuracao se houver uma forma adequada
         // A proporção de tempo é: (Duração da Nota / Unidade Base)
-        const razao = this.#duracao.razao / this.#unidadeTempo.razao;
+        const razao = this.#duracao.razao / this.unidadeTempo.razao;
 
         if (Math.abs(razao - 1) < 0.000001) return "";
 
@@ -222,14 +220,25 @@ export class Nota {
     }
     get duracao() { return this.#duracao; }
     set duracao(val) {
+        if (val === null && this.#duracao === null) return;
         if (!(val instanceof TempoDuracao)) throw new Error("A duração deve ser TempoDuracao.");
         this.#duracao = val;
     }
-    get unidadeTempo() { return this.#unidadeTempo; }
-    set unidadeTempo( tempo ) {
-        if (!(tempo instanceof TempoDuracao)) throw new Error("A unidadeTempo deve ser TempoDuracao.");
-        this.#unidadeTempo = tempo;
+    get unidadeTempo() {
+        return this.#unidadeTempo ||
+            this.#options.compasso?.unidadeTempo ||
+            this.#options.voz?.unidadeTempo ||
+            this.#options.obra?.unidadeTempo;
+    }
+    set unidadeTempo( val ) {
+        if ((val === null || val === undefined ) && (this.#unidadeTempo === null || this.#unidadeTempo === undefined )) return;
+        if (!(val instanceof TempoDuracao)) {
+            throw new Error("A unidadeTempo deve ser TempoDuracao.");
+        }
+        this.#unidadeTempo = val;
     }
     get ligada() { return this.#options.ligada; }
     set ligada(val) { this.#options.ligada = !!val; }
+    get options() { return this.#options; }
+
 }

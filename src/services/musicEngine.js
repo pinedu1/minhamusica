@@ -40,6 +40,51 @@ export const setupMusic = async (visualSelector, audioSelector, abcString) => {
                 label: "Violão"
             }
         ],
+        clickListener: function(abcElem, tuneNumber, classes, analysis, drag, mouseEvent) {
+
+            // 1. Verifica primeiro se clicou em um texto anexado (Letra ou Acorde)
+            const alvo = mouseEvent.target;
+
+            if (alvo.classList.contains("abcjs-lyric")) {
+                console.log("Clicou na sílaba:", alvo.textContent);
+                console.log("Nota associada a esta sílaba:", abcElem);
+                return; // Para a execução aqui
+            }
+
+            if (alvo.classList.contains("abcjs-chord")) {
+                console.log("Clicou na cifra:", alvo.textContent);
+                return;
+            }
+
+            // 2. Se não foi texto, avalia a estrutura musical
+            console.log("Clicou " + abcElem.el_type);
+            switch (abcElem.el_type) {
+                case "note":
+                    console.log("Clicou na cabeça da nota ou haste!");
+                    console.log("Duração:", abcElem.duration);
+                    break;
+                case "rest":
+                    console.log("Clicou na Pausa!");
+                    console.log("Duração:", abcElem.duration);
+                    break;
+
+                case "key":
+                    console.log("Clicou na Armadura de Clave. Tom atual:", abcElem.root + abcElem.acc);
+                    break;
+
+                case "bar":
+                    console.log("Clicou em uma linha de compasso!");
+                    break;
+
+                case "clef":
+                    console.log("Clicou na clave:", abcElem.type);
+                    break;
+
+                default:
+                    console.log("Clicou em outro elemento:", abcElem.el_type);
+            }
+        }
+/*
         clickListener: (abcElem, tuneNumber, classes, analysis, drag, mouseEvent) => {
             console.log("Você clicou em um elemento!");
             console.log("Classes do SVG:", classes);
@@ -55,6 +100,7 @@ export const setupMusic = async (visualSelector, audioSelector, abcString) => {
                 console.log("Clicou em uma pausa!");
             }
         }
+*/
     })[0];
 
     // 2. Configuração do Áudio

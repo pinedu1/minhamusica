@@ -61,10 +61,7 @@ export class Acorde {
             throw new TypeError("Falha ao criar Acorde: Todos os elementos em 'graceNote' devem ser instâncias de Nota.");
         }
 
-        this.unidadeTempo =
-            this.#options.unidadeTempo ||
-            this.#options.compasso?.unidadeTempo ||
-            this.#options.obra?.unidadeTempo;
+        this.unidadeTempo = this.#options.unidadeTempo;
 
         if (!(this.#unidadeTempo instanceof TempoDuracao)) {
             throw new Error("Falha ao criar Acorde: 'unidadeTempo' (L:) não encontrado.");
@@ -131,7 +128,7 @@ export class Acorde {
      * @private
      */
     #formatarDuracaoAbc() {
-        const razao = this.#duracao.razao / this.#unidadeTempo.razao;
+        const razao = this.#duracao.razao / this.unidadeTempo.razao;
         if (Math.abs(razao - 1) < 0.000001) return "";
 
         if (Number.isInteger(Number(razao.toFixed(8)))) {
@@ -176,7 +173,12 @@ export class Acorde {
         this.#duracao = val;
     }
 
-    get unidadeTempo() { return this.#unidadeTempo; }
+    get unidadeTempo() {
+        return this.#unidadeTempo ||
+            this.#options.compasso?.unidadeTempo ||
+            this.#options.voz?.unidadeTempo ||
+            this.#options.obra?.unidadeTempo;
+    }
     
     set unidadeTempo( tempo ) {
         if (!(tempo instanceof TempoDuracao)) {
@@ -184,6 +186,7 @@ export class Acorde {
         }
         this.#unidadeTempo = tempo;
     }
+    get options() { return this.#options; }
 
     /**
      * USAGE: Helper para criação rápida de Acorde a partir de um JSON.

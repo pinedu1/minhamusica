@@ -1,3 +1,5 @@
+import { tempoDuracaoSchema, uniaoTempoDuracao } from '../../schemas/tempoDuracaoSchema.js';
+
 /**
  * Representa a fração de tempo de uma nota (ex: 1/4, 3/8).
  */
@@ -12,7 +14,7 @@ export class TempoDuracao {
      * @throws {TypeError} Se algum dos argumentos não for um número inteiro.
      * @throws {Error} Se algum dos argumentos for menor ou igual a zero.
      */
-    constructor(numerador = 4, denominador = 4) {
+    constructor(numerador = 1, denominador = 4) {
         // Utilizamos os setters para aplicar a validação
         this.numerador = numerador;
         this.denominador = denominador;
@@ -84,5 +86,48 @@ export class TempoDuracao {
      */
     toAbc() {
         return `L:${this.toString()}\n`;
+    }
+    // 2. O Helper Estático
+    static create(dados) {
+        // Se já for uma instância de TempoDuracao, não precisa recriar
+        if (dados instanceof TempoDuracao) return dados;
+
+        // Usamos safeParse para não estourar o erro padrão do Zod
+        const resultado = uniaoTempoDuracao.safeParse(dados);
+
+        // Caso não validou, levanta o throw personalizado
+        if (!resultado.success) {
+            throw new TypeError("TempoDuracao.create: unidadeTempo deve ser uma string.");
+        }
+
+        // Se validou, extraímos os dados limpos
+        const validado = resultado.data;
+        const regexFracao = /^\d+\/[1-9]\d*$/;
+        if ( regexFracao.test(validado) ) {
+            // Se entrou como string "1/4", quebra e passa para o construtor
+            const partes = validado.split('/');
+            const num = parseInt(partes[0], 10);
+            const den = parseInt(partes[1], 10);
+
+            return new TempoDuracao(num, den);
+        }
+
+        if (validado.duracao && regexFracao.test(validado.duracao)) {
+            // Se entrou como string "1/4", quebra e passa para o construtor
+            const partes = validado.duracao.split('/');
+            const num = parseInt(partes[0], 10);
+            const den = parseInt(partes[1], 10);
+
+            return new TempoDuracao(num, den);
+        }
+        if (validado.numerador && validado.denominador) {
+            return new TempoDuracao(validado.numerador, validado.denominador);
+        }
+        return null;
+    }
+    equals(outroTempo) {
+        if (!(outroTempo instanceof TempoDuracao)) return false;
+        // Comparamos a razão (decimal) para considerar 1/2 igual a 2/4
+        return Math.abs(this.razao - outroTempo.razao) < 0.000001;
     }
 }

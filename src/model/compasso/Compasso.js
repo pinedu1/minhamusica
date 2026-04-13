@@ -2,10 +2,8 @@ import { TipoBarra } from "../compasso/TipoBarra.js";
 import { Nota } from "../nota/Nota.js";
 import { Pausa } from "../nota/Pausa.js";
 import { Acorde } from "../nota/Acorde.js";
-/*
 import { Voz } from "../voz/Voz.js";
 import { Obra } from "../obra/Obra.js";
-*/
 import { TempoMetrica } from "../tempo/TempoMetrica.js";
 import { TempoDuracao } from "../tempo/TempoDuracao.js";
 import { Tonalidade } from "../compasso/Tonalidade.js";
@@ -97,33 +95,33 @@ export class Compasso {
      * USAGE: Helper estático para criação rápida de Compasso a partir de um JSON.
      * Ex: Compasso.create({ elementos: [{ freq: "C" }, { notas: [{freq:"E"}] }, {}], options: { tempo: "1", duracao: "1/8" } })
      */
-    static create(config = {}) {
-        const elementosArray = config.elementos || config.elements || [];
-        const options = config.options || {};
+    static create(json = {}) {
+        const elementosArray = json.elementos || json.elements || [];
+        const options = json.options || {};
         
         // Aliases comuns do JSON raiz para o options
-        if (config.letra !== undefined) options.letra = config.letra;
-        if (config.index !== undefined) options.index = config.index;
-        if (config.mudancaDeTom !== undefined) options.mudancaDeTom = config.mudancaDeTom;
+        if (options.letra !== undefined) options.letra = options.letra;
+        if (options.index !== undefined) options.index = options.index;
+        if (options.mudancaDeTom !== undefined) options.mudancaDeTom = options.mudancaDeTom;
 
         // Trata metrica a partir de string ("4/4")
-        if (config.metrica) {
-            if (config.metrica instanceof TempoMetrica) {
-                options.metrica = config.metrica;
-            } else if (typeof config.metrica === "string") {
-                options.metrica = TempoMetrica.create(config.metrica);
+        if (options.metrica) {
+            if (options.metrica instanceof TempoMetrica) {
+                options.metrica = options.metrica;
+            } else if (typeof options.metrica === "string") {
+                options.metrica = TempoMetrica.create(options.metrica);
             }
         }
         
         // Conversão de "duracao" ou "unidadeTempo" do config/options em TempoDuracao (L:)
-        const refTempo = options.unidadeTempo || options.duracao || config.unidadeTempo || config.duracao;
+        const refTempo = options.unidadeTempo;
         if (refTempo) {
             if (refTempo instanceof TempoDuracao) {
                 options.unidadeTempo = refTempo;
             } else {
                 const parts = refTempo.toString().split("/");
-                const num = parseInt(parts[0]) || 1;
-                const den = parseInt(parts[1]) || 1;
+                const num = parseInt(parts[0]);
+                const den = parseInt(parts[1]);
                 options.unidadeTempo = new TempoDuracao(num, den);
             }
         }
@@ -158,6 +156,27 @@ export class Compasso {
 
         return new Compasso(elementosInstanciados, options);
     }
+    getUnidadeTempo() {
+        return this.unidadeTempo || this.voz?.unidadeTempo || this.obra?.unidadeTempo || new TempoDuracao(1, 8);
+    }
+    /**
+     * Calcula a unidade de tempo baseado no compasso e suas propriedades.
+     * @param unidadeTempo @type{TempoDuracao}
+     * @returns {Number}
+     */
+    getPulsos(unidadeTempo) {
+        const metricaRef = this.metrica || this.voz?.metrica || this.obra?.metrica;
+        let pulsosTotais = 0;
+        if (metricaRef) {
+            // Ex: M: 4/4, L: 1/8 => (4/4) / 0.125 = 8 pulsos.
+            pulsosTotais = (metricaRef.numerador / metricaRef.denominador) / unidadeTempo.razao;
+        } else {
+            // Fallback: calcula pulsos baseados na soma das durações reais dos elementos
+            const somaRazoes = this.#elements.reduce((acc, el) => acc + el.duracao.razao, 0);
+            pulsosTotais = somaRazoes / unidadeTempo.razao;
+        }
+        return pulsosTotais;
+    }
 
     /**
      * USAGE: Orquestra a geração da string ABC completa do compasso.
@@ -166,6 +185,9 @@ export class Compasso {
      */
     toAbc() {
         let abc = "";
+        // Resolvendo unidade de tempo local com fallback para 1/8 exclusivo deste método
+        const ut = this.getUnidadeTempo();
+        let pulsosTotais = this.getPulsos(ut);
 
         if (this.#barraInicial && this.#barraInicial !== TipoBarra.NONE) {
             abc += this.#barraInicial.abc;
@@ -179,19 +201,6 @@ export class Compasso {
             abc += `[K:${this.mudancaDeTom.valor}]`;
         }
 
-        // Resolvendo unidade de tempo local com fallback para 1/8 exclusivo deste método
-        const ut = this.unidadeTempo || this.voz?.unidadeTempo || this.obra?.unidadeTempo || new TempoDuracao(1, 8);
-        const metricaRef = this.metrica || this.voz?.metrica || this.obra?.metrica;
-
-        let pulsosTotais = 0;
-        if (metricaRef) {
-            // Ex: M: 4/4, L: 1/8 => (4/4) / 0.125 = 8 pulsos.
-            pulsosTotais = (metricaRef.numerador / metricaRef.denominador) / ut.razao;
-        } else {
-            // Fallback: calcula pulsos baseados na soma das durações reais dos elementos
-            const somaRazoes = this.#elements.reduce((acc, el) => acc + el.duracao.razao, 0);
-            pulsosTotais = somaRazoes / ut.razao;
-        }
 
         // Arredonda para cima para dar prioridade à primeira metade em casos ímpares
         const pontoDeCorte = Math.ceil(pulsosTotais / 2);
@@ -208,7 +217,9 @@ export class Compasso {
                 const local = a.local || "_";
                 abc += `"${local}${a.texto}"`;
             });
-
+            if (!elemento.unidadeTempo) {
+                console.log('sem unidadeTempo irmão');
+            }
             abc += elemento.toAbc();
 
             const pulsosElemento = elemento.duracao.razao / ut.razao;
@@ -256,7 +267,13 @@ export class Compasso {
         if (val.some(n => !(n instanceof Nota) && !(n instanceof Pausa) && !(n instanceof Acorde))) {
             throw new TypeError("Compasso: Apenas instâncias de Nota, Pausa ou Acorde são permitidas.");
         }
-        this.#elements = val;
+        this.#elements = [];
+        val.forEach( e=> {
+            if ( !e.compasso ) {
+                e.options.compasso = this;
+            }
+            this.#elements.push(e);
+        });
     }
 
     /**
@@ -307,8 +324,11 @@ export class Compasso {
         if (!(val instanceof Obra)) throw new TypeError('Compasso: Obra deve ser uma instância de Obra.');
         this.#obra = val;
     }
-
-    get unidadeTempo() { return this.#unidadeTempo; }
+    get unidadeTempo() {
+        return this.#unidadeTempo ||
+            this.#options.voz?.unidadeTempo ||
+            this.#options.obra?.unidadeTempo;
+    }
 
     set unidadeTempo( tempo ) {
         if (!(tempo instanceof TempoDuracao)) {
@@ -353,4 +373,5 @@ export class Compasso {
         }
         this.#letra = letra;
     }
+    get options() { return this.#options; }
 }
