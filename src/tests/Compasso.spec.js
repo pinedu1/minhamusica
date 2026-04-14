@@ -273,9 +273,9 @@ describe('Classe Compasso', () => {
                 options: { metrica: "4/4", unidadeTempo: "1/4" }
             });
 
-            const nota = compasso.elements[0];
-            expect(nota.duracao.razao).toBe(2); // ratio de 2/1
-            expect(nota.unidadeTempo.razao).toBe(0.25); // ratio de 1/4
+            const acorde = compasso.elements[0];
+            expect(acorde.duracao.razao).toBe(2); // ratio de 2/1
+            expect(acorde.getUnidadeTempo().razao).toBe(0.25); // ratio de 1/4
             const result = compasso.toAbc();
             console.log("----------------------------------");
             console.log(result);

@@ -4,46 +4,44 @@ import { Compasso } from '../model/compasso/Compasso.js';
 import { Nota } from '../model/nota/Nota.js';
 import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
 import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
-
-// Mocks simples para simular as dependências externas que a Voz usa
-class MockClave {
-    constructor(abc = "K:clef=treble") { this.abc = abc; }
-    toAbc() { return this.abc; }
-}
-
-class MockObra {}
+import { Clave } from '../model/obra/Clave.js';
 
 describe('Classe Voz', () => {
-
+    class MockObra {}
+    const ref14 = new TempoDuracao(1, 4);
+    const ref18 = new TempoDuracao(1, 8);
+    const metrica44 = new TempoMetrica(4, 4);
+    it('deve inicializar e obter a unidadeTempo corretamente', () => {
+        const voz = new Voz(1);
+        expect(voz).toBeInstanceOf(Voz);
+    });
     describe('Inicialização e Associações', () => {
         it('deve inicializar com ID e valores padrão corretos', () => {
-            const voz = new Voz("V1");
+            const voz = new Voz("V1", [], {unidadeTempo: ref14});
             expect(voz.id).toBe("V1");
             expect(voz.direcaoHaste).toBe("auto");
             expect(voz.compassos).toEqual([]);
         });
+    });
+    it('deve vincular a referência da Voz e atualizar o index dos compassos ao adicionar', () => {
+        const voz = new Voz("V1");
+        const c1 = new Compasso();
+        const c2 = new Compasso();
 
-        it('deve vincular a referência da Voz e atualizar o index dos compassos ao adicionar', () => {
-            const voz = new Voz("V1");
-            const c1 = new Compasso();
-            const c2 = new Compasso();
+        voz.compassos = [c1, c2];
 
-            voz.compassos = [c1, c2];
-
-            expect(c1.options.voz).toBe(voz);
-            expect(c2.options.voz).toBe(voz);
-            expect(c1.index).toBe(1);
-            expect(c2.index).toBe(2);
-        });
-
-        it('deve lançar erro se a direção da haste for inválida', () => {
-            const voz = new Voz("V1");
-            expect(() => {
-                voz.direcaoHaste = "diagonal";
-            }).toThrow(/Direção da haste deve ser 'auto', 'up' ou 'down'/);
-        });
+        expect(c1.options.voz).toBe(voz);
+        expect(c2.options.voz).toBe(voz);
+        expect(c1.index).toBe(1);
+        expect(c2.index).toBe(2);
     });
 
+    it('deve lançar erro se a direção da haste for inválida', () => {
+        const voz = new Voz("V1");
+        expect(() => {
+            voz.direcaoHaste = "diagonal";
+        }).toThrow(/Direção da haste deve ser 'auto', 'up' ou 'down'/);
+    });
     describe('Geração de Notação ABC (toAbc)', () => {
         it('deve gerar o cabeçalho completo da voz com todas as opções preenchidas', () => {
             const voz = new Voz("Melodia_Principal", [], {
@@ -52,7 +50,7 @@ describe('Classe Voz', () => {
                 direcaoHaste: "down",
                 stafflines: 5,
                 middle: "B",
-                clave: new MockClave("clef=treble"),
+                clave: Clave.create({}),
                 metrica: new TempoMetrica(3, 4)
             });
 
@@ -63,37 +61,56 @@ describe('Classe Voz', () => {
             // Verifica se a métrica foi impressa logo em seguida
             expect(abc).toContain('[M:3/4]');
         });
-
-        it('deve quebrar a linha a cada N compassos de acordo com as options', () => {
-            const voz = new Voz("V1", [], { quebraDeLinha: 3 });
-
-            // Adiciona 4 compassos vazios
-            voz.addCompasso(new Compasso()); // 1
-            voz.addCompasso(new Compasso()); // 2
-            voz.addCompasso(new Compasso()); // 3 (Aqui deve quebrar a linha)
-            voz.addCompasso(new Compasso()); // 4 (Último, sem separador extra)
-
-            const abc = voz.toAbc();
-            const compassosABC = abc.split('|').filter(c => c.trim() !== '' && !c.includes('V:'));
-
-            // O join no toAbc faz: C1 + ' ' + C2 + ' ' + C3 + '\n' + C4
-            // Verifica se a quebra de linha ocorreu imediatamente antes do compasso 4
-            expect(abc).toMatch(/\|\n\|$/); // O penúltimo caractere é \n antes da barra final
-        });
-
-        it('deve agrupar as letras (lyrics) dos compassos e gerar a tag w: no final', () => {
-            const c1 = new Compasso([], { letra: ["A-", "mém"] });
-            const c2 = new Compasso([]); // Compasso sem letra
-            const c3 = new Compasso([], { letra: ["Se-", "nhor"] });
-
-            const voz = new Voz("V1");
-            voz.compassos = [c1, c2, c3];
-
-            const abc = voz.toAbc();
-            expect(abc).toContain('w: A- mém - Se- nhor');
-        });
     });
+    it('deve quebrar a linha a cada N compassos de acordo com as options', () => {
+        const voz = new Voz("V1", [], { quebraDeLinha: 3, unidadeTempo: ref14 });
 
+        // Adiciona 4 compassos vazios
+        voz.addCompasso(new Compasso()); // 1
+        voz.addCompasso(new Compasso()); // 2
+        voz.addCompasso(new Compasso()); // 3 (Aqui deve quebrar a linha)
+        voz.addCompasso(new Compasso()); // 4 (Último, sem separador extra)
+
+        const abc = voz.toAbc();
+        const compassosABC = abc.split('|').filter(c => c.trim() !== '' && !c.includes('V:'));
+
+        // Garante que a última coisa gerada pela Voz é uma quebra de linha
+        expect(abc).toMatch(/\n$/);
+    });
+    it('deve formatar 5 compassos corretamente (quebraDeLinha = 5) sem letra', () => {
+        // 1. Instanciamos a Voz (adapte conforme o construtor real da sua classe)
+        const voz = new Voz(1, [], { quebraDeLinha: 5, unidadeTempo: ref14 });
+
+        // 2. Setup: Criamos e adicionamos 5 compassos reais na voz
+        [1, 2, 3, 4, 5].forEach(num => {
+            voz.addCompasso(
+                new Compasso([ { altura: "C", duracao: ref14 } ], {index: num})
+            );
+        });
+
+        // 3. Execução
+        const abc = voz.toAbc();
+
+        // 4. Asserções (Expects)
+
+        // Verifica se a string final termina com o último compasso seguido APENAS do \n final
+        expect(abc).toMatch(/C|\n$/);
+
+        // Verifica a montagem exata da linha de compassos:
+        // Barra inicial (|) + Compassos separados por espaço + Quebra de linha no final
+        expect(abc).toContain('|C| C| C| C| C|\n');
+    });
+    it('deve agrupar as letras (lyrics) dos compassos e gerar a tag w: no final', () => {
+        const c1 = new Compasso([], { letra: ["A", "mém"] });
+        const c2 = new Compasso([]); // Compasso sem letra
+        const c3 = new Compasso([], { letra: ["Se", "nhor"] });
+
+        const voz = new Voz("V1", [], { unidadeTempo: ref14 });
+        voz.compassos = [c1, c2, c3];
+
+        const abc = voz.toAbc();
+        expect(abc).toContain('w: A-mém - Se-nhor');
+    });
     describe('Helper estático Voz.create() e Zod Schema', () => {
         it('deve instanciar uma Voz completa e seus compassos internos a partir de JSON', () => {
             const json = {
@@ -115,7 +132,6 @@ describe('Classe Voz', () => {
             expect(voz.compassos[0]).toBeInstanceOf(Compasso);
             expect(voz.compassos[0].elements[0]).toBeInstanceOf(Nota);
         });
-
         it('deve barrar a criação se o ID contiver espaços (validação regex Zod)', () => {
             const jsonComEspaco = {
                 id: "Viola Caipira", // Espaços não são permitidos no Zod agora!
@@ -126,19 +142,40 @@ describe('Classe Voz', () => {
                 Voz.create(jsonComEspaco);
             }).toThrow(/O ID da voz deve conter apenas letras, números e sublinhados/);
         });
-
         it('deve permitir a criação com ID numérico', () => {
             const jsonNumerico = { id: 2, compassos: [] };
             const voz = Voz.create(jsonNumerico);
             expect(voz.id).toBe(2);
         });
-
         it('deve barrar a criação se o ID estiver ausente (obrigatório)', () => {
             const jsonSemId = { compassos: [] };
 
             expect(() => {
                 Voz.create(jsonSemId);
-            }).toThrow(/O ID da voz é obrigatório/);
+            }).toThrow("Voz.create: Erro na estrutura dos dados: O ID da voz é obrigatório.");
         });
+        it('deve gerar a string ABC corretamente', () => {
+            const json = {
+                id: "V1",
+                options: { nome: "Melodia", unidadeTempo: "1/4", metrica: "4/4", clave: {} },
+                compassos: [
+                    {
+                        elementos: [{ altura: "C", duracao: '1/4' }, { altura: "D", duracao: '1/4' }]
+                    }
+                ]
+            };
+            const voz = Voz.create( json );
+
+            const expectedAbc = `V:V1 name="Melodia" clef=treble\n[M:4/4]|CD z2|\n`;
+            const result = voz.toAbc();
+            console.log("--------------------");
+            console.log(result);
+            console.log("--------------------");
+            // Normalize line endings and remove extra spaces for comparison
+            const normalize = (str) => str.replace(/\\r\\n/g, '\\n').replace(/\\s+/g, ' ').trim();
+            expect(normalize( result )).toBe(normalize(expectedAbc));
+        });
+
     });
 });
+

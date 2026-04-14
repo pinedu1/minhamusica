@@ -3,6 +3,7 @@ import { Obra } from "../obra/Obra.js";
 import { Clave } from "../obra/Clave.js";
 import { TempoMetrica } from "../tempo/TempoMetrica.js";
 import { TempoDuracao } from "../tempo/TempoDuracao.js";
+import { vozSchema } from "../../schemas/vozSchema.js";
 
 /**
  * Representa uma camada musical independente (Voz) na obra.
@@ -87,8 +88,8 @@ export class Voz {
 
         abc += "\n";
 
-        if ( this.metrica ) {
-            abc += this.metrica.toCompasso();
+        if ( this.#options.metrica ) {
+            abc += this.#options.metrica.toCompasso();
         }
 
         let configQuebraLinha = this.#options.quebraDeLinha || 5;
@@ -114,7 +115,7 @@ export class Voz {
 
         const lyrics = this.#compassos
             .filter(compasso => compasso.letra && compasso.letra.length > 0)
-            .map(compasso => compasso.letra.join(' '))
+            .map(compasso => compasso.letra.join('-'))
             .join(' - ');
 
         if (lyrics) {
@@ -164,13 +165,15 @@ export class Voz {
         this.#compassos = [];
         arrayCompassos.forEach(c => this.addCompasso(c));
     }
-    get getUnidadeTempo() {
-        return this.options.#unidadeTempo || this.#options.obra?.unidadeTempo;
+    getUnidadeTempo() {
+        return this.#options.unidadeTempo || this.#options.obra?.unidadeTempo;
     }
     get unidadeTempo() {
         return this.#options.unidadeTempo;
     }
-
+    set unidadeTempo(val) {
+        this.#options.unidadeTempo = val;
+    }
     /**
      * USAGE: Adiciona um compasso à voz, definindo seu índice e vinculando a referência de voz.
      * @param {Compasso} compasso
@@ -199,6 +202,10 @@ export class Voz {
         }
         this.#options.direcaoHaste = val;
     }
+    getMetrica() {
+        return this.#options.metrica || this.#options.obra?.metrica;
+    }
+
     get metrica() {
         return this.#options.metrica;
     }
@@ -226,6 +233,10 @@ export class Voz {
      */
     static create(json = {}) {
         if (json instanceof Voz) return json;
+        if (json?.id === undefined || json?.id === null) {
+            throw new TypeError("Voz.create: Erro na estrutura dos dados: O ID da voz é obrigatório.");
+            return;
+        }
 
         // 1. Validação via Zod
         const resultado = vozSchema.safeParse(json);
@@ -236,13 +247,7 @@ export class Voz {
         }
 
         const { id, compassos, options } = resultado.data;
-
-        // 2. Instanciação Recursiva dos Compassos
-        const instanciasCompassos = compassos.map(c => {
-            return c.constructor.name === 'Compasso' ? c : Compasso.create(c);
-        });
-
-        // 3. Processamento das Opções Complexas (Classes)
+        // 2. Processamento das Opções Complexas PRIMEIRO
         const optionsProcessado = { ...options };
 
         if (options.unidadeTempo) {
@@ -252,17 +257,34 @@ export class Voz {
             optionsProcessado.metrica = TempoMetrica.create(options.metrica);
         }
 
-        // Hidratação da Clave (supondo que a classe Clave também tenha um create estático)
-        if (options.clave && options.clave.constructor.name !== 'Clave') {
+        if (options.clave ) {
             optionsProcessado.clave = Clave.create(options.clave);
-        } else if (options.clave) {
-            optionsProcessado.clave = options.clave;
         }
 
-        // 4. Criação da Instância Final
-        const voz = new Voz(id, instanciasCompassos, optionsProcessado);
+        // 3. Criação da Instância da Voz (ainda SEM os compassos)
+        // Passamos um array vazio [] para não estourar nenhuma validação no construtor
+        const voz = new Voz(id, [], optionsProcessado);
 
-        // Atribuir via setter para garantir que o vínculo this.#compassos[x].options.voz seja feito
+        // 4. Instanciação Recursiva dos Compassos (agora sim, com a Voz pronta!)
+        const instanciasCompassos = compassos.map(c => {
+            if (c.constructor.name === 'Compasso') {
+                // Se já for instância, apenas garante o vínculo
+                c.options = c.options || {};
+                c.options.voz = voz;
+                return c;
+            }
+
+            // Se for JSON literal: Injeta a Voz no objeto cru ANTES do create
+            c.options = c.options || {};
+            c.options.voz = voz;
+
+            // O Compasso.create agora vai rodar com o options.voz preenchido!
+            // Logo, quando ele criar as Notas, elas terão acesso à Voz (e sua unidadeTempo).
+            return Compasso.create(c);
+        });
+
+        // 5. Atribuir os compassos hidratados à voz usando o seu setter
+        // (Isso garante que índices e vinculações internas finais sejam respeitadas)
         voz.compassos = instanciasCompassos;
 
         return voz;

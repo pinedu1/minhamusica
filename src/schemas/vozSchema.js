@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { compassoSchema } from '../compasso/compassoSchema.js';
-import { tempoDuracaoSchema } from '../tempo/tempoDuracaoSchema.js';
-import { tempoMetricaSchema } from '../tempo/tempoMetricaSchema.js';
+import { compassoSchema } from './compassoSchema.js';
+import { tempoDuracaoSchema } from './tempoDuracaoSchema.js';
+import { tempoMetricaSchema } from './tempoMetricaSchema.js';
 
 /**
  * Schema principal da Voz

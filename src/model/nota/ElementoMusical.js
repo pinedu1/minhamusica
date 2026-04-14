@@ -15,26 +15,6 @@ export class ElementoMusical {
     }
 
     /**
-     * Lógica DRY: Busca a unidade de tempo ativa na hierarquia.
-     */
-    getUnidadeTempo() {
-        if (this._options.unidadeTempo) {
-            return this._options.unidadeTempo;
-        }
-        if (this._options.compasso) {
-            return this._options.compasso.unidadeTempo
-        }
-        if (this._options.voz) {
-            return this._options.voz.unidadeTempo
-        }
-        if (this._options.obra) {
-            return this._options.obra.unidadeTempo
-        }
-        throw new TypeError("A unidadeTempo Global deve ser definida em algum nível da hierarquia (Pausa/Compasso/Voz/Obra).");
-        return null;
-    }
-
-    /**
      * Lógica DRY: Formata a duração para o padrão ABC.
      */
     /**
@@ -82,6 +62,37 @@ export class ElementoMusical {
 
     get unidadeTempo() { return this._options.unidadeTempo; }
     set unidadeTempo(tempo) { this._options.unidadeTempo = tempo; }
+    /**
+     * Lógica DRY: Busca a unidade de tempo ativa na hierarquia.
+     */
+    getUnidadeTempo() {
+        // 1. Retorna imediatamente se a unidade de tempo estiver no próprio elemento
+        if (this._options.unidadeTempo) {
+            return this._options.unidadeTempo;
+        }
+
+        // 2. Define a ordem de subida na árvore de hierarquia
+        const hierarquia = ['compasso', 'voz', 'obra'];
+
+        // 3. Percorre os pais dinamicamente
+        for (const nivel of hierarquia) {
+            const pai = this._options[nivel];
+
+            if (!pai) continue; // Pula para o próximo se este pai não existir
+
+            // Duck typing: Se o objeto tiver o método, executa. Senão, busca a propriedade direta (útil para JSON cru).
+            const tempo = typeof pai.getUnidadeTempo === 'function'
+                ? pai.getUnidadeTempo()
+                : pai.unidadeTempo;
+
+            if (tempo) {
+                return tempo;
+            }
+        }
+
+        // 4. Lança o erro se chegar ao topo da árvore sem encontrar nada
+        throw new TypeError("A unidadeTempo Global deve ser definida em algum nível da hierarquia (Pausa/Compasso/Voz/Obra).");
+    }
     // E precisaria de getters para as heranças também
     get obra() { return this._options.obra; }
     set obra(val) {
@@ -120,4 +131,15 @@ export class ElementoMusical {
         this._options.compasso = val;
     }
     get options() { return this._options; }
+    set options(val) {
+        if (val === undefined) return;
+        if (!val) {
+            this._options = {};
+            return;
+        }
+        if (val.constructor.name !== 'Object') {
+            throw new TypeError("setOptions: O valor deve ser um objeto.");
+        }
+        this._options = val;
+    }
 }

@@ -161,7 +161,18 @@ export class Acorde extends ElementoMusical {
         // 3. Instanciação recursiva das Notas
         // Como o 'notas' do JSON são objetos puros, transformamos em instâncias de Nota
         const instanciasNotas = notas.map(n =>{
-            if (!n.options.unidadeTempo) n.options.unidadeTempo = options.unidadeTempo;
+            if (!n.options.unidadeTempo && options.unidadeTempo) {
+                n.options.unidadeTempo = options.unidadeTempo;
+            }
+            if (!n.options.compasso && options.compasso) {
+                n.options.compasso = options.compasso;
+            }
+            if (!n.options.voz && options.voz) {
+                n.options.voz = options.voz;
+            }
+            if (!n.options.obra && options.obra) {
+                n.options.obra = options.obra;
+            }
             return Nota.create(n);
         });
 

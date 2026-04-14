@@ -51,13 +51,24 @@ export class Compasso {
             , letra: options.letra || []
             , ...options
         };
+        this.elements = elements;
+        this.index = options.index || 0;
     }
 
     getUnidadeTempo() {
-        return this.unidadeTempo || this.voz?.unidadeTempo || this.obra?.unidadeTempo;
+        if (this.unidadeTempo) {
+            return this.unidadeTempo;
+        }
+        if (this.voz) {
+            return this.voz.getUnidadeTempo();
+        }
+        if ( this.obra ) {
+            return this.obra.unidadeTempo;
+        }
+        return null;
     }
     getMetrica() {
-        return this.#options.metrica || this.#options.voz?.metrica || this.#options.obra?.metrica;
+        return this.#options.metrica || this.#options.voz?.getMetrica() || this.#options.obra?.metrica;
     }
     /**
      * Calcula a unidade de tempo baseado no compasso e suas propriedades.
@@ -93,8 +104,8 @@ export class Compasso {
             abc += this.#options.barraInicial.abc;
         }
 
-        if (this.getMetrica()) {
-            abc += this.getMetrica().toCompasso();
+        if (this.#options.metrica) {
+            abc += this.#options.metrica.toCompasso();
         }
 
         if (this.mudancaDeTom) {
@@ -187,19 +198,34 @@ export class Compasso {
      */
     get elements() { return this.#elements; }
     set elements(val) {
-        if (!Array.isArray(val)) throw new TypeError('Compasso: Elementos devem ser Array.');
-        if (val.some(n => !(n instanceof Nota) && !(n instanceof Pausa) && !(n instanceof Acorde))) {
-            throw new TypeError("Compasso: Apenas instâncias de Nota, Pausa ou Acorde são permitidas.");
+        if (!Array.isArray(val)) {
+            throw new TypeError('Compasso: Elementos devem ser um Array.');
         }
-        this.#elements = [];
-        val.forEach( e=> {
-            if ( !e.compasso ) {
-                e.options.compasso = this;
+
+        this.#elements = val.map(el => {
+            // 1. Prepara o objeto options caso ele não exista (importante para JSONs crus)
+            el.options = el.options || {};
+
+            // 2. Injeta o compasso como pai.
+            // Isso dispensa a necessidade de copiar a unidadeTempo manualmente,
+            // pois a Nota/Pausa/Acorde agora sabe subir a árvore para procurar!
+            el.options.compasso = this;
+
+            // 3. A SUA LÓGICA DE ROTEAMENTO:
+            // Verifica se já é uma instância de Nota ou se o JSON tem a propriedade 'altura'
+            if (el.constructor.name === 'Nota' || el.altura !== undefined) {
+                return Nota.create(el);
             }
-            this.#elements.push(e);
+
+            // Verifica se já é uma instância de Acorde ou se o JSON tem um array 'notas'
+            if (el.constructor.name === 'Acorde' || el.notas !== undefined) {
+                return Acorde.create(el);
+            }
+
+            // Se não for nenhum dos dois, assume que é uma Pausa
+            return Pausa.create(el);
         });
     }
-
     /**
      * USAGE: Barra inicial.
      */
@@ -311,7 +337,7 @@ export class Compasso {
 
         const { elementos, options } = resultado.data;
 
-        // 1. Processamento de Options (Tempo e Métrica)
+        // 1. Processamento de Options (Tempo e Métrica) PRIMEIRO
         const optionsProcessado = { ...options };
 
         if (options.unidadeTempo) {
@@ -320,18 +346,27 @@ export class Compasso {
         if (options.metrica) {
             optionsProcessado.metrica = TempoMetrica.create(options.metrica);
         }
-        // 2. Instanciação dos Elementos (Nota, Pausa ou Acorde)
+
+        // 2. CRIAÇÃO DA INSTÂNCIA PRIMEIRO (Ainda sem elementos para não engatilhar validação)
+        const compasso = new Compasso([], optionsProcessado);
+
+        // 3. Roteamento e Instanciação dos Elementos (Nota, Pausa ou Acorde)
         const instanciasElementos = elementos.map(el => {
-            if (!el.options.unidadeTempo) el.options.unidadeTempo = optionsProcessado.unidadeTempo;
+
+            // Garante que o objeto options exista no JSON cru
+            el.options = el.options || {};
+
+            // A MÁGICA: Injeta o compasso no JSON ANTES de chamar o .create()
+            el.options.compasso = compasso;
+
+            // Agora, quando o Nota.create validar a unidadeTempo, ele achará o compasso pai!
             if (el.constructor.name === 'Nota' || el.altura) return Nota.create(el);
             if (el.constructor.name === 'Acorde' || el.notas) return Acorde.create(el);
             return Pausa.create(el);
         });
 
-        // 3. Criar a instância
-        const compasso = new Compasso(instanciasElementos, optionsProcessado);
-
-        // 4. Atribuir os elementos (o setter 'elements' já lida com o vínculo back-reference)
+        // 4. Atribuir os elementos já hidratados
+        // O seu setter 'elements' vai assumir daqui e fazer as verificações finais
         compasso.elements = instanciasElementos;
 
         return compasso;

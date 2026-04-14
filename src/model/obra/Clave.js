@@ -1,4 +1,5 @@
 import { ClaveTipo } from './ClaveTipo.js';
+import { ClaveSchema } from '../../schemas/claveSchema.js';
 
 export class Clave {
     /** @type {keyof typeof ClaveTipo} */
@@ -77,23 +78,33 @@ export class Clave {
      * USAGE: Helper para criação rápida de Clave a partir de um JSON.
      * Ex: Clave.create({ tipo: "TREBLE", oitava: 0 })
      * @param {Object} json - Objeto com as propriedades tipo e oitava.
-     * @param {string} json.tipo - Tipo da Clave, Default: ClaveTipo.TREBLE.
-     * @param {number} json.oitava - Oitava da Clave, Default: 0.
+     * @param {string} [json.tipo="TREBLE"] - Chave da Clave (TREBLE, BASS, ALTO, etc).
+     * @param {number} [json.oitava=0] - Oitava da Clave.
      * @returns {Clave}
      */
     static create( json = {} ) {
+        if (json instanceof Clave) return json;
+        // 1. Desestrutura o objeto recebido por parâmetro
         let { tipo, oitava } = json;
+
+        // 2. Se não enviou tipo, assume a CHAVE 'TREBLE' (como string)
         if ( !tipo ) {
-            tipo = ClaveTipo.TREBLE;
-        } else {
-            tipo = ClaveTipo[tipo];
+            tipo = 'TREBLE';
         }
-        if ( !oitava ) {
+
+        // 3. Se não enviou oitava (checa undefined para não sobrescrever caso enviem oitava 0)
+        if ( oitava === undefined ) {
             oitava = 0;
         }
-        if ( !tipo || !tipo.valor ) {
-            throw new Error(`Tipo de Clave não encontrada. Deve ser uma das seguintes: ${Object.keys(ClaveTipo).join(', ')}`);
+
+        // 4. Busca o objeto correto dentro do Enum e instancia a Clave
+        const instanciaTipo = ClaveTipo[tipo];
+
+        // Segurança extra: se enviaram uma string que não existe no Enum (ex: tipo: "GUITARRA")
+        if ( !instanciaTipo ) {
+            throw new Error(`Tipo de Clave não encontrada. Deve ser uma destas chaves: ${Object.keys(ClaveTipo).join(', ')}`);
         }
-        return new Clave( tipo, oitava );
+
+        return new Clave( instanciaTipo, oitava );
     }
 }
