@@ -165,15 +165,6 @@ export class Voz {
         this.#compassos = [];
         arrayCompassos.forEach(c => this.addCompasso(c));
     }
-    getUnidadeTempo() {
-        return this.#options.unidadeTempo || this.#options.obra?.unidadeTempo;
-    }
-    get unidadeTempo() {
-        return this.#options.unidadeTempo;
-    }
-    set unidadeTempo(val) {
-        this.#options.unidadeTempo = val;
-    }
     /**
      * USAGE: Adiciona um compasso à voz, definindo seu índice e vinculando a referência de voz.
      * @param {Compasso} compasso
@@ -185,6 +176,15 @@ export class Voz {
         compasso.index = this.#compassos.length + 1;
         compasso.options.voz = this;
         this.#compassos.push(compasso);
+    }
+    getUnidadeTempo() {
+        return this.#options.unidadeTempo || this.#options.obra?.unidadeTempo;
+    }
+    get unidadeTempo() {
+        return this.#options.unidadeTempo;
+    }
+    set unidadeTempo(val) {
+        this.#options.unidadeTempo = val;
     }
 
     /**
@@ -214,6 +214,7 @@ export class Voz {
         if (!(val instanceof TempoMetrica)) throw new TypeError('Voz: TempoMetrica inválido.');
         this.#options.metrica = val;
     }
+    get options() { return this.#options; }
     /**
      * USAGE: Helper estático para criação rápida de Voz a partir de um JSON.
      * Ex: Voz.create( { "compassos": [ { "elementos": [ { "freq": "C" }, { "notas": [ { "freq": "E" } ] }, {} ], "options": { "tempo": "1", "duracao": "1/8" } }, { "elementos": [ { "freq": "C" }, { "notas": [ { "freq": "E" } ] }, {} ], "options": { "tempo": "1", "duracao": "1/8" } } ], "options": { "nome": "Metais", "sinonimo": "mtl", "direcaoHaste": "up", "clave": {}, "stafflines": 5, "middle": "B" } } );

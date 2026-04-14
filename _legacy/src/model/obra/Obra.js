@@ -4,7 +4,7 @@ B:	Book, eg B:Encyclopeadia Blowzabellica or B:O'Neill's
 C:	Composer eg C:Andy Cutting or C:Trad
 D:	Discography eg D:New Victory Band, One More Dance And Then
 F:	File Name eg http://www.lesession.co.uk/woodenflute.abc
-    G:	Group eg G:Flute - this is used for the purpose of indexing tunes in software, NOT for naming the group / band you acquired the tune from (which should be recorded in the S: source field).
+G:	Group eg G:Flute - this is used for the purpose of indexing tunes in software, NOT for naming the group / band you acquired the tune from (which should be recorded in the S: source field).
 H:	History - Multiple H: fields may be used as needed to record text about the history of the tune. (Many people (including me) seem to tend to forget about the H: field and instead always put information like that in the N: notes field instead.)
 I:	Information - used by certain software packages, NOT for historical information or notes (which should be recorded in the H: or N: fields).
 K:	Key -see part one of this tutorial for further details
