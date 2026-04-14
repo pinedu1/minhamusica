@@ -168,9 +168,9 @@ describe('Classe Voz', () => {
 
             const expectedAbc = `V:V1 name="Melodia" clef=treble\n[M:4/4]|CD z2|\n`;
             const result = voz.toAbc();
-            console.log("--------------------");
-            console.log(result);
-            console.log("--------------------");
+            // console.log("--------------------");
+            // console.log(result);
+            // console.log("--------------------");
             // Normalize line endings and remove extra spaces for comparison
             const normalize = (str) => str.replace(/\\r\\n/g, '\\n').replace(/\\s+/g, ' ').trim();
             expect(normalize( result )).toBe(normalize(expectedAbc));

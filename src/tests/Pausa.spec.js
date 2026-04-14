@@ -8,64 +8,64 @@ describe('Pausa', () => {
         it('deve formatar corretamente a pausa base sem multiplicador (z) quando duração == unidadeTempo', () => {
             const pausa = Pausa.create({ duracao: "1/4", options: { unidadeTempo: ref14 } });
             const result = pausa.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("z");
         });
         it('deve calcular multiplicador quando duração for maior que unidadeTempo', () => {
             const pausa = Pausa.create({ duracao: "1/2", options: { unidadeTempo: ref14 } });
             const result = pausa.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("z2");
         });
         it('deve calcular o divisor quando duração for menor que unidadeTempo', () => {
             const pausa = Pausa.create({ duracao: "1/8", options: { unidadeTempo: ref14 } });
             const result = pausa.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("z/");
 
             const pausa2 = Pausa.create({ duracao: "1/16", options: { unidadeTempo: ref14 } });
             const result1 = pausa2.toAbc();
-            console.log("-----------------");
-            console.log(result1);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result1);
+            // console.log("-----------------");
             expect(result1).toBe("z/4");
         });
         it('deve incluir fermata corretamente (!fermata!z)', () => {
             const pausa = Pausa.create({ duracao: "1/4", options: { unidadeTempo: ref14, fermata: true } });
             const result = pausa.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("!fermata!z");
         });
         it('deve incluir marcação de respiração (!breath!z)', () => {
             const pausa = Pausa.create({ duracao: "1/4", options: { unidadeTempo: ref14, breath: true } });
             const result = pausa.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("!breath!z");
         });
         it('deve plotar a pausa invizivel', () => {
             const pausa = Pausa.create({ duracao: "1/4", options: { unidadeTempo: ref14, invisivel: true } });
             const result = pausa.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("x");
         });
         it('deve combinar múltiplos atributos (fermata e breath)', () => {
             const pausa = Pausa.create({ duracao: "1/4", options: { unidadeTempo: ref14, fermata: true, breath: true } });;
             const result = pausa.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("!fermata!!breath!z");
         });
     });

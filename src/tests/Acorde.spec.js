@@ -21,9 +21,9 @@ describe('Classe Acorde', () => {
                 options: { unidadeTempo: ref14 }
             });
             const result = acorde.toAbc();
-            console.log("-----------------");
-            console.log(result);
-            console.log("-----------------");
+            // console.log("-----------------");
+            // console.log(result);
+            // console.log("-----------------");
             expect(result).toBe("[CEG]");
         });
         it('deve formatar acidentes de notas corretamente dentro do acorde', () => {

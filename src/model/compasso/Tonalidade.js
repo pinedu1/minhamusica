@@ -26,6 +26,9 @@ export class Tonalidade {
     }
 
     static create( key = 'C' ) {
+        if (key instanceof Tonalidade) {
+            return key;
+        }
         // 2. Verifica se a chave informada existe no array de chaves
         const chavesValidas = Object.keys(TonalidadeEnum);
         if (!chavesValidas.includes(key)) {

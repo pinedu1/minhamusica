@@ -83,9 +83,9 @@ describe('Classe Obra', () => {
             expect(obra.options.compositor).toContain("Zé da Silva");
             expect(obra.options.titulo).toContain("Amor não chora");
             const result = obra.toAbc();
-            console.log("-------------------------");
-            console.log(result);
-            console.log("-------------------------");
+            // console.log("-------------------------");
+            // console.log(result);
+            // console.log("-------------------------");
         });
     });
 

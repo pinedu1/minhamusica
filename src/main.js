@@ -4,7 +4,7 @@ import { exportarParaPDF } from "./services/print.js";
 import "./styles/main.scss";
 
 const initApp = async () => {
-    console.log("Iniciando interface...");
+    // console.log("Iniciando interface...");
 
     try {
         // Inicializa o ABCJS (Desenho + Áudio)

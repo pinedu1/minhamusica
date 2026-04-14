@@ -95,7 +95,8 @@ describe('TempoDuracao', () => {
         
         it('deve retornar a string montada corretamente em toAbc', () => {
             const tempo = new TempoDuracao(1, 8);
-            expect(tempo.toAbc()).toBe('L:1/8\n');
+            expect(tempo.toAbc()).toBe('L:1/8');
+            expect(tempo.toCompasso()).toBe('[L:1/8]');
         });
     });
 });

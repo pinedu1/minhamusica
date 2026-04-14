@@ -359,6 +359,9 @@ export class Compasso {
         // 1. Processamento de Options (Tempo e Métrica) PRIMEIRO
         const optionsProcessado = { ...options };
 
+        if (options.mudancaDeTom) {
+            optionsProcessado.mudancaDeTom = Tonalidade.create(options.mudancaDeTom);
+        }
         if (options.unidadeTempo) {
             optionsProcessado.unidadeTempo = TempoDuracao.create(options.unidadeTempo);
         }

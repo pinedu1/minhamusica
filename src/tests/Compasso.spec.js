@@ -235,9 +235,9 @@ describe('Classe Compasso', () => {
             compasso.addCifra("Am", 0);
             compasso.addAnotacao("p", 0, "_"); // ^p sobre a segunda nota
             const result = compasso.toAbc();
-            console.log("----------------------------------");
-            console.log(result);
-            console.log("----------------------------------");
+            // console.log("----------------------------------");
+            // console.log(result);
+            // console.log("----------------------------------");
             expect(result).toBe('[M:4/4]"Am""_p"C2 E2|');
         });
     });
@@ -258,9 +258,9 @@ describe('Classe Compasso', () => {
                 options: { metrica: "4/4", unidadeTempo: "1/4" }
             });
             const result = compasso.toAbc();
-            console.log("----------------------------------");
-            console.log(result);
-            console.log("----------------------------------");
+            // console.log("----------------------------------");
+            // console.log(result);
+            // console.log("----------------------------------");
             expect(result).toBe('[M:4/4]zf [ed] z|');
             expect(compasso.elements).toHaveLength(3);
             expect(compasso.elements[0]).toBeInstanceOf(Pausa);
@@ -277,25 +277,25 @@ describe('Classe Compasso', () => {
             expect(acorde.duracao.razao).toBe(2); // ratio de 2/1
             expect(acorde.getUnidadeTempo().razao).toBe(0.25); // ratio de 1/4
             const result = compasso.toAbc();
-            console.log("----------------------------------");
-            console.log(result);
-            console.log("----------------------------------");
+            // console.log("----------------------------------");
+            // console.log(result);
+            // console.log("----------------------------------");
             expect(result).toBe("[M:4/4][C]8|"); // 2 / 0.25 = 8
         });
         it('deve inicializar metrica e letra a partir do nível raiz do JSON e suportar chaves menores (Fm)', () => {
             const compasso = Compasso.create({
                 elementos: []
-                , options: { metrica: "6/8", unidadeTempo: "1/4", mudancaDeTom: Tonalidade.Fm, letra: ["A","mém"] }
+                , options: { metrica: "6/8", unidadeTempo: "1/4", mudancaDeTom: Tonalidade.create('Fm'), letra: ["A","mém"] }
             });
 
             expect(compasso.letra).toEqual(["A","mém"]);
             expect(compasso.metrica.numerador).toBe(6);
             expect(compasso.metrica.denominador).toBe(8);
-            expect(compasso.mudancaDeTom).toBe(Tonalidade.Fm);
+            expect(compasso.mudancaDeTom.valor).toBe(Tonalidade.create('Fm').valor);
             const result = compasso.toAbc();
-            console.log("----------------------");
-            console.log(result);
-            console.log("----------------------");
+            // console.log("----------------------");
+            // console.log(result);
+            // console.log("----------------------");
             expect(result).toBe("[M:6/8][K:Fm] z3|");
         });
         it('deve permitir instanciar elementos usando classes reais em vez de objetos vazios', () => {
@@ -325,9 +325,9 @@ describe('Classe Compasso', () => {
             // Pulsos totais (4/4) = 4.0 pulsos
             // Falta = 4.0 - 1.5 = 2.5 pulsos
             const result = compasso.toAbc();
-            console.log("----------------------");
-            console.log(result);
-            console.log("----------------------");
+            // console.log("----------------------");
+            // console.log(result);
+            // console.log("----------------------");
             expect(result).toBe("[M:4/4]G3/2 z5/2|");
         });
     });
