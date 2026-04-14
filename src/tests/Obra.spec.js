@@ -51,18 +51,18 @@ describe('Classe Obra', () => {
                     tonalidade: "C",
                     notas: ["Esta música foi originalmente composta em cavaquinho", "Depois trasposta para Violão"],
                     partes: null,
-                    tempoAndamento: { tempo: '4/4', duracao: 95 },
-                    ritmo: 'REEL',
+                    tempoAndamento: { tempo: '1/4', duracao: 95 },
+                    ritmo: 'TOADA',
                     fonte: ["Internet", "Sitio do caboclo"],
                     titulo: ["Amor não chora", "Semente minha"],
                     letra: null,
                     notaTranscricao: ["Antonio dedilhado"]
-                },
-                vozes: [
+                }
+                , vozes: [
                     {
-                        id: "V1",
-                        options: { nome: "Melodia" },
-                        compassos: [] // Mockando sem elementos para não depender de schemas complexos de Compasso que não conhecemos aqui
+                        id: "V1"
+                        , options: { nome: "Melodia" }
+                        , compassos: [{elementos: [{ altura: "C", duracao: '1/4' }, { altura: "E", duracao: '1/4' }]}]
                     }
                 ]
             };
@@ -82,6 +82,10 @@ describe('Classe Obra', () => {
             
             expect(obra.options.compositor).toContain("Zé da Silva");
             expect(obra.options.titulo).toContain("Amor não chora");
+            const result = obra.toAbc();
+            console.log("-------------------------");
+            console.log(result);
+            console.log("-------------------------");
         });
     });
 
@@ -105,7 +109,7 @@ describe('Classe Obra', () => {
             const abc = obra.toAbc();
 
             const linhas = abc.split('\n');
-            
+
             // Validando a regra de Ouro ABC:
             expect(linhas[0]).toBe('X:10'); // X: deve ser o primeiro
             expect(linhas[1]).toBe('T:Ode a Alegria'); // T: deve ser o segundo
@@ -115,7 +119,7 @@ describe('Classe Obra', () => {
             expect(abc).toContain('Q:1/4=120');
             expect(abc).toContain('R:Waltz');
             expect(abc).toContain('N:Uma obra prima');
-            
+
             // K: deve ser a última linha antes do corpo da música
             const indexK = linhas.findIndex(linha => linha.startsWith('K:D'));
             expect(indexK).toBeGreaterThan(0);

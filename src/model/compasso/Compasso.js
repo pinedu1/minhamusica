@@ -68,7 +68,26 @@ export class Compasso {
         return null;
     }
     getMetrica() {
-        return this.#options.metrica || this.#options.voz?.getMetrica() || this.#options.obra?.metrica;
+        if ( this.#options.metrica ) {
+            return this.#options.metrica;
+        }
+        if ( this.#options.voz ) {
+            const voz = this.#options.voz;
+            if ( voz instanceof Voz) {
+                return voz.getMetrica();
+            } else if ( voz.options.metrica ) {
+                return voz.options.metrica;
+            }
+        }
+        if ( this.#options.obra ) {
+            const obra = this.#options.obra;
+            if ( obra instanceof Voz) {
+                return obra.getMetrica();
+            } else if ( obra.options.metrica ) {
+                return obra.options.metrica;
+            }
+        }
+        return null;
     }
     /**
      * Calcula a unidade de tempo baseado no compasso e suas propriedades.

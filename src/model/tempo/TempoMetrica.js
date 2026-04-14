@@ -83,7 +83,7 @@ export class TempoMetrica {
         if (this.#numerador === 1 && this.#denominador === 1) return "1";
         const num = this.#numerador === 1 ? "" : this.#numerador;
         const den = this.#denominador === 1 ? "" : `/${this.#denominador}`;
-        return `M:${num}${den}\n`;
+        return `M:${num}${den}`;
     }
     // 2. O Helper Estático
     static create(dados) {

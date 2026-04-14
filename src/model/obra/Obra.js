@@ -1,4 +1,4 @@
-import { Voz } from './Voz.js';
+import { Voz } from '../voz/Voz.js';
 import { Compasso } from '../compasso/Compasso.js';
 import { TempoAndamento } from '../tempo/TempoAndamento.js';
 import { TempoDuracao } from '../tempo/TempoDuracao.js';
@@ -6,7 +6,7 @@ import { TempoMetrica } from '../tempo/TempoMetrica.js';
 import { Ritmo } from './Ritmo.js';
 import { GrupoInstrumento } from './GrupoInstrumento.js';
 import { Tonalidade } from '../compasso/Tonalidade.js';
-import { Clave } from '../compasso/Clave.js';
+import { Clave } from './Clave.js';
 import { obraSchema } from '../../schemas/obraSchema.js';
 
 /*
@@ -83,7 +83,7 @@ export class Obra {
             , clave: options.clave || Clave.create('TREBLE')
             , notas: options.notas || []  // N: Notes : Multiple N: fields can be used as needed to record detailed text notes about, well, just about anything you want to say about the tune that won't go in any of the other fields really ...
             , partes: options.partes || null  // P: Parts -see below for further details
-            , tempoAndamento: options.tempoAndamento || TempoAndamento.create({ tempo: '4/4', duracao: 95 })  // Q: Tempo -see part one of this tutorial for further details
+            , tempoAndamento: options.tempoAndamento || TempoAndamento.create({ tempo: '1/4', duracao: 95 })  // Q: Tempo -see part one of this tutorial for further details
             , ritmo: options.ritmo || Ritmo.create('REEL')  // R: Rhythm -see part one of this tutorial for further details
             , fonte: options.fonte || []  // S: Source - where you got the tune from eg S:Olio or S:Dave Praties
             , titulo: options.titulo || null  // T: Title -see part one of this tutorial for further details
@@ -140,12 +140,12 @@ export class Obra {
 
         // L: Default note length
         if (opt.unidadeTempo) {
-            abc += `L:${opt.unidadeTempo.toAbc()}\n`;
+            abc += `${opt.unidadeTempo.toAbc()}\n`;
         }
 
         // Q: Tempo
         if (opt.tempoAndamento) {
-            abc += `Q:${opt.tempoAndamento.toAbc()}\n`;
+            abc += `${opt.tempoAndamento.toAbc()}\n`;
         }
 
         // P: Parts
@@ -205,12 +205,18 @@ export class Obra {
 
         // K: Key (Obrigatório e deve ser o ÚLTIMO campo do cabeçalho)
         // Adiciona a clave na mesma linha da tonalidade se ela existir, padrão ABC
-        if (opt.tonalidade) {
+        if (opt.tonalidade && opt.tonalidade.valor) {
             abc += `K:${opt.tonalidade.toAbc()}`;
             if (opt.clave) {
                 abc += ` ${opt.clave.toAbc()}`;
             }
             abc += `\n`;
+        } else if (opt.tonalidade && typeof opt.tonalidade === 'string') {
+             abc += `K:${opt.tonalidade}`;
+             if (opt.clave) {
+                 abc += ` ${opt.clave.toAbc()}`;
+             }
+             abc += `\n`;
         } else {
             abc += `K:C`;
             if (opt.clave) {
@@ -222,7 +228,9 @@ export class Obra {
         // --- Corpo da Obra ---
         // V: Vozes e Pautas
         if (this.#vozes && this.#vozes.length > 0) {
-            abc += this.#vozes.map(voz => voz.toAbc()).join("\n");
+            this.#vozes.forEach(v => {
+                abc += v.toAbc();
+            });
         }
 
         // W: Words (Letras globais) - Geralmente vêm ao final de tudo no padrão ABC

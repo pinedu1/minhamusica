@@ -1,8 +1,46 @@
+export class Tonalidade {
+    #tonalidade = null
+
+    /**
+     * USAGE: Construtor da Tonalidade.
+     * @param tonalidade @type{string}
+     */
+    constructor(tonalidade) {
+        this.#tonalidade = TonalidadeEnum[tonalidade] || TonalidadeEnum.C;
+    }
+    get valor() {
+        if (!this.#tonalidade) return null;
+        return this.#tonalidade.valor;
+    }
+    get acidentes() {
+        if (!this.#tonalidade) return null;
+        return this.#tonalidade.acidentes;
+    }
+    get tipo() {
+        if (!this.#tonalidade) return null;
+        return this.#tonalidade.tipo;
+    }
+    
+    toAbc() {
+        return this.valor;
+    }
+
+    static create( key = 'C' ) {
+        // 2. Verifica se a chave informada existe no array de chaves
+        const chavesValidas = Object.keys(TonalidadeEnum);
+        if (!chavesValidas.includes(key)) {
+            throw new TypeError(
+                `Tonalidade.create: Tonalidade inválida "${key}". Deve ser um destes: [${chavesValidas.join(', ')}].`
+            );
+        }
+        return new Tonalidade(key);
+    }
+}
 /**
  * Enum completo das Tonalidades (Armaduras de Clave) organizado por grupo.
  * @enum {{valor: string, acidentes: number, tipo: '#'|'b'|'n'}}
  */
-export const Tonalidade = Object.freeze({
+export const TonalidadeEnum = Object.freeze({
     // --- MAIORES NATURAIS ---
     A: { valor: 'A', acidentes: 3, tipo: '#' }, // Lá Maior (F#, C#, G#)
     B: { valor: 'B', acidentes: 5, tipo: '#' }, // Si Maior (F#, C#, G#, D#, A#)

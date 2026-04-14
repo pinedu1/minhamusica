@@ -178,7 +178,19 @@ export class Voz {
         this.#compassos.push(compasso);
     }
     getUnidadeTempo() {
-        return this.#options.unidadeTempo || this.#options.obra?.unidadeTempo;
+        if ( this.#options.unidadeTempo ) {
+            return this.#options.unidadeTempo;
+        }
+        if ( this.#options.obra ) {
+            const obra = this.#options.obra;
+            if ( obra instanceof Obra) {
+                return obra.getUnidadeTempo();
+            } else if ( obra.options.unidadeTempo ) {
+                return obra.options.unidadeTempo;
+            }
+        }
+        return null;
+
     }
     get unidadeTempo() {
         return this.#options.unidadeTempo;
@@ -203,7 +215,18 @@ export class Voz {
         this.#options.direcaoHaste = val;
     }
     getMetrica() {
-        return this.#options.metrica || this.#options.obra?.metrica;
+        if ( this.#options.metrica ) {
+            return this.#options.metrica;
+        }
+        if ( this.#options.obra ) {
+            const obra = this.#options.obra;
+            if ( obra instanceof Obra) {
+                return obra.getMetrica();
+            } else if ( obra.options.metrica ) {
+                return obra.options.metrica;
+            }
+        }
+        return null;
     }
 
     get metrica() {

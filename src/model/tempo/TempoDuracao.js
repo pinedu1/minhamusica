@@ -85,7 +85,7 @@ export class TempoDuracao {
      * @returns {string}
      */
     toAbc() {
-        return `L:${this.toString()}\n`;
+        return `L:${this.toString()}`;
     }
     // 2. O Helper Estático
     static create(dados) {

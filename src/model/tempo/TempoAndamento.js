@@ -36,13 +36,13 @@ export class TempoAndamento {
     get duracao() { return this.#duracao; }
     get razao() { return this.#tempo.razao / this.#duracao; }
     toString() {
-        return `${this.#tempo.toAbc()}=${this.#duracao}`;
+        return `${this.#tempo.toString()}=${this.#duracao}`;
     }
     toCompasso() {
         return `[Q:${this.toString()}]`;
     }
     toAbc() {
-        return `Q:${this.toString()}\n`;
+        return `Q:${this.toString()}`;
     }
     
     /**
