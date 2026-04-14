@@ -349,3 +349,5 @@ const NotaFrequenciaEnum = Object.freeze({
 for (const [key, instance] of Object.entries(NotaFrequenciaEnum)) {
     instance.key = key;
 }
+// No final do seu arquivo NotaFrequencia.js
+export const notaChavesValidas = Object.keys(NotaFrequenciaEnum);

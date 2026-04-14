@@ -1,3 +1,4 @@
+import { tempoMetricaSchema, uniaoTempoMetrica } from '../../schemas/tempoMetricaSchema.js';
 /**
  * Representa a fração de tempo de uma nota (ex: 1/4, 3/8).
  * M:	Meter :see part one of this tutorial for further details
@@ -84,10 +85,42 @@ export class TempoMetrica {
         const den = this.#denominador === 1 ? "" : `/${this.#denominador}`;
         return `M:${num}${den}\n`;
     }
-    static create( tempo ) {
-        const parts = tempo.split("/");
-        const num = parseInt(parts[0]);
-        const den = parseInt(parts[1] || 1);
-        return new TempoMetrica(num, den);
+    // 2. O Helper Estático
+    static create(dados) {
+        // Se já for uma instância de TempoDuracao, não precisa recriar
+        if (dados instanceof TempoMetrica) return dados;
+
+        // Usamos safeParse para não estourar o erro padrão do Zod
+        const resultado = uniaoTempoMetrica.safeParse(dados);
+
+        // Caso não validou, levanta o throw personalizado
+        if (!resultado.success) {
+            throw new TypeError("TempoMetrica.create: duracao deve ser uma string.");
+        }
+
+        // Se validou, extraímos os dados limpos
+        const validado = resultado.data;
+        const regexFracao = /^\d+\/[1-9]\d*$/;
+        if ( regexFracao.test(validado) ) {
+            // Se entrou como string "1/4", quebra e passa para o construtor
+            const partes = validado.split('/');
+            const num = parseInt(partes[0], 10);
+            const den = parseInt(partes[1], 10);
+
+            return new TempoMetrica(num, den);
+        }
+
+        if (validado.duracao && regexFracao.test(validado.duracao)) {
+            // Se entrou como string "1/4", quebra e passa para o construtor
+            const partes = validado.duracao.split('/');
+            const num = parseInt(partes[0], 10);
+            const den = parseInt(partes[1], 10);
+
+            return new TempoMetrica(num, den);
+        }
+        if (validado.numerador && validado.denominador) {
+            return new TempoMetrica(validado.numerador, validado.denominador);
+        }
+        return null;
     }
 }

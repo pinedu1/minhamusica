@@ -183,5 +183,27 @@ describe('Classe Compasso', () => {
             expect(compasso.elements[0]).toBe(nota);
             expect(compasso.toAbc()).toBe("[M:4/4]G|");
         });
+	it('deve instanciar uma nota G pontuada (3/8) e preencher o resto do compasso', () => {
+	    // 3/8 é o valor matemático de uma semínima (1/4) pontuada
+	    const nota = Nota.create({ altura: "G", duracao: "3/8", options: { unidadeTempo: "1/4"} });
+	    
+	    const compasso = Compasso.create({
+		elementos: [nota],
+		options: {metrica: "4/4", unidadeTempo: "1/4"}
+	    });
+
+	    expect(compasso.elements[0]).toBe(nota);
+	    
+	    // Matemática do ABC:
+	    // L:1/4
+	    // Duração do G (3/8) -> (3/8) / (1/4) = 1.5 pulsos
+	    // Pulsos totais (4/4) = 4.0 pulsos
+	    // Falta = 4.0 - 1.5 = 2.5 pulsos
+            const result = compasso.toAbc();
+            console.log("----------------------");
+            console.log(result);
+            console.log("----------------------");
+	    expect(result).toBe("[M:4/4]G1.5 z2.5|");
+	});
     });
 });

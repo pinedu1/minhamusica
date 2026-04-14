@@ -13,16 +13,16 @@ const formatoStringObjeto = z.object({
 const formatoStringPura = z.string().regex(/^\d+\/[1-9]\d*$/);
 
 // 2. A União (O "Motor" de validação)
-export const uniaoTempoDuracao = z.union([
+export const uniaoTempoMetrica = z.union([
     formatoObjeto,
     formatoStringObjeto,
     formatoStringPura,
     // Validação segura para evitar import circular
     z.any().refine((val) => {
-        return val && typeof val === 'object' && val.constructor.name === 'TempoDuracao';
-    }, { message: "Deve ser uma instância de TempoDuracao" })
+        return val && typeof val === 'object' && val.constructor.name === 'TempoMetrica';
+    }, { message: "Deve ser uma instância de TempoMetrica" })
 ]);
 
 // 3. O EXPORT CORRIGIDO (Sem o objeto em volta)
 // Antes era: z.object({ unidadeTempo: uniaoTempoDuracao }) -> ISSO CAUSA O ERRO
-export const tempoDuracaoSchema = uniaoTempoDuracao;
+export const tempoMetricaSchema = uniaoTempoMetrica;

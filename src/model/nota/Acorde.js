@@ -1,29 +1,26 @@
 import { TempoDuracao } from "../tempo/TempoDuracao.js";
 import { Nota } from "./Nota.js";
-
+import { ElementoMusical } from "./ElementoMusical.js";
+import { acordeSchema } from "../../schemas/acordeSchema.js";
+import { NotaFrequencia } from "./NotaFrequencia.js";
+import { NotaFrequenciaSchema } from "../../schemas/notaFrequenciaSchema.js";
+import { TempoDuracaoSchema } from "../../schemas/tempoDuracaoSchema.js";
 /**
  * Representa um acorde musical, um conjunto de notas tocadas simultaneamente.
  * Suporta atributos de execução globais e notas de adorno (grace notes).
  */
-export class Acorde {
+export class Acorde extends ElementoMusical {
     /** @type {Array<Nota>} */
     #notas = [];
-    /** @type {TempoDuracao} */
-    #duracao;
-    /** @type {Object} */
-    #options;
-    /** @type {TempoDuracao} */
-    #unidadeTempo;
-
     /**
      * @param {Array<Nota>} notas - Notas que compõem o acorde.
      * @param {TempoDuracao} duracao - Duração do conjunto.
      * @param {Object} [options={}] - Atributos e contexto.
      */
     constructor(notas = [], duracao, options = {}) {
+        super(duracao, options);
         this.notas = notas;
-        this.duracao = duracao;
-        this.#options = {
+        this._options = {
             obra: null,
             compasso: null,
             unidadeTempo: null,
@@ -53,18 +50,12 @@ export class Acorde {
         };
 
         // Validação da propriedade graceNote (Idêntica à classe Nota)
-        const gn = this.#options.graceNote;
+        const gn = this._options.graceNote;
         if (gn !== false && gn !== null && !Array.isArray(gn)) {
             throw new TypeError("Falha ao criar Acorde: 'graceNote' deve ser false, null ou um Array de instâncias de Nota.");
         }
         if (Array.isArray(gn) && gn.some(n => !(n instanceof Nota))) {
             throw new TypeError("Falha ao criar Acorde: Todos os elementos em 'graceNote' devem ser instâncias de Nota.");
-        }
-
-        this.unidadeTempo = this.#options.unidadeTempo;
-
-        if (!(this.#unidadeTempo instanceof TempoDuracao)) {
-            throw new Error("Falha ao criar Acorde: 'unidadeTempo' (L:) não encontrado.");
         }
     }
 
@@ -74,7 +65,7 @@ export class Acorde {
      */
     toAbc() {
         let abc = "";
-        const opt = this.#options;
+        const opt = this._options;
 
         // 1. PREFIXOS GLOBAIS
         if (opt.ghostNote) abc += "!style=x!";
@@ -102,7 +93,7 @@ export class Acorde {
         abc += `[${notasAbc}]`;
 
         // 3. SUFIXO DE DURAÇÃO
-        abc += this.#formatarDuracaoAbc();
+        abc += this._formatarDuracaoAbc();
 
         // 4. SUFIXOS FINAIS
         if (opt.dedilhado) abc += `$"${opt.dedilhado}"`;
@@ -117,34 +108,13 @@ export class Acorde {
      * @returns {string}
      */
     #toGraceNotes() {
-        const gn = this.#options.graceNote;
+        const gn = this._options.graceNote;
         if (!Array.isArray(gn) || gn.length === 0) return "";
 
         const notasGraceAbc = gn.map(nota => nota.toGraceNote(true)).join('');
         return `{${notasGraceAbc}}`;
     }
 
-    /**
-     * @private
-     */
-    #formatarDuracaoAbc() {
-        const razao = this.#duracao.razao / this.unidadeTempo.razao;
-        if (Math.abs(razao - 1) < 0.000001) return "";
-
-        if (Number.isInteger(Number(razao.toFixed(8)))) {
-            return Math.round(razao).toString();
-        }
-
-        const d = Number(razao.toFixed(8));
-        if (d === 0.5) return "/";
-        
-        const denominador = Math.round(1 / d);
-        if (Math.abs((1 / denominador) - d) < 0.000001) {
-            return `/${denominador}`;
-        }
-
-        return razao.toString();
-    }
     #addNota(nota) {
         if (!(nota instanceof Nota)) {
             throw new TypeError('A nota deve ser uma instância de Nota.');
@@ -164,89 +134,51 @@ export class Acorde {
         arrayNotas.forEach(nota => this.#addNota(nota));
     }
 
-    get duracao() { return this.#duracao; }
-    
-    set duracao(val) {
-        if (!(val instanceof TempoDuracao)) {
-            throw new TypeError("A duração do acorde deve ser uma instância de TempoDuracao.");
-        }
-        this.#duracao = val;
-    }
-
-    get unidadeTempo() {
-        return this.#unidadeTempo ||
-            this.#options.compasso?.unidadeTempo ||
-            this.#options.voz?.unidadeTempo ||
-            this.#options.obra?.unidadeTempo;
-    }
-    
-    set unidadeTempo( tempo ) {
-        if (!(tempo instanceof TempoDuracao)) {
-            throw new TypeError("O 'unidadeTempo' do acorde deve ser do tipo TempoDuracao.");
-        }
-        this.#unidadeTempo = tempo;
-    }
-    get options() { return this.#options; }
-
     /**
      * USAGE: Helper para criação rápida de Acorde a partir de um JSON.
-     * Ex: Acorde.create({ notas: [{ freq: "C", sustenido: true }, { freq: "E," }], tempo: "1/4", duracao: "1/4" })
+     * Ex: Acorde.create({ notas: [{ altura: "C", duracao: "1/4" }, { altura: "E", duracao: "1/4" }], options: { unidadeTempo: "4/4" } })
      */
-    static create(config = {}) {
-        let { notas, tempo, duracao, unidadeTempo, ...options } = config;
+    /**
+     * USAGE: Helper para criação rápida de Acorde a partir de um JSON.
+     */
+    static create(dados) {
+        if (dados instanceof Acorde) return dados;
 
-        if (!notas || !Array.isArray(notas)) {
-            throw new Error("A propriedade 'notas' é obrigatória e deve ser um array no create() de Acorde.");
+        // 1. Validação via Zod
+        const resultado = acordeSchema.safeParse(dados);
+
+        if (!resultado.success) {
+            throw new TypeError("Acorde.create: Erro na estrutura dos dados: " + resultado.error.message);
         }
 
-        // Processa o tempo do acorde (duração dele próprio)
-        tempo = tempo || "1";
-        let duracaoObj;
-        if (tempo instanceof TempoDuracao) {
-            duracaoObj = tempo;
-        } else {
-            const parts = tempo.toString().split("/");
-            const num = parseInt(parts[0]) || 1;
-            const den = parseInt(parts[1]) || 1;
-            duracaoObj = new TempoDuracao(num, den);
+        const { notas, duracao, options } = resultado.data;
+
+        // 2. Validação da Regra de Negócio (Hierarquia de Tempo)
+        if (!options.unidadeTempo && !options.compasso && !options.voz && !options.obra) {
+            throw new TypeError("Acorde.create: A unidadeTempo Global deve ser definida em algum nível da hierarquia.");
         }
 
-        // Processa a unidade de referência (L:)
-        const refTempo = duracao || unidadeTempo;
-        if (refTempo) {
-            if (refTempo instanceof TempoDuracao) {
-                options.unidadeTempo = refTempo;
-            } else {
-                const rParts = refTempo.toString().split("/");
-                const rNum = parseInt(rParts[0]) || 1;
-                const rDen = parseInt(rParts[1]) || 1;
-                options.unidadeTempo = new TempoDuracao(rNum, rDen);
-            }
-        }
-
-        // Instancia as notas
-        const notasInstanciadas = notas.map(notaConfig => {
-            if (notaConfig instanceof Nota) return notaConfig;
-            
-            // Adiciona a unidadeTempo ao contexto da nota
-            const notaOpt = { ...notaConfig };
-            if (options.unidadeTempo) {
-                notaOpt.unidadeTempo = options.unidadeTempo;
-            }
-            
-            return Nota.create(notaOpt);
+        // 3. Instanciação recursiva das Notas
+        // Como o 'notas' do JSON são objetos puros, transformamos em instâncias de Nota
+        const instanciasNotas = notas.map(n =>{
+            if (!n.options.unidadeTempo) n.options.unidadeTempo = options.unidadeTempo;
+            return Nota.create(n);
         });
 
-        // Caso options possua graceNotes em JSON, as converte para instâncias de Nota
-        if (options.graceNote && Array.isArray(options.graceNote)) {
-            options.graceNote = options.graceNote.map(gnConfig => {
-                if (gnConfig instanceof Nota) return gnConfig;
-                const gnOpt = { ...gnConfig };
-                if (options.unidadeTempo) gnOpt.unidadeTempo = options.unidadeTempo;
-                return Nota.create(gnOpt);
-            });
+        // 4. Instanciação da Duração e Unidade de Tempo
+        const instanciaDuracao = TempoDuracao.create(duracao);
+        const optionsProcessado = { ...options };
+
+        if (options.unidadeTempo) {
+            optionsProcessado.unidadeTempo = TempoDuracao.create(options.unidadeTempo);
         }
 
-        return new Acorde(notasInstanciadas, duracaoObj, options);
+        // Tratamento de GraceNotes se forem um array
+        if (Array.isArray(options.graceNote)) {
+            optionsProcessado.graceNote = options.graceNote.map(n => Nota.create(n));
+        }
+
+        // 5. Retorna a nova instância de Acorde
+        return new Acorde(instanciasNotas, instanciaDuracao, optionsProcessado);
     }
 }

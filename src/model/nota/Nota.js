@@ -1,31 +1,28 @@
 import { NotaFrequencia } from "./NotaFrequencia.js";
 import { TempoDuracao } from "../tempo/TempoDuracao.js";
-
+import { notaSchema } from "../../schemas/notaSchema.js";
+import { NotaFrequenciaSchema } from "../../schemas/notaFrequenciaSchema.js";
+import { TempoDuracaoSchema } from "../../schemas/tempoDuracaoSchema.js";
+import { ElementoMusical } from "./ElementoMusical.js";
 /**
  * Representa uma nota musical completa, integrando altura, duração e atributos de execução.
  */
-export class Nota {
+export class Nota extends ElementoMusical {
     /** @type {NotaFrequencia} */
     #altura;
-    /** @type {TempoDuracao} */
-    #duracao;
-    /** @type {Object} */
-    #options;
-    /**
-     * Unidade de Tempo herada dos objetos pai
-     * @type {TempoDuracao} */
-    #unidadeTempo;
-
     /**
      * @param {NotaFrequencia} altura
      * @param {TempoDuracao} duracao
      * @param {Object} [options={}]
      */
     constructor(altura, duracao, options = {}) {
+        super(duracao, options);
+        //
         this.altura = altura;
         this.duracao = duracao;
-        this.#options = {
+        this._options = {
             obra: null,
+            voz: null,
             compasso: null,
             unidadeTempo: null,
             
@@ -61,62 +58,55 @@ export class Nota {
             ...options
         };
 
-        const gn = this.#options.graceNote;
+        const gn = this._options.graceNote;
         if (gn !== false && gn !== null && !Array.isArray(gn)) {
             throw new TypeError("Falha ao criar Nota: 'graceNote' deve ser false, null ou Array<Nota>.");
         }
-
-        this.unidadeTempo = this.#options.unidadeTempo;
     }
 
     /**
      * USAGE: Helper para criação rápida de Nota a partir de um JSON.
-     * Ex: Nota.create({ freq: "C", tempo: "1/4", duracao: "1/4", sustenido: true })
+     * Ex: Nota.create({ altura: "C", duracao: "1/4", options:{ sustenido: true })
      */
-    static create(config = {}) {
-        let { freq, tempo, duracao, unidadeTempo, ...options } = config;
-        
-        if (!freq) throw new Error("A propriedade 'freq' é obrigatória no create().");
-        
-        const freqObj = NotaFrequencia.getByAbc(freq);
-        if (!freqObj) throw new Error(`NotaFrequencia não encontrada para: ${freq}`);
+    static create(dados) {
+        if (dados instanceof Nota) return dados;
 
-        //if (!tempo) throw new Error(`Nota.create: Você deve informar o tempo da nota. Exemplo: tempo: "1/4"`);
+        const resultado = notaSchema.safeParse(dados);
 
-        let duracaoObj;
-        if (tempo instanceof TempoDuracao) {
-            duracaoObj = tempo;
-        } else {
-            const parts = tempo.toString().split("/");
-            const num = parseInt(parts[0]) || 1;
-            const den = parseInt(parts[1]) || 1;
-            duracaoObj = new TempoDuracao(num, den);
+        // 1. Validação do Schema
+        if (!resultado.success) {
+            throw new TypeError("Nota.create: Erro na estrutura dos dados: " + resultado.error.message);
         }
 
-        const refTempo = duracao || unidadeTempo;
-        if (refTempo) {
-            if (refTempo instanceof TempoDuracao) {
-                options.unidadeTempo = refTempo;
-            } else {
-                const rParts = refTempo.toString().split("/");
-                const rNum = parseInt(rParts[0]) || 1;
-                const rDen = parseInt(rParts[1]) || 1;
-                options.unidadeTempo = new TempoDuracao(rNum, rDen);
-            }
+        const { altura, duracao, options } = resultado.data;
+
+        // 2. Validação da Regra de Negócio: Hierarquia de Tempo
+        if (!options.unidadeTempo && !options.compasso && !options.voz && !options.obra) {
+            throw new TypeError("Nota.create: A unidadeTempo Global deve ser definida em algum nível da hierarquia (Pausa/Compasso/Voz/Obra).");
         }
 
-        return new Nota(freqObj, duracaoObj, options);
+        // 3. Instanciação das dependências
+        const instanciaFrequencia = NotaFrequencia.getByAbc(altura);
+        const instanciaDuracao = TempoDuracao.create(duracao);
+
+        // 4. Tratamento específico para unidadeTempo se ela existir no options
+        const optionsProcessado = { ...options };
+        if (options.unidadeTempo) {
+            optionsProcessado.unidadeTempo = TempoDuracao.create(options.unidadeTempo);
+        }
+
+        // Retorno usando o spread para manter o DRY em todas as propriedades de options
+        return new Nota(instanciaFrequencia, instanciaDuracao, optionsProcessado);
     }
-
     /**
      * USAGE: Gera string ABC simplificada para notas de adorno.
      */
     toGraceNote() {
         let abc = "";
-        if (this.#options.sustenido) abc += "^";
-        if (this.#options.beQuad) abc += "=";
+        if (this._options.sustenido) abc += "^";
+        if (this._options.beQuad) abc += "=";
         abc += this.#altura.abc;
-        abc += this.#formatarDuracaoAbc();
+        abc += this._formatarDuracaoAbc();
         return abc;
     }
 
@@ -127,7 +117,7 @@ export class Nota {
      */
     toAbc( isAcorde = false ) {
         let abc = "";
-        const opt = this.#options;
+        const opt = this._options;
         
         // Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
         if ( isAcorde === true ) {
@@ -169,7 +159,7 @@ export class Nota {
         abc += this.#altura.abc;
 
         // 3. SUFIXO DE DURAÇÃO
-        abc += this.#formatarDuracaoAbc();
+        abc += this._formatarDuracaoAbc();
 
         // 4. SUFIXOS (Dedilhado e Ligaduras)
         if (opt.dedilhado) abc += `$"${opt.dedilhado}"`;
@@ -186,7 +176,7 @@ export class Nota {
      * @private
      */
     #toGraceNotes() {
-        const gn = this.#options.graceNote;
+        const gn = this._options.graceNote;
         if (!Array.isArray(gn) || gn.length === 0) return "";
         const notasGraceAbc = gn.map(nota => nota.toGraceNote()).join('');
         return `{${notasGraceAbc}}`;
@@ -195,22 +185,6 @@ export class Nota {
     /**
      * @private
      */
-    #formatarDuracaoAbc() {
-        // Substituído para usar o método toNota() da classe TempoDuracao se houver uma forma adequada
-        // A proporção de tempo é: (Duração da Nota / Unidade Base)
-        const razao = this.#duracao.razao / this.unidadeTempo.razao;
-
-        if (Math.abs(razao - 1) < 0.000001) return "";
-
-        if (Number.isInteger(Number(razao.toFixed(8)))) {
-            return Math.round(razao).toString();
-        }
-
-        const d = Number(razao.toFixed(8));
-        if (d === 0.5) return "/";
-        const den = Math.round(1 / d);
-        return Math.abs((1 / den) - d) < 0.000001 ? `/${den}` : razao.toString();
-    }
 
     // Getters / Setters
     get altura() { return this.#altura; }
@@ -218,27 +192,7 @@ export class Nota {
         if (!(val instanceof NotaFrequencia)) throw new Error("A altura deve ser NotaFrequencia.");
         this.#altura = val;
     }
-    get duracao() { return this.#duracao; }
-    set duracao(val) {
-        if (val === null && this.#duracao === null) return;
-        if (!(val instanceof TempoDuracao)) throw new Error("A duração deve ser TempoDuracao.");
-        this.#duracao = val;
-    }
-    get unidadeTempo() {
-        return this.#unidadeTempo ||
-            this.#options.compasso?.unidadeTempo ||
-            this.#options.voz?.unidadeTempo ||
-            this.#options.obra?.unidadeTempo;
-    }
-    set unidadeTempo( val ) {
-        if ((val === null || val === undefined ) && (this.#unidadeTempo === null || this.#unidadeTempo === undefined )) return;
-        if (!(val instanceof TempoDuracao)) {
-            throw new Error("A unidadeTempo deve ser TempoDuracao.");
-        }
-        this.#unidadeTempo = val;
-    }
-    get ligada() { return this.#options.ligada; }
-    set ligada(val) { this.#options.ligada = !!val; }
-    get options() { return this.#options; }
-
+    get ligada() { return this._options.ligada; }
+    set ligada(val) { this._options.ligada = !!val; }
+    get options() { return this._options; }
 }
