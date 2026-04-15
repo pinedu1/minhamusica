@@ -160,6 +160,63 @@ export class Nota extends ElementoMusical {
     }
     get ligada() { return this._options.ligada; }
     set ligada(val) { this._options.ligada = !!val; }
+
+    /**
+     * Converte a instância da Nota para um objeto JSON que pode ser usado para recriá-la.
+     * @returns {Object}
+     */
+    toJSON() {
+        const json = {
+            altura: this.#altura.abc,
+            duracao: this.duracao.toString(),
+        };
+
+        const defaultOptions = {
+            acento: false,
+            marcato: false,
+            staccato: false,
+            staccatissimo: false,
+            tenuto: false,
+            hammerOn: false,
+            pullOff: false,
+            ligada: false,
+            mordente: false,
+            upperMordent: false,
+            trinado: false,
+            roll: false,
+            fermata: false,
+            ghostNote: false,
+            graceNote: null,
+            arpeggio: false,
+            dedilhado: null,
+            sustenido: false,
+            beQuad: false,
+        };
+
+        const optionsToExport = {};
+
+        for (const key in this._options) {
+            if (Object.hasOwnProperty.call(defaultOptions, key)) {
+                const value = this._options[key];
+                const defaultValue = defaultOptions[key];
+
+                if (key === 'graceNote' && Array.isArray(value)) {
+                    if (value.length > 0) {
+                        optionsToExport[key] = value.map(gn => gn.toJSON());
+                    }
+                } else if (value !== defaultValue) {
+                    optionsToExport[key] = value;
+                }
+            }
+        }
+
+        if (Object.keys(optionsToExport).length > 0) {
+            json.options = optionsToExport;
+        }
+
+        return json;
+    }
+
     /**
      * USAGE: Helper para criação rápida de Nota a partir de um JSON.
      * Ex: Nota.create({ altura: "C", duracao: "1/4", options:{ sustenido: true })

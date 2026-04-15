@@ -1,10 +1,18 @@
 export class Ritmo {
     #ritmo = null;
+    #key = null;
     constructor( key = 'REEL' ) {
+        // Garantindo que a chave não seja nula ou indefinida
         if ( key == null || key === undefined ) {
             key = 'REEL';
         }
-        this.#ritmo = RitmoAbc[ key ];
+
+        // Atribui o objeto com nome e métrica
+        this.#ritmo = RitmoAbc[key];
+
+        // Como 'key' já é a string da chave (ex: 'TOADA'), basta salvar diretamente!
+        // Fazemos uma verificação simples: se This.#ritmo existe, a chave é válida.
+        this.#key = this.#ritmo ? key : null;
     }
     get nome() {
         if ( !this.#ritmo ) return null;
@@ -13,6 +21,9 @@ export class Ritmo {
     get metrica() {
         if ( !this.#ritmo ) return null;
         return this.#ritmo.metrica;
+    }
+    get key() {
+        return this.#key;
     }
     static create( ritmo = 'REEL' ) {
         // 2. Verifica se a chave informada existe no array de chaves
@@ -71,7 +82,7 @@ export const RitmoAbc = Object.freeze({
     LUNDU: { nome: "Lundu", metrica: "2/4" },
     MAMBO: { nome: "Mambo", metrica: "4/4" },
     MARACATU: { nome: "Maracatu", metrica: "2/4" },
-    MARCH: { nome: "March", metrica: "2/4" },
+    MARCHA_MILITAR: { nome: "March", metrica: "2/4" },
     MARCHINHA: { nome: "Marchinha", metrica: "2/4" },
     MAXIXE: { nome: "Maxixe", metrica: "2/4" },
     MAZURKA: { nome: "Mazurka", metrica: "3/4" },
@@ -98,6 +109,7 @@ export const RitmoAbc = Object.freeze({
     TANGO: { nome: "Tango", metrica: "4/4" },
     TOADA: { nome: "Toada", metrica: "2/4" },
     VANERA: { nome: "Vanera", metrica: "2/4" },
+    VALSA: { nome: "Valsa", metrica: "3/4" },
     VIRA: { nome: "Vira", metrica: "3/4" },
     WALTZ: { nome: "Waltz", metrica: "3/4" },
     XAXADO: { nome: "Xaxado", metrica: "2/4" },

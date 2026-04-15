@@ -197,6 +197,47 @@ export class Compasso {
     }
 
     /**
+     * Converte a instância do Compasso para um objeto JSON que pode ser usado para recriá-la.
+     * @returns {Object}
+     */
+    toJSON() {
+        const json = {
+            elementos: this.#elements.map(el => el.toJSON())
+        };
+
+        const options = {};
+
+        // Serializa apenas as opções que não são nulas, vazias ou padrão
+        if (this.#options.unidadeTempo) {
+            options.unidadeTempo = this.#options.unidadeTempo.toString();
+        }
+        if (this.#options.metrica) {
+            options.metrica = this.#options.metrica.toString();
+        }
+        if (this.#options.mudancaDeTom) {
+            options.mudancaDeTom = this.#options.mudancaDeTom.valor;
+        }
+        if (this.#options.anotacoes && this.#options.anotacoes.length > 0) {
+            options.anotacoes = this.#options.anotacoes;
+        }
+        if (this.#options.cifras && this.#options.cifras.length > 0) {
+            options.cifras = this.#options.cifras;
+        }
+        if (this.#options.letra && this.#options.letra.length > 0) {
+            options.letra = this.#options.letra;
+        }
+        // barraInicial e barraFinal são omitidos intencionalmente, pois o método `create`
+        // não possui a lógica para desserializá-los de uma string para uma instância de `TipoBarra`.
+        // Adicionar isso ao JSON quebraria a reconstrução.
+
+        if (Object.keys(options).length > 0) {
+            json.options = options;
+        }
+
+        return json;
+    }
+
+    /**
      * USAGE: Índice do compasso.
      */
     get index() { return this.#index; }

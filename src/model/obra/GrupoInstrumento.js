@@ -1,10 +1,12 @@
 export class GrupoInstrumento {
     #grupo = null;
+    #key = null;
     constructor( key ) {
         if ( key == null || key === undefined ) {
             key = 'CORDAS';
         }
         this.#grupo = GrupoInstrumentoAbc[ key ];
+        this.#key = key;
     }
     get nome() {
         if (!this.#grupo) return null;
@@ -13,6 +15,9 @@ export class GrupoInstrumento {
     get valor() {
         if (!this.#grupo) return null;
         return this.#grupo.valor
+    }
+    get key() {
+        return this.#key;
     }
     static create( key = 'CORDAS' ) {
         // 2. Verifica se a chave informada existe no array de chaves

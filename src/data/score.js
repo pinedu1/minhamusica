@@ -76,3 +76,79 @@ P:B
 "C" (5cdedc "Am" ec"Bm"B2"~G"dB |
 "A"[A2c2]"Am"[A2a2] "G"[G4B4d4g4] :|
 `;
+export default mzk_4 = `
+X:1
+T: Bagatelle No. 25 in A minor
+C: Ludwig van Beethoven
+M: 3/8
+L: 1/16
+Q: 1/8=98
+V:1 clef=treble name="Mão Dir."
+V:2 clef=bass name="Mão Esq."
+V:1
+e^d ed eB| dc A2 zC| EA B2 zE| ^GB c2 zE|
+e^d ed eB| dc A2 zC| EA B3D-| [cD-][BD] [AC]2 z2|
+e^d ed eB| dc A2 zC| EA B2 zE| ^GB c2 zE|
+e^d ed eB| dc A2 zC| EA B2 zD-| [cD-][BD] [AC]2 zB|
+cd e3G| fe2<d2F| ed c3E| dc Bz2E|
+ez2e e'z| z^d ez2d| e^d ed eB| dc A2 zC|
+EA B2 zE| ^GB c2 zE| e^d ed eB| dc A2 zC|
+EA B2 zD-| [cD-][BD] [AC]2 zB| cd2<e2G| fe d3F|
+ed c3E| dc B3/2z3/2E/2z/2| ez2e/2z/2 e'/2z3/2| z^d/2z/2 ez2d/2z/2|
+e^d/2z/2 ed eB| dc/2z/2 A3/2z3/2C| EA B2 zE| ^GB c2 zE/2z/2|
+e^d ed eB| dc A3/2z3/2C| EA B2 zD| cB/2z/2 [AC]3/2z3/2[cE]/2z/2|
+[cF]/2z/2[cGE]/2z/2 c3-c/2z/2| f3/2e/2 e2 d3/2z/2| ^a3/2=a/2 ag fe| dc ^A2 =A3/2^A/2|
+A/2G/2A/2^A/2 c4| d^d2<e2e| fA/2z/2 c3/2z/2 d/2c/2B/2c/2| d>B c/2g/2G/2g/2 A/2g/2B/2g/2|
+c/2g/2d/2g/2 e/2g/2c'/2b/2 a/2g/2f/2e/2| d/2g/2f/2d/2 c/2g/2G/2g/2 A/2g/2B/2g/2| c/2g/2d/2g/2 e/2g/2c'/2b/2 a/2g/2f/2e/2| d/2g/2f/2d/2 e/2f/2e/2^d/2 e/2B/2e/2d/2|
+e/2B/2e/2^d/2 e2>B2| e^d e3B| ez2^d ez| z^d ed eB|
+dc A2 zC| EA B2 zE| ^GB c2 zE| e^d ed eB|
+dc A2 zC| EA B2 zD| cB [AC]2 zB| cd2<e2G|
+fe2<d2F| ed2<c2E| dc Bz2E| ez2e e'z|
+z^d ez2d| e^d ed eB| dc2<A2C| EA B2 zE|
+^GB c2 zE| e^d ed eB| dc2<A2C| EA B2 zD-|
+[cD-][BD] [AC]2 z2| z2 [^c-^A-G-E-]4| [^c^AGE]z [d=AF]3z| [e^c][fd] [fd^G]3z|
+[fd^G]z [e-c-A-]4| [ecA]z [dF]3z| [cE][BD] [A-^FC-]3[AC]| [AC]z [AC]z [cE]z|
+[BD]z [AC]4| z2 [^c-^A-G-E-]4| [^c^AGE]z [d=AF]3z| [e^c][fd] [fd]3z|
+[fd]z [f-d-]4| [fd]z [^dG]3z| [dF][c^D] [^AF=D]4| [AF-D-][FD] [^GFD]3z|
+[^GFD]z [AEC]3z| z2 [BE]2 z2| z2  (3A,CE  (3Ace|  (3dcB  (3Ace  (3ac'e'|
+ (3d'c'b  (3ac'e'  (3a'c''e''|  (3d''c''b'  (3^a'=a'^g'  (3=g'^f'=f'|  (3e'^d'=d'  (3^c'=c'b  (3^a=a^g|  (3g^f=f e^d eB|
+dc A2 zC| EA B2 zE| ^GB c2 zE| e^d ed eB|
+dc A2 zC| EA B2 zD| cB [AC]2 zB| cd e3G|
+fe d3F| ed2<c2E| dc Bz2E| ez2e e'z|
+z^d ez2d| e^d ed eB| dc2<A2C| EA B3E|
+^GB c2 zE| e^d ed eB| dc A2 zC| EA B2 zD-|
+[cD-][BD] [AC]4|
+V:2
+z6| z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z|
+z6| z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z|
+z6| z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z|
+z6| z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z|
+z2 C,G, Cz| z2 G,,G, B,z| z2 A,,E, A,z| z2 E,,E, Ez|
+zE ez2^d| ez2^d ez| z6| z2 A,,E, A,z|
+z2 E,,E, ^G,z| z2 A,,E, A,z| z6| z2 A,,E, A,z|
+z2 E,,E, ^G,z| z2 A,,E, A,z| z2 C,G, Cz| z2 G,,G, B,z|
+z2 A,,E, A,z| z2 E,,E, Ez| zE ez2^d| ez2^d ez|
+z6| z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z|
+z6| z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,[C^A,]|
+[CA,][C^A,G,] F,=A, CA,| CA, F,^A, DA,| D^A, F,D [A,G,F,]D| [^A,G,F,]D F,=A, CA,|
+CA, F,A, CA,| CA, E,A, CA,| [DD,]F, G,E G,E| G,F [EC]z2[GF]|
+[GE][GFD] [GEC]z [A,F,]2| [B,G,]z Cz2[GF]| [GE][GFD] [GEC]z [A,F,]z| [B,G,]z [B,^G,]2 z2|
+z6| z6| z^d ez2d| ez4z|
+z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z| z6|
+z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z| z2 C,G, Cz|
+z2 G,,G, B,z| z2 A,,E, A,z| z2 E,,E, Ez| zE ez2^d|
+ez2^d ez| z6| z2 A,,E, A,z| z2 E,,E, ^G,z|
+z2 A,,E, A,z| z6| z2 A,,E, A,z| z2 E,,E, ^G,z|
+z2 A,,A,, A,,A,,| A,,A,, A,,A,, A,,A,,| A,,A,, A,,A,, A,,A,,| A,,A,, A,,A,, A,,A,,|
+A,,A,, A,,A,, A,,A,,| A,,A,, [A,,D,,][A,,D,,] [A,,D,,][A,,D,,]| [A,,D,,][A,,D,,] [A,,^D,,][A,,D,,] [A,,D,,][A,,D,,]| [A,,^D,,][A,,D,,] [A,,E,,][A,,E,,] [A,,E,,][A,,E,,]|
+[^G,,E,,][G,,E,,] [A,,A,,,-][A,,A,,,] A,,A,,| A,,A,, A,,A,, A,,A,,| A,,A,, A,,A,, A,,A,,| A,,A,, A,,A,, A,,A,,|
+A,,A,, ^A,,A,, A,,A,,| ^A,,A,, A,,A,, A,,A,,| ^A,,A,, A,,A,, A,,A,,| ^A,,A,, B,,B,, B,,B,,|
+B,,B,, C,2 z2| z2 [^G,E,]2 z2| z2 A,,,2 z2| [EC-A,]C [ECA,]z3|
+[ECA,]z [ECA,]z3| [ECA,]z [ECA,]z3| z6| z6|
+z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z| z6|
+z2 A,,E, A,z| z2 E,,E, ^G,z| z2 A,,E, A,z| z2 C,G, Cz|
+z2 G,,G, B,z| z2 A,,E, A,z| z2 E,,E, Ez| zE ez2^d|
+ez2^d ez| z6| z2 A,,E, A,z| z2 E,,E, ^G,z|
+z2 A,,E, A,z| z6| z2 A,,E, A,z| z2 E,,E, ^G,z|
+z2 [A,,A,,,]4|
+`;

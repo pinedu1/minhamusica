@@ -175,7 +175,91 @@ describe('Classe Voz', () => {
             const normalize = (str) => str.replace(/\\r\\n/g, '\\n').replace(/\\s+/g, ' ').trim();
             expect(normalize( result )).toBe(normalize(expectedAbc));
         });
+    });
+    describe('Método toJSON()', () => {
 
+        it('deve serializar uma voz simples para um JSON limpo', () => {
+            const voz = Voz.create({
+                id: "V1",
+                options: { nome: "Melodia", unidadeTempo: "1/4", metrica: "4/4", clave: { tipo: 'TREBLE' } },
+                compassos: [
+                    {
+                        elementos: [{ altura: "C", duracao: '1/4' }, { altura: "D", duracao: '1/4' }]
+                    }
+                ]
+            });
+
+            const json = voz.toJSON();
+
+            const expectedJSON = {
+                id: "V1",
+                options: { nome: "Melodia", unidadeTempo: "1/4", metrica: "4/4", clave: { tipo: 'TREBLE', oitava: 0 } },
+                compassos: [
+                    {
+                        elementos: [{ altura: "C", duracao: '1/4' }, { altura: "D", duracao: '1/4' }],
+                        options: { unidadeTempo: "1/4", metrica: "4/4" }
+                    }
+                ]
+            };
+
+            // Compasso toJSON includes inherited options, so we need to adjust the expectation
+            const compassoJson = voz.compassos[0].toJSON();
+            expectedJSON.compassos[0] = compassoJson;
+
+            expect(json).toEqual(expectedJSON);
+        });
+        it('deve ser o inverso exato do Voz.create()', () => {
+            const originalJSON = {
+                id: "V2",
+                options: {
+                    nome: "Baixo",
+                    sinonimo: "bx",
+                    unidadeTempo: "1/8",
+                    metrica: "6/8",
+                    clave: { tipo: 'BASS', oitava: 0 },
+                    direcaoHaste: 'down'
+                },
+                compassos: [
+                    {
+                        elementos: [
+                            { altura: "G,", duracao: "3/8" },
+                            { altura: "D", duracao: "3/8" }
+                        ]
+                    },
+                    {
+                        elementos: [
+                            { duracao: "6/8" }
+                        ]
+                    }
+                ]
+            };
+
+            const voz = Voz.create(originalJSON);
+            const jsonGerado = voz.toJSON();
+            console.log( JSON.stringify(jsonGerado) );
+
+            // Re-create from generated JSON to ensure it's a valid input
+            const vozRecriada = Voz.create(jsonGerado);
+
+            // The final JSON from the re-created object should match the generated one
+            expect(vozRecriada.toJSON()).toEqual(jsonGerado);
+
+            // And the re-created object should be deeply equal to the original one
+            expect(vozRecriada).toEqual(voz);
+        });
+
+        it('deve omitir o campo "options" se nenhuma opção relevante for fornecida', () => {
+            // Create a Voz instance with only an ID and no specific options
+            const voz = new Voz("V_empty", []);
+
+            // The constructor sets default values for options.
+            // The toJSON method's logic will then correctly skip these default/null values,
+            // resulting in an empty options object, and thus json.options will be undefined.
+
+            const json = voz.toJSON();
+
+            // The 'options' key should not exist in the final JSON
+            expect(json.options).toBeUndefined();
+        });
     });
 });
-

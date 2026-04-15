@@ -235,9 +235,6 @@ describe('Classe Compasso', () => {
             compasso.addCifra("Am", 0);
             compasso.addAnotacao("p", 0, "_"); // ^p sobre a segunda nota
             const result = compasso.toAbc();
-            // console.log("----------------------------------");
-            // console.log(result);
-            // console.log("----------------------------------");
             expect(result).toBe('[M:4/4]"Am""_p"C2 E2|');
         });
     });
@@ -258,9 +255,6 @@ describe('Classe Compasso', () => {
                 options: { metrica: "4/4", unidadeTempo: "1/4" }
             });
             const result = compasso.toAbc();
-            // console.log("----------------------------------");
-            // console.log(result);
-            // console.log("----------------------------------");
             expect(result).toBe('[M:4/4]zf [ed] z|');
             expect(compasso.elements).toHaveLength(3);
             expect(compasso.elements[0]).toBeInstanceOf(Pausa);
@@ -277,9 +271,6 @@ describe('Classe Compasso', () => {
             expect(acorde.duracao.razao).toBe(2); // ratio de 2/1
             expect(acorde.getUnidadeTempo().razao).toBe(0.25); // ratio de 1/4
             const result = compasso.toAbc();
-            // console.log("----------------------------------");
-            // console.log(result);
-            // console.log("----------------------------------");
             expect(result).toBe("[M:4/4][C]8|"); // 2 / 0.25 = 8
         });
         it('deve inicializar metrica e letra a partir do nível raiz do JSON e suportar chaves menores (Fm)', () => {
@@ -293,9 +284,6 @@ describe('Classe Compasso', () => {
             expect(compasso.metrica.denominador).toBe(8);
             expect(compasso.mudancaDeTom.valor).toBe(Tonalidade.create('Fm').valor);
             const result = compasso.toAbc();
-            // console.log("----------------------");
-            // console.log(result);
-            // console.log("----------------------");
             expect(result).toBe("[M:6/8][K:Fm] z3|");
         });
         it('deve permitir instanciar elementos usando classes reais em vez de objetos vazios', () => {
@@ -325,10 +313,92 @@ describe('Classe Compasso', () => {
             // Pulsos totais (4/4) = 4.0 pulsos
             // Falta = 4.0 - 1.5 = 2.5 pulsos
             const result = compasso.toAbc();
-            // console.log("----------------------");
-            // console.log(result);
-            // console.log("----------------------");
             expect(result).toBe("[M:4/4]G3/2 z5/2|");
+        });
+    });
+
+    describe('Método toJSON()', () => {
+        it('deve serializar um compasso simples para um JSON limpo', () => {
+            const compasso = Compasso.create({
+                elementos: [
+                    { duracao: "1/4" },
+                    { altura: "f", duracao: "1/4" },
+                    {
+                        notas: [
+                            { altura: "e", duracao: "1/4" },
+                            { altura: "d", duracao: "1/4" }
+                        ],
+                        duracao: "1/4",
+                    }
+                ],
+                options: { metrica: "4/4", unidadeTempo: "1/4" }
+            });
+
+            const json = compasso.toJSON();
+
+            const expectedJSON = {
+                elementos: [
+                    { duracao: "1/4" },
+                    { altura: "f", duracao: "1/4" },
+                    {
+                        notas: [
+                            { altura: "e", duracao: "1/4" },
+                            { altura: "d", duracao: "1/4" }
+                        ],
+                        duracao: "1/4",
+                    }
+                ],
+                options: { metrica: "4/4", unidadeTempo: "1/4" }
+            };
+
+            expect(json).toEqual(expectedJSON);
+        });
+
+        it('deve ser o inverso exato do Compasso.create()', () => {
+            const originalJSON = {
+                elementos: [
+                    { duracao: "1/8" },
+                    { altura: "a", duracao: "1/8", options: { staccato: true } },
+                    {
+                        notas: [
+                            { altura: "c", duracao: "1/4" },
+                            { altura: "e", duracao: "1/4" }
+                        ],
+                        duracao: "1/4",
+                        options: { arpeggio: true }
+                    }
+                ],
+                options: {
+                    metrica: "3/4",
+                    unidadeTempo: "1/8",
+                    mudancaDeTom: "Am",
+                    cifras: [{ texto: "Am", posicao: 1 }],
+                    letra: ["Teste"]
+                }
+            };
+
+            const compasso = Compasso.create(originalJSON);
+            const jsonGerado = compasso.toJSON();
+            console.log(JSON.stringify(jsonGerado, null, 2));
+            // O JSON gerado deve ser "deeply equal" ao original
+            expect(jsonGerado).toEqual(originalJSON);
+
+
+            // Bônus: Recriar a partir do JSON gerado deve produzir um objeto idêntico
+            const compassoRecriado = Compasso.create(jsonGerado);
+            expect(compassoRecriado).toEqual(compasso);
+        });
+
+        it('deve omitir o campo "options" se nenhuma opção relevante for fornecida', () => {
+            // Cria um compasso com o mínimo necessário para a validação dos elementos filhos
+            const ut = new TempoDuracao(1, 4);
+            const pausa = new Pausa(ut, { unidadeTempo: ut });
+            const compasso = new Compasso([pausa], {}); // Nenhuma opção no compasso
+
+            const json = compasso.toJSON();
+
+            // O campo 'options' não deve existir se estiver vazio
+            expect(json.options).toBeUndefined();
         });
     });
 });

@@ -194,5 +194,110 @@ describe('Nota', () => {
             expect(nota.getUnidadeTempo()).toBe(ref44);
         });
     });
+    describe('toJSON', () => {
+        it('deve serializar uma nota simples para JSON', () => {
+            const nota = Nota.create({ altura: 'C', duracao: '1/4', options: { unidadeTempo: "1/4" } });
+            const json = nota.toJSON();
+            console.log("-----------------------");
+            console.log(json);
+            console.log("-----------------------");
+            expect(json).to.deep.equal({
+                altura: 'C',
+                duracao: '1/4'
+            });
+        });
 
+        it('deve serializar uma nota com opções para JSON', () => {
+            const nota = Nota.create({
+                altura: 'D',
+                duracao: '1/2',
+                options: {
+                    unidadeTempo: "1/4",
+                    staccato: true,
+                    sustenido: true
+                }
+            });
+            const json = nota.toJSON();
+            console.log("-----------------------");
+            console.log(json);
+            console.log("-----------------------");
+            expect(json).to.deep.equal({
+                altura: 'D',
+                duracao: '1/2',
+                options: {
+                    staccato: true,
+                    sustenido: true
+                }
+            });
+        });
+
+        it('deve serializar uma nota com grace notes para JSON', () => {
+            const graceNote = Nota.create({ altura: 'E', duracao: '1/8', options: { unidadeTempo: "1/4" } });
+            const nota = Nota.create({
+                altura: 'F',
+                duracao: '1/1',
+                options: {
+                    unidadeTempo: "1/4",
+                    graceNote: [graceNote]
+                }
+            });
+            const json = nota.toJSON();
+            console.log("-----------------------");
+            console.log(json);
+            console.log("-----------------------");
+            expect(json).to.deep.equal({
+                altura: 'F',
+                duracao: '1/1',
+                options: {
+                    graceNote: [{
+                        altura: 'E',
+                        duracao: '1/8'
+                    }]
+                }
+            });
+        });
+
+        it('não deve serializar opções com valores padrão', () => {
+            const nota = Nota.create({
+                altura: 'G',
+                duracao: '1/4',
+                options: {
+                    unidadeTempo: "1/4",
+                    staccato: false, // Valor padrão
+                    ligada: false // Valor padrão
+                }
+            });
+            const json = nota.toJSON();
+            console.log("-----------------------");
+            console.log(json);
+            console.log("-----------------------");
+            expect(json).to.deep.equal({
+                altura: 'G',
+                duracao: '1/4'
+            });
+        });
+
+        it('deve reconstruir a nota a partir do JSON serializado', () => {
+            const original = Nota.create({
+                altura: 'A',
+                duracao: '1/2',
+                options: {
+                    unidadeTempo: "1/4",
+                    staccato: true,
+                    acento: true
+                }
+            });
+            const json = original.toJSON();
+            console.log("-----------------------");
+            console.log(json);
+            console.log("-----------------------");
+            json.options.unidadeTempo = "1/4";
+            const reconstruida = Nota.create({ ...json, options: { ...json.options } });
+
+            expect(reconstruida.altura.abc).to.equal(original.altura.abc);
+            expect(reconstruida.duracao.toString()).to.equal(original.duracao.toString());
+            expect(reconstruida._options.staccato).to.be.true;
+            expect(reconstruida._options.acento).to.be.true;
+        });
+    });
 });

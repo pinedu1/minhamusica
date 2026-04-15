@@ -3,9 +3,9 @@ import { Compasso } from '../compasso/Compasso.js';
 import { TempoAndamento } from '../tempo/TempoAndamento.js';
 import { TempoDuracao } from '../tempo/TempoDuracao.js';
 import { TempoMetrica } from '../tempo/TempoMetrica.js';
+import { Tonalidade } from '../compasso/Tonalidade.js';
 import { Ritmo } from './Ritmo.js';
 import { GrupoInstrumento } from './GrupoInstrumento.js';
-import { Tonalidade } from '../compasso/Tonalidade.js';
 import { Clave } from './Clave.js';
 import { obraSchema } from '../../schemas/obraSchema.js';
 
@@ -206,23 +206,9 @@ export class Obra {
         // K: Key (Obrigatório e deve ser o ÚLTIMO campo do cabeçalho)
         // Adiciona a clave na mesma linha da tonalidade se ela existir, padrão ABC
         if (opt.tonalidade && opt.tonalidade.valor) {
-            abc += `K:${opt.tonalidade.toAbc()}`;
-            if (opt.clave) {
-                abc += ` ${opt.clave.toAbc()}`;
-            }
-            abc += `\n`;
-        } else if (opt.tonalidade && typeof opt.tonalidade === 'string') {
-             abc += `K:${opt.tonalidade}`;
-             if (opt.clave) {
-                 abc += ` ${opt.clave.toAbc()}`;
-             }
-             abc += `\n`;
+            abc += `K:${opt.tonalidade.toAbc()}\n`;
         } else {
-            abc += `K:C`;
-            if (opt.clave) {
-                abc += ` ${opt.clave.toAbc()}`;
-            }
-            abc += `\n`; // Valor seguro de fallback para Tonalidade
+            abc += `K:C\n`;
         }
         
         // --- Corpo da Obra ---
@@ -239,6 +225,97 @@ export class Obra {
         }
 
         return abc.trim();
+    }
+
+    /**
+     * Converte a instância da Obra para um objeto JSON que pode ser usado para recriá-la.
+     * @returns {Object}
+     */
+    toJSON() {
+        const json = {
+            index: this.#index,
+            vozes: this.#vozes.map(voz => voz.toJSON())
+        };
+
+        const options = {};
+        const opt = this.#options;
+
+        /* Obj */
+        if (opt.unidadeTempo) {
+            options.unidadeTempo = opt.unidadeTempo.toString();
+        }
+        if (opt.metrica) {
+            options.metrica = opt.metrica.toString();
+        }
+        if (opt.tonalidade) {
+            options.tonalidade = opt.tonalidade.valor;
+        }
+        if (opt.clave) {
+            if (opt.clave.oitava === 0) {
+                options.clave = opt.clave.key;
+            } else {
+                return {tipo: opt.clave.tipo, oitava: opt.clave.oitava};
+            }
+        }
+        if (opt.tempoAndamento) {
+            options.tempoAndamento = { tempo: opt.tempoAndamento.tempo.toString(), duracao: opt.tempoAndamento.duracao };
+        }
+        if (opt.ritmo) {
+            options.ritmo = opt.ritmo.key;
+        }
+        if (opt.grupoInstrumento) {
+            options.grupoInstrumento = opt.grupoInstrumento.key;
+        }
+        /* Array */
+        if (opt.titulo) {
+            options.titulo = opt.titulo;
+        }
+        if (opt.letra) {
+            options.letra = opt.letra;
+        }
+        if (opt.livro && opt.livro.length > 0) {
+            options.livro = opt.livro;
+        }
+        if (opt.compositor && opt.compositor.length > 0) {
+            options.compositor = opt.compositor;
+        }
+        if (opt.discografia && opt.discografia.length > 0) {
+            options.discografia = opt.discografia;
+        }
+        if (opt.historia && opt.historia.length > 0) {
+            options.historia = opt.historia;
+        }
+        if (opt.informacoes && opt.informacoes.length > 0) {
+            options.informacoes = opt.informacoes;
+        }
+        if (opt.notas && opt.notas.length > 0) {
+            options.notas = opt.notas;
+        }
+        if (opt.fonte && opt.fonte.length > 0) {
+            options.fonte = opt.fonte;
+        }
+        /* String */
+        if (opt.notaTranscricao) {
+            options.notaTranscricao = opt.notaTranscricao;
+        }
+        if (opt.areaGeografica) {
+            options.areaGeografica = opt.areaGeografica.toString();
+        }
+        if (opt.origemGeografica) {
+            options.origemGeografica = opt.origemGeografica.toString();
+        }
+        if (opt.nomeArquivo && opt.nomeArquivo.length > 0) {
+            options.nomeArquivo = opt.nomeArquivo;
+        }
+        if (opt.partes) {
+            options.partes = opt.partes;
+        }
+
+        if (Object.keys(options).length > 0) {
+            json.options = options;
+        }
+
+        return json;
     }
 
     get index() {

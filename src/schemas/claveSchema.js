@@ -1,15 +1,16 @@
 import { z } from 'zod';
 import { ClaveTipo } from '../model/obra/ClaveTipo.js';
 
-// 1. Apenas JavaScript puro aqui, sem o "as [...]"
 const chavesClave = Object.keys(ClaveTipo);
 
-export const claveSchema = z.object({
-    // 2. Usamos esta técnica de array ([item[0], ...resto]) para satisfazer o Zod no JavaScript puro
-    tipo: z.enum([chavesClave[0], ...chavesClave.slice(1)], {
-        errorMap: () => ({ message: `Tipo de Clave inválido. Deve ser uma das seguintes: ${chavesClave.join(', ')}` })
-    }).default('TREBLE').optional(),
+// 1. Isolamos a regra do Enum para poder reaproveitá-la
+const claveEnumSchema = z.enum([chavesClave[0], ...chavesClave.slice(1)], {
+    errorMap: () => ({ message: `Clave inválida. Deve ser: ${chavesClave.join(', ')}` })
+});
 
+// 2. Mantemos o seu schema de objeto intacto, mas agora usando o enum isolado
+const claveObjectSchema = z.object({
+    tipo: claveEnumSchema.default('TREBLE').optional(),
     oitava: z.number({
         required_error: "A oitava é obrigatória",
         invalid_type_error: "A oitava deve ser um número"
@@ -18,3 +19,10 @@ export const claveSchema = z.object({
         .max(8, "A oitava deve ser no máximo 8")
         .default(0).optional()
 });
+
+// 3. Criamos a UNIÃO final exportada
+// O Zod vai testar a primeira regra; se falhar, tenta a segunda.
+export const claveSchema = z.union([
+    claveObjectSchema,
+    claveEnumSchema
+]);

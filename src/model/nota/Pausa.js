@@ -47,6 +47,37 @@ export class Pausa extends ElementoMusical {
         return abc;
     }
 
+    toJSON() {
+        const json = {
+            duracao: this.duracao.toString(),
+        };
+
+        const defaultOptions = {
+            fermata: false,
+            breath: null,
+            invisivel: false,
+        };
+
+        const optionsToExport = {};
+
+        for (const key in this._options) {
+            if (Object.hasOwnProperty.call(defaultOptions, key)) {
+                const value = this._options[key];
+                const defaultValue = defaultOptions[key];
+
+                if (value !== defaultValue) {
+                    optionsToExport[key] = value;
+                }
+            }
+        }
+
+        if (Object.keys(optionsToExport).length > 0) {
+            json.options = optionsToExport;
+        }
+
+        return json;
+    }
+
     get fermata() { return this._options.fermata === true; }
     get breath() { return this._options.fermata === true; }
     get invisivel() { return this._options.invisivel === true; }

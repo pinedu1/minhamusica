@@ -155,4 +155,99 @@ describe('Classe Acorde', () => {
             expect(acorde.toAbc()).toBe("[^CE,]2");
         });
     });
+    describe('toJSON', () => {
+        it('deve serializar um acorde simples para JSON', () => {
+            const acorde = new Acorde([
+                Nota.create({ altura: 'C', duracao: '1/4', options: { unidadeTempo: "1/4" } }),
+                Nota.create({ altura: 'E', duracao: '1/4', options: { unidadeTempo: "1/4" } }),
+                Nota.create({ altura: 'G', duracao: '1/4', options: { unidadeTempo: "1/4" } })
+            ], '1/4', { unidadeTempo: "1/4" });
+            const json = acorde.toJSON();
+            expect(json).to.deep.equal({
+                notas: [
+                    { altura: 'C', duracao: '1/4' },
+                    { altura: 'E', duracao: '1/4' },
+                    { altura: 'G', duracao: '1/4' }
+                ],
+                duracao: '1/4'
+            });
+        });
+        it('deve serializar um acorde com opções para JSON', () => {
+            const notas = [
+                Nota.create({ altura: 'C', duracao: '1/4', options: { unidadeTempo: "1/4" } }),
+                Nota.create({ altura: 'E', duracao: '1/4', options: { unidadeTempo: "1/4", sustenido: true } })
+            ];
+            const acorde = new Acorde(notas, '1/4', { unidadeTempo: "1/4", staccato: true, fermata: true });
+            const json = acorde.toJSON();
+            expect(json).to.deep.equal({
+                notas: [
+                    { altura: 'C', duracao: '1/4' },
+                    { altura: 'E', duracao: '1/4', options: { sustenido: true } }
+                ],
+                duracao: '1/4',
+                options: {
+                    staccato: true,
+                    fermata: true
+                }
+            });
+        });
+        it('deve serializar um acorde com grace notes para JSON', () => {
+            const graceNote = Nota.create({ altura: 'D', duracao: '1/8', options: { unidadeTempo: "1/4" } });
+            const notas = [
+                Nota.create({ altura: 'C', duracao: '1/4', options: { unidadeTempo: "1/4" } }),
+                Nota.create({ altura: 'E', duracao: '1/4', options: { unidadeTempo: "1/4" } })
+            ];
+            const acorde = new Acorde(notas, '1/4', { unidadeTempo: "1/4", graceNote: [graceNote] });
+            const json = acorde.toJSON();
+            expect(json).to.deep.equal({
+                notas: [
+                    { altura: 'C', duracao: '1/4' },
+                    { altura: 'E', duracao: '1/4' }
+                ],
+                duracao: '1/4',
+                options: {
+                    graceNote: [{
+                        altura: 'D',
+                        duracao: '1/8'
+                    }]
+                }
+            });
+        });
+        it('não deve serializar opções com valores padrão', () => {
+            const notas = [
+                Nota.create({ altura: 'C', duracao: '1/4', options: { unidadeTempo: "1/4" } })
+            ];
+            const acorde = new Acorde(notas, '1/4', { unidadeTempo: "1/4", staccato: false, ligada: false });
+            const json = acorde.toJSON();
+            expect(json).to.deep.equal({
+                notas: [
+                    { altura: 'C', duracao: '1/4' }
+                ],
+                duracao: '1/4'
+            });
+        });
+        it('deve reconstruir o acorde a partir do JSON serializado', () => {
+            const original = Acorde.create({
+                notas: [
+                    { altura: 'C', duracao: '1/4', options: { unidadeTempo: "1/4" } }
+                    , { altura: 'E', duracao: '1/4', options: { unidadeTempo: "1/4", sustenido: true } }
+                ],
+                duracao: '1/4',
+                options: {
+                    unidadeTempo: "1/4",
+                    staccato: true
+                }
+            });
+            const json = original.toJSON();
+            json.options.unidadeTempo = "1/4";
+            const reconstruido = Acorde.create({ ...json, options: { ...json.options } });
+
+            expect(reconstruido.notas.length).to.equal(2);
+            expect(reconstruido.notas[0].altura.abc).to.equal('C');
+            expect(reconstruido.notas[1].altura.abc).to.equal('E');
+            expect(reconstruido.notas[1]._options.sustenido).to.be.true;
+            expect(reconstruido.duracao.toString()).to.equal('1/4');
+            expect(reconstruido._options.staccato).to.be.true;
+        });
+    });
 });

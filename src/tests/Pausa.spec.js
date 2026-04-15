@@ -127,6 +127,66 @@ describe('Pausa', () => {
             pausa.voz = null;
             expect(pausa.getUnidadeTempo()).toEqual(mockObra.unidadeTempo);
         });
+    });
+    describe('toJSON', () => {
+        it('deve serializar uma pausa simples para JSON', () => {
+            const pausa = Pausa.create({ duracao: '1/4', options: { unidadeTempo: "1/4" } });
+            const json = pausa.toJSON();
+            expect(json).to.deep.equal({
+                duracao: '1/4'
+            });
+        });
 
+        it('deve serializar uma pausa com opções para JSON', () => {
+            const pausa = Pausa.create({
+                duracao: '1/2',
+                options: {
+                    unidadeTempo: "1/4",
+                    fermata: true,
+                    invisivel: true
+                }
+            });
+            const json = pausa.toJSON();
+            expect(json).to.deep.equal({
+                duracao: '1/2',
+                options: {
+                    fermata: true,
+                    invisivel: true
+                }
+            });
+        });
+
+        it('não deve serializar opções com valores padrão', () => {
+            const pausa = Pausa.create({
+                duracao: '1/4',
+                options: {
+                    unidadeTempo: "1/4",
+                    fermata: false, // Valor padrão
+                    invisivel: false // Valor padrão
+                }
+            });
+            const json = pausa.toJSON();
+            expect(json).to.deep.equal({
+                duracao: '1/4'
+            });
+        });
+
+        it('deve reconstruir a pausa a partir do JSON serializado', () => {
+            const original = Pausa.create({
+                duracao: '1/2',
+                options: {
+                    unidadeTempo: "1/4",
+                    fermata: true,
+                    breath: true
+                }
+            });
+            const json = original.toJSON();
+            json.options.unidadeTempo = "1/4";
+            const reconstruida = Pausa.create({ ...json, options: { ...json.options } });
+
+            expect(reconstruida.duracao.toString()).to.equal(original.duracao.toString());
+            expect(reconstruida.fermata).to.be.true;
+            expect(reconstruida.breath).to.be.true;
+        });
     });
 });

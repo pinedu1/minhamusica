@@ -102,6 +102,54 @@ export class Acorde extends ElementoMusical {
         return abc;
     }
 
+    toJSON() {
+        const json = {
+            notas: this.#notas.map(n => n.toJSON()),
+            duracao: this.duracao.toString(),
+        };
+
+        const defaultOptions = {
+            acento: false,
+            marcato: false,
+            staccato: false,
+            staccatissimo: false,
+            tenuto: false,
+            ligada: false,
+            arpeggio: false,
+            fermata: false,
+            ghostNote: false,
+            roll: false,
+            trinado: false,
+            mordente: false,
+            upperMordent: false,
+            graceNote: null,
+            dedilhado: null,
+        };
+
+        const optionsToExport = {};
+
+        for (const key in this._options) {
+            if (Object.hasOwnProperty.call(defaultOptions, key)) {
+                const value = this._options[key];
+                const defaultValue = defaultOptions[key];
+
+                if (key === 'graceNote' && Array.isArray(value)) {
+                    if (value.length > 0) {
+                        optionsToExport[key] = value.map(gn => gn.toJSON());
+                    }
+                } else if (value !== defaultValue) {
+                    optionsToExport[key] = value;
+                }
+            }
+        }
+
+        if (Object.keys(optionsToExport).length > 0) {
+            json.options = optionsToExport;
+        }
+
+        return json;
+    }
+
     /**
      * USAGE: Transforma a matriz de adornos em uma string ABC enfileirada.
      * @private
@@ -136,10 +184,6 @@ export class Acorde extends ElementoMusical {
 
     /**
      * USAGE: Helper para criação rápida de Acorde a partir de um JSON.
-     * Ex: Acorde.create({ notas: [{ altura: "C", duracao: "1/4" }, { altura: "E", duracao: "1/4" }], options: { unidadeTempo: "4/4" } })
-     */
-    /**
-     * USAGE: Helper para criação rápida de Acorde a partir de um JSON.
      */
     static create(dados) {
         if (dados instanceof Acorde) return dados;
@@ -159,8 +203,11 @@ export class Acorde extends ElementoMusical {
         }
 
         // 3. Instanciação recursiva das Notas
-        // Como o 'notas' do JSON são objetos puros, transformamos em instâncias de Nota
-        const instanciasNotas = notas.map(n =>{
+        const instanciasNotas = notas.map(n => {
+            // GARANTE que o objeto options exista no JSON cru da nota
+            n.options = n.options || {};
+
+            // Propaga o contexto do Acorde para a Nota, se a nota não tiver o seu próprio.
             if (!n.options.unidadeTempo && options.unidadeTempo) {
                 n.options.unidadeTempo = options.unidadeTempo;
             }

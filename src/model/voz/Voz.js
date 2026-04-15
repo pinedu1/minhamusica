@@ -76,7 +76,10 @@ export class Voz {
         if (this.#options.sinonimo) abc += ` nm="${this.#options.sinonimo}"`;
 
         if (this.#options.clave instanceof Clave) {
-            abc += ` ${this.#options.clave.toAbc()}`;
+            const clave = this.#options.clave;
+            if (clave) {
+                abc += ` ${clave.toVoz()}`;
+            }
         }
 
         if (this.#options.direcaoHaste !== 'auto') {
@@ -123,6 +126,53 @@ export class Voz {
         }
 
         return abc;
+    }
+
+    /**
+     * Converte a instância da Voz para um objeto JSON que pode ser usado para recriá-la.
+     * @returns {Object}
+     */
+    toJSON() {
+        const json = {
+            id: this.#id,
+            compassos: this.#compassos.map(c => c.toJSON())
+        };
+
+        const options = {};
+        const opt = this.#options;
+        if (opt.nome) {
+            options.nome = opt.nome;
+        }
+        if (opt.sinonimo) {
+            options.sinonimo = opt.sinonimo;
+        }
+        if (opt.direcaoHaste && opt.direcaoHaste !== 'auto') {
+            options.direcaoHaste = opt.direcaoHaste;
+        }
+        if (opt.clave) {
+            options.clave = opt.clave.toJSON();
+        }
+        if (opt.stafflines) {
+            options.stafflines = opt.stafflines;
+        }
+        if (opt.middle) {
+            options.middle = opt.middle;
+        }
+        if (opt.quebraDeLinha && opt.quebraDeLinha !== 5) {
+            options.quebraDeLinha = opt.quebraDeLinha;
+        }
+        if (opt.metrica) {
+            options.metrica = opt.metrica.toString();
+        }
+        if (opt.unidadeTempo) {
+            options.unidadeTempo = opt.unidadeTempo.toString();
+        }
+
+        if (Object.keys(options).length > 0) {
+            json.options = options;
+        }
+
+        return json;
     }
 
     /**
@@ -198,7 +248,20 @@ export class Voz {
     set unidadeTempo(val) {
         this.#options.unidadeTempo = val;
     }
-
+    getClave() {
+        if ( this.#options.clave ) {
+            return this.#options.clave;
+        }
+        if ( this.#options.obra ) {
+            const obra = this.#options.obra;
+            if ( obra instanceof Obra) {
+                return obra.clave;
+            } else if ( obra.options.clave ) {
+                return obra.options.clave;
+            }
+        }
+        return null;
+    }
     /**
      * USAGE: Obtém a configuração atual da haste das notas.
      */

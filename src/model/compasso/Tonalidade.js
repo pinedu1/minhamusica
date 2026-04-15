@@ -1,6 +1,5 @@
 export class Tonalidade {
     #tonalidade = null
-
     /**
      * USAGE: Construtor da Tonalidade.
      * @param tonalidade @type{string}
@@ -20,7 +19,6 @@ export class Tonalidade {
         if (!this.#tonalidade) return null;
         return this.#tonalidade.tipo;
     }
-    
     toAbc() {
         return this.valor;
     }

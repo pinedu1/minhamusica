@@ -44,6 +44,9 @@ export class TempoAndamento {
     toAbc() {
         return `Q:${this.toString()}`;
     }
+    toJSON() {
+        return { tempo: this.#tempo.toString(), duracao: this.#duracao };
+    }
     
     /**
      * USAGE: Factory method. Aceita o formato JSON { tempo: '4/4', duracao: 95 } ou as propriedades soltas.
