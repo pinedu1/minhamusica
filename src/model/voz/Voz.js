@@ -376,4 +376,47 @@ export class Voz {
 
         return voz;
     }
+
+    /**
+     * USAGE: Cria uma nova instância de Voz a partir de um bloco de notação ABC.
+     * @param {{declaration: string, lines: Array<string>}} group - O grupo de linhas da voz.
+     * @param {Object} contextOptions - Opções herdadas do cabeçalho da Obra (L, M, K).
+     * @returns {Voz} Uma nova instância da classe Voz.
+     */
+    static parseAbc(group, contextOptions) {
+        const { declaration, lines } = group;
+        const voiceOptions = { ...contextOptions };
+
+        // 1. Parse da linha de declaração da Voz (V:)
+        const declarationParts = declaration.split(/\s+/);
+        const voiceId = declarationParts[0].substring(2);
+
+        const nameMatch = declaration.match(/name="([^"]+)"/);
+        if (nameMatch) voiceOptions.nome = nameMatch[1];
+
+        const synonymMatch = declaration.match(/nm="([^"]+)"/);
+        if (synonymMatch) voiceOptions.sinonimo = synonymMatch[1];
+        
+        const clefMatch = declaration.match(/clef=([^\s]+)/);
+        if (clefMatch) {
+            voiceOptions.clave = Clave.create(clefMatch[1]);
+        }
+
+        // 2. Combina todas as linhas de música em uma única string e remove comentários
+        const musicString = lines.map(line => {
+            const commentIndex = line.indexOf('%');
+            return commentIndex !== -1 ? line.substring(0, commentIndex).trim() : line.trim();
+        }).join(' ');
+
+        // 3. Divide a string de música pelos compassos
+        // Filtra strings vazias que podem surgir de barras de compasso no início/fim
+        const compassoStrings = musicString.split('|').map(s => s.trim()).filter(s => s);
+
+        // 4. Deleta o parsing para a classe Compasso
+        // Passa o contexto (unidade de tempo, métrica, etc.) para cada compasso
+        const compassos = compassoStrings.map(cs => Compasso.parseAbc(cs, voiceOptions));
+
+        // 5. Cria e retorna a instância da Voz
+        return new Voz(voiceId, compassos, voiceOptions);
+    }
 }

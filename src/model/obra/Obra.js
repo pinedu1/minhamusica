@@ -467,4 +467,143 @@ export class Obra {
             notaTranscricao: opt.notaTranscricao
         });
     }
+
+    /**
+     * USAGE: Cria uma nova instância de Obra a partir de uma string em notação ABC.
+     * Este método funciona como o ponto de entrada, orquestrando o parsing do
+     * cabeçalho e do corpo da música.
+     * @param {string} abcString - A string completa no formato ABC.
+     * @returns {Obra} Uma nova instância da classe Obra.
+     */
+    static parseAbc(abcString) {
+        const lines = abcString.split('\n').map(l => l.trim()).filter(l => l);
+
+        // 1. Separa o cabeçalho e o corpo. A Tonalidade (K:) é a última linha do cabeçalho.
+        const keyIndex = lines.findIndex(l => l.startsWith('K:'));
+        if (keyIndex === -1) {
+            throw new Error("Obra.parseAbc: Tonalidade (K:) não encontrada na string ABC.");
+        }
+
+        const headerLines = lines.slice(0, keyIndex + 1);
+        const bodyLines = lines.slice(keyIndex + 1);
+
+        // 2. Faz o parsing do cabeçalho para extrair o índice e as opções.
+        const { index, options } = Obra.#parseHeader(headerLines);
+
+        // 3. Garante a existência de uma voz (Voz) implícita, se necessário.
+        // Se houver linhas de música antes da primeira declaração 'V:' ou se não houver 'V:' de todo,
+        // injeta uma declaração de voz padrão 'V:1'.
+        const firstVoiceTagIndex = bodyLines.findIndex(l => l.startsWith('V:'));
+        const firstMusicalLineIndex = bodyLines.findIndex(l => 
+            !l.startsWith('%%') && !l.startsWith('P:') && l.match(/[a-zA-Z]/)
+        );
+        
+        if (firstMusicalLineIndex !== -1 && (firstVoiceTagIndex === -1 || firstMusicalLineIndex < firstVoiceTagIndex)) {
+            bodyLines.unshift('V:1');
+        }
+        
+        // 4. Agrupa as linhas do corpo por cada declaração de voz.
+        const voiceGroups = [];
+        let currentGroup = null;
+
+        for (const line of bodyLines) {
+            if (line.startsWith('V:')) {
+                if (currentGroup) {
+                    voiceGroups.push(currentGroup);
+                }
+                currentGroup = { declaration: line, lines: [] };
+            }
+            // Adiciona a linha ao grupo atual, ignorando comentários de linha e outros metadados do corpo
+            else if (currentGroup && line.trim() && !line.startsWith('%%')) {
+                currentGroup.lines.push(line);
+            }
+        }
+        if (currentGroup) {
+            voiceGroups.push(currentGroup);
+        }
+
+        // 5. Deleta o parsing de cada grupo para a classe Voz.
+        // As opções do cabeçalho (L, M, K) são passadas para o contexto do parsing da voz.
+        const vozes = voiceGroups.map(group => Voz.parseAbc(group, options));
+
+        // 6. Cria e retorna a instância final da Obra.
+        return new Obra(index, vozes, options);
+    }
+
+    /**
+     * @private
+     * USAGE: Processa as linhas do cabeçalho da notação ABC.
+     * @param {Array<string>} headerLines - As linhas que compõem o cabeçalho.
+     * @returns {{index: number, options: Object}} - O índice da obra e um objeto de opções.
+     */
+    static #parseHeader(headerLines) {
+        const options = {};
+        let index = 1;
+
+        const extractMulti = (prefix, line, target) => {
+            const value = line.substring(prefix.length).trim();
+            if (!target) return [value];
+            target.push(value);
+            return target;
+        };
+
+        for (const line of headerLines) {
+            if (line.startsWith('X:')) {
+                index = parseInt(line.substring(2).trim(), 10);
+            } else if (line.startsWith('T:')) {
+                options.titulo = extractMulti('T:', line, options.titulo);
+            } else if (line.startsWith('C:')) {
+                options.compositor = extractMulti('C:', line, options.compositor);
+            } else if (line.startsWith('M:')) {
+                options.metrica = TempoMetrica.create(line.substring(2).trim());
+            } else if (line.startsWith('L:')) {
+                options.unidadeTempo = TempoDuracao.create(line.substring(2).trim());
+            } else if (line.startsWith('Q:')) {
+                options.tempoAndamento = TempoAndamento.create(line.substring(2).trim());
+            } else if (line.startsWith('K:')) {
+                const content = line.substring(2).trim();
+                const parts = content.split(/\s+/);
+                options.tonalidade = Tonalidade.create(parts[0]);
+                
+                const clefPart = parts.find(p => p.startsWith('clef='));
+                if (clefPart) {
+                    options.clave = Clave.create(clefPart.substring('clef='.length));
+                }
+            } else if (line.startsWith('R:')) {
+                options.ritmo = Ritmo.create(line.substring(2).trim());
+            } else if (line.startsWith('A:')) {
+                options.areaGeografica = line.substring(2).trim();
+            } else if (line.startsWith('O:')) {
+                options.origemGeografica = line.substring(2).trim();
+            } else if (line.startsWith('B:')) {
+                options.livro = extractMulti('B:', line, options.livro);
+            } else if (line.startsWith('D:')) {
+                options.discografia = extractMulti('D:', line, options.discografia);
+            } else if (line.startsWith('F:')) {
+                options.nomeArquivo = line.substring(2).trim();
+            } else if (line.startsWith('G:')) {
+                options.grupoInstrumento = GrupoInstrumento.create(line.substring(2).trim());
+            } else if (line.startsWith('H:')) {
+                options.historia = extractMulti('H:', line, options.historia);
+            } else if (line.startsWith('I:')) {
+                options.informacoes = extractMulti('I:', line, options.informacoes);
+            } else if (line.startsWith('N:')) {
+                options.notas = extractMulti('N:', line, options.notas);
+            } else if (line.startsWith('P:')) {
+                options.partes = line.substring(2).trim();
+            } else if (line.startsWith('S:')) {
+                options.fonte = extractMulti('S:', line, options.fonte);
+            } else if (line.startsWith('W:')) {
+                options.letra = extractMulti('W:', line, options.letra);
+            } else if (line.startsWith('Z:')) {
+                options.notaTranscricao = line.substring(2).trim();
+            }
+        }
+
+        if (options.titulo && options.titulo.length === 1) {
+            options.titulo = options.titulo[0];
+        }
+
+        return { index, options };
+    }
 }

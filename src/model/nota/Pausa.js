@@ -118,4 +118,51 @@ export class Pausa extends ElementoMusical {
             compasso: validado.options.compasso
         });
     }
+
+    /**
+     * USAGE: Cria uma nova instância de Pausa a partir de uma string de notação ABC.
+     * @param {string} pausaString - A string da pausa (ex: "z2", "X/").
+     * @param {Object} contextOptions - Opções de contexto (L, M, K).
+     * @returns {Pausa} Uma nova instância da classe Pausa.
+     */
+    static parseAbc(pausaString, contextOptions) {
+        const pausaRegex = /([zxyZXY])([0-9]*\/*[0-9]*)?/;
+        const match = pausaString.match(pausaRegex);
+
+        if (!match) {
+            throw new Error(`Pausa.parseAbc: String de pausa inválida: "${pausaString}"`);
+        }
+
+        const [, tipo, duracaoStr] = match;
+
+        const pausaOptions = { ...contextOptions };
+        pausaOptions.invisivel = ['x', 'X'].includes(tipo);
+
+        let duracao;
+        const unidadeTempo = contextOptions.unidadeTempo || new TempoDuracao(1, 8); // Fallback
+
+        if (['Z', 'X'].includes(tipo)) {
+            // Pausa de compasso inteiro
+            const metrica = contextOptions.metrica;
+            if (!metrica) {
+                throw new Error("Pausa.parseAbc: Métrica (M:) não definida para pausa de compasso inteiro (Z ou X).");
+            }
+            duracao = new TempoDuracao(metrica.numerador, metrica.denominador);
+        } else if (duracaoStr) {
+            if (duracaoStr.includes('/')) {
+                if (duracaoStr.startsWith('/')) { // ex: /2
+                    duracao = new TempoDuracao(unidadeTempo.numerador, unidadeTempo.denominador * 2);
+                } else { // ex: 3/2
+                    const [numerador, denominador] = duracaoStr.split('/').map(Number);
+                    duracao = new TempoDuracao(unidadeTempo.numerador * numerador, unidadeTempo.denominador * denominador);
+                }
+            } else { // ex: 2
+                duracao = new TempoDuracao(unidadeTempo.numerador * Number(duracaoStr), unidadeTempo.denominador);
+            }
+        } else {
+            duracao = unidadeTempo;
+        }
+
+        return new Pausa(duracao, pausaOptions);
+    }
 }

@@ -239,4 +239,64 @@ export class Acorde extends ElementoMusical {
         // 5. Retorna a nova instância de Acorde
         return new Acorde(instanciasNotas, instanciaDuracao, optionsProcessado);
     }
+
+    /**
+     * USAGE: Cria uma nova instância de Acorde a partir de uma string de notação ABC.
+     * @param {string} acordeString - A string do acorde (ex: "[CEG]2").
+     * @param {Object} contextOptions - Opções de contexto (L, M, K).
+     * @returns {Acorde} Uma nova instância da classe Acorde.
+     */
+    static parseAbc(acordeString, contextOptions) {
+        const acordeRegex = /\[([^\]]+)\]([0-9]*\/*[0-9]*)?(-)?/;
+        const match = acordeString.match(acordeRegex);
+
+        if (!match) {
+            throw new Error(`Acorde.parseAbc: String de acorde inválida: "${acordeString}"`);
+        }
+
+        const [, notasStr, duracaoStr, ligadura] = match;
+        const acordeOptions = { ...contextOptions };
+
+        // 1. Duração do Acorde
+        const unidadeTempo = contextOptions.unidadeTempo || new TempoDuracao(1, 8); // Fallback
+        let duracao;
+
+        if (duracaoStr) {
+            if (duracaoStr.includes('/')) {
+                if (duracaoStr.startsWith('/')) { // ex: /2
+                    duracao = new TempoDuracao(unidadeTempo.numerador, unidadeTempo.denominador * 2);
+                } else { // ex: 3/2
+                    const [numerador, denominador] = duracaoStr.split('/').map(Number);
+                    duracao = new TempoDuracao(unidadeTempo.numerador * numerador, unidadeTempo.denominador * denominador);
+                }
+            } else { // ex: 2
+                duracao = new TempoDuracao(unidadeTempo.numerador * Number(duracaoStr), unidadeTempo.denominador);
+            }
+        } else {
+            duracao = unidadeTempo;
+        }
+
+        if (ligadura) {
+            acordeOptions.ligada = true;
+        }
+
+        // 2. Parsing das notas internas
+        const notaInternaRegex = /([=^_]?[a-gA-G][,']*)/g;
+        const notas = [];
+        let notaMatch;
+        while ((notaMatch = notaInternaRegex.exec(notasStr)) !== null) {
+            // A duração de cada nota interna é a mesma do acorde.
+            // Passamos a string da nota e o contexto, mas a duração será a do acorde.
+            const nota = Nota.parseAbc(notaMatch[0], contextOptions);
+            notas.push(nota);
+        }
+
+        // 3. Criação do Acorde
+        const acorde = new Acorde(notas, duracao, acordeOptions);
+        
+        // Garante que a duração de cada nota individual seja a mesma do acorde
+        acorde.notas.forEach(n => n.duracao = acorde.duracao);
+
+        return acorde;
+    }
 }

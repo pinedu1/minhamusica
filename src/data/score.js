@@ -21,9 +21,6 @@ a3/2 g f/ | g3/2 f e/ | e3/2 d3/2- | d3 |
 A/d/e/ f d/ | c B2 | A/d/e/ f d/ | c B2 |
 A/d/e/ f d/ | f d A/^c/ | d3- | d3 |]
 `;
-
-
-
 export const mzk_1 = `
 X:1
 T:Saudade
@@ -35,7 +32,6 @@ K:CV:1 nm="Violão (Nylon)" snm="Vln" clef=treble+16
     %%MIDI program 24
 V:1
 `;
-
 export const mzk_2 = `
 X:1
 T:Amargurado
@@ -48,7 +44,6 @@ V:T name="Viola Caipira"
     | z f ed cB | "E"[GEB,]G GG FG | "F#"[df][df] [df][ce] [Bd][Ac] | "B"[Bd][Bd] [Bd][Bd] [Ac][Bd] |
 | "G#"[ce]G =G^G A=A | "C#m"GG =G^G BG| "F#"AA =A^A dc | BF Bd f2- | "B"B'4 z2 |
 `;
-
 export const mzk_3 = `
 X:1
 T:Plead for Slough
@@ -76,7 +71,7 @@ P:B
 "C" (5cdedc "Am" ec"Bm"B2"~G"dB |
 "A"[A2c2]"Am"[A2a2] "G"[G4B4d4g4] :|
 `;
-export default mzk_4 = `
+export const mzk_4 = `
 X:1
 T: Bagatelle No. 25 in A minor
 C: Ludwig van Beethoven

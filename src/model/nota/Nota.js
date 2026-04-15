@@ -251,4 +251,64 @@ export class Nota extends ElementoMusical {
         // Retorno usando o spread para manter o DRY em todas as propriedades de options
         return new Nota(instanciaFrequencia, instanciaDuracao, optionsProcessado);
     }
+
+    /**
+     * USAGE: Cria uma nova instância de Nota a partir de uma string de notação ABC.
+     * @param {string} notaString - A string da nota (ex: "^C'2").
+     * @param {Object} contextOptions - Opções de contexto (L, M, K).
+     * @returns {Nota} Uma nova instância da classe Nota.
+     */
+    static parseAbc(notaString, contextOptions) {
+        const notaRegex = /([=^_]*)?([a-gA-G])([,']*)?([0-9]*\/*[0-9]*)?(-)?/;
+        const match = notaString.match(notaRegex);
+
+        if (!match) {
+            throw new Error(`Nota.parseAbc: String de nota inválida: "${notaString}"`);
+        }
+
+        const [, acidente, nome, oitava, duracaoStr, ligadura] = match;
+
+        const notaOptions = { ...contextOptions };
+
+        // 1. Acidentes
+        if (acidente) {
+            if (acidente.includes('^')) notaOptions.sustenido = true;
+            if (acidente.includes('=')) notaOptions.beQuad = true;
+            // Adicionar bemol (_) se necessário no futuro
+        }
+
+        // 2. Altura (Nome + Oitava)
+        const alturaAbc = `${nome}${oitava || ''}`;
+        const altura = NotaFrequencia.getByAbc(alturaAbc);
+
+        // 3. Duração
+        const unidadeTempo = contextOptions.unidadeTempo || new TempoDuracao(1, 8); // Fallback
+        let duracao;
+
+        if (duracaoStr) {
+            if (duracaoStr.includes('/')) {
+                if (duracaoStr.startsWith('/')) { // ex: /2
+                    duracao = new TempoDuracao(unidadeTempo.numerador, unidadeTempo.denominador * 2);
+                } else { // ex: 3/2
+                    const [numerador, denominador] = duracaoStr.split('/').map(Number);
+                    duracao = new TempoDuracao(unidadeTempo.numerador * numerador, unidadeTempo.denominador * denominador);
+                }
+            } else { // ex: 2
+                duracao = new TempoDuracao(unidadeTempo.numerador * Number(duracaoStr), unidadeTempo.denominador);
+            }
+        } else {
+            duracao = unidadeTempo;
+        }
+        
+        if (duracaoStr && duracaoStr.endsWith('-')) {
+            notaOptions.ligada = true;
+        }
+
+        // 4. Ligadura (tie)
+        if (ligadura) {
+            notaOptions.ligada = true;
+        }
+
+        return new Nota(altura, duracao, notaOptions);
+    }
 }

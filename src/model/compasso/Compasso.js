@@ -434,4 +434,43 @@ export class Compasso {
 
         return compasso;
     }
+
+    /**
+     * USAGE: Cria uma nova instância de Compasso a partir de uma string de notação ABC.
+     * @param {string} compassoString - A string contendo os elementos do compasso.
+     * @param {Object} contextOptions - Opções de contexto (L, M, K) herdadas da Voz/Obra.
+     * @returns {Compasso} Uma nova instância da classe Compasso.
+     */
+    static parseAbc(compassoString, contextOptions) {
+        // Regex para capturar notas, acordes, pausas e cifras
+        const elementRegex = /"([^"]+)"|(\[([^\]]+)\])|([zxyZXY])|([=^_]?[a-gA-G][,']*)([0-9]*\/*[0-9]*-?)/g;
+        const elements = [];
+        let match;
+
+        // Remove espaços extras para simplificar a regex
+        const cleanString = compassoString.replace(/\s+/g, ' ');
+
+        // Itera sobre todos os elementos musicais na string do compasso
+        while ((match = elementRegex.exec(cleanString)) !== null) {
+            const token = match[0];
+            
+            if (token.startsWith('"')) {
+                // TODO: Implementar parsing de cifras e anotações
+                continue;
+            }
+
+            if (token.startsWith('[')) {
+                // É um acorde
+                elements.push(Acorde.parseAbc(token, contextOptions));
+            } else if (/[zxyZXY]/.test(token[0])) {
+                // É uma pausa
+                elements.push(Pausa.parseAbc(token, contextOptions));
+            } else {
+                // É uma nota
+                elements.push(Nota.parseAbc(token, contextOptions));
+            }
+        }
+
+        return new Compasso(elements, contextOptions);
+    }
 }
