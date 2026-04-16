@@ -4,6 +4,7 @@ import { pausaSchema } from './pausaSchema.js';
 import { acordeSchema } from './acordeSchema.js';
 import { tempoDuracaoSchema } from './tempoDuracaoSchema.js';
 import { tempoMetricaSchema } from './tempoMetricaSchema.js';
+import { tipoBarraSchema } from './tipoBarraSchema.js';
 
 /**
  * Schema para validação de anotações e cifras
@@ -50,8 +51,8 @@ export const compassoSchema = z.object({
         metrica: tempoMetricaSchema.optional().nullable(),
 
         // Enums e Objetos de configuração
-        barraInicial: z.any().optional(), // TipoBarra
-        barraFinal: z.any().optional(),   // TipoBarra
+        barraInicial: tipoBarraSchema.optional().nullable(),
+        barraFinal: tipoBarraSchema.optional().nullable(),
         mudancaDeTom: z.any().optional().nullable(), // Tonalidade
     }).default({})
 });

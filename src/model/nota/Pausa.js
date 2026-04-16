@@ -139,7 +139,21 @@ export class Pausa extends ElementoMusical {
         pausaOptions.invisivel = ['x', 'X'].includes(tipo);
 
         let duracao;
-        const unidadeTempo = contextOptions.unidadeTempo || new TempoDuracao(1, 8); // Fallback
+        const unidadeTempo = (function() {
+            if (contextOptions.voz) {
+                const voz = contextOptions.voz;
+                if ( voz.getUnidadeTempo() && voz.getUnidadeTempo() instanceof TempoDuracao ) {
+                    return voz.getUnidadeTempo();
+                }
+            }
+            if (contextOptions.obra) {
+                const obra = contextOptions.obra;
+                if ( obra.getUnidadeTempo() && obra.getUnidadeTempo() instanceof TempoDuracao ) {
+                    return obra.getUnidadeTempo();
+                }
+            }
+            return new TempoDuracao(1, 8);
+        })();
 
         if (['Z', 'X'].includes(tipo)) {
             // Pausa de compasso inteiro

@@ -4,46 +4,17 @@ import { Clave } from "../obra/Clave.js";
 import { TempoMetrica } from "../tempo/TempoMetrica.js";
 import { TempoDuracao } from "../tempo/TempoDuracao.js";
 import { vozSchema } from "../../schemas/vozSchema.js";
+import { TipoBarra } from "../compasso/TipoBarra.js";
 
 /**
  * Representa uma camada musical independente (Voz) na obra.
  * Responsável por agrupar compassos e definir propriedades de exibição e playback.
  */
 export class Voz {
-    /**
-     * USAGE: Identificador único da voz (ex: 1, "V1").
-     * @type {string|number|null}
-     */
     #id;
-
-    /**
-     * USAGE: Container central de configurações de exibição da voz.
-     * @type {Object}
-     */
     #options = {};
-
-    /**
-     * USAGE: Lista ordenada de compassos que compõem esta voz.
-     * @type {Array<Compasso>}
-     */
     #compassos = [];
 
-    /**
-     * USAGE: Cria uma nova voz e inicializa suas propriedades através do objeto options.
-     *
-     * @param {Array<Compasso>} [compassos=[]] - Matriz inicial de compassos.
-     * @param {Object} [options={}] - Configurações de cabeçalho da voz.
-     *
-     * --- PROPRIEDADES DE #OPTIONS ---
-     * @param {Number|String|null} [options.id=null] - Identificador único no ABC.
-     * @param {Obra|null} [options.obra=null] - Vinculação imediata com a Obra.
-     * @param {String|null} [options.nome=null] - Nome completo da voz (ex: "Viola Ponteada").
-     * @param {String|null} [options.sinonimo=null] - Abreviação (nm=) da voz.
-     * @param {String} [options.direcaoHaste='auto'] - Direção das hastes ('up', 'down', 'auto').
-     * @param {Clave|null} [options.clave=null] - Definição de clave (clef=) inicial da voz.
-     * @param {Number|null} [options.stafflines=null] - Número de linhas da pauta (padrão 5).
-     * @param {String|null} [options.middle=null] - Define a nota central da pauta.
-     */
     constructor(id, compassos = [], options = {}) {
         this.compassos = compassos;
         this.id = id;
@@ -56,338 +27,195 @@ export class Voz {
             clave: null,
             stafflines: null,
             middle: null,
-            quebraDeLinha: 5,
+            quebraDeLinha: 4,
             metrica: null,
             ...options
         };
     }
 
-    /**
-     * USAGE: Gera a string ABC da voz completa, incluindo o cabeçalho V: e todos os seus compassos.
-     * Realiza a injeção de contexto rítmico (M: e L:) da obra em cada compasso.
-     *
-     * @returns {string} Ex: "V:1 name=\"Melodia\"\n| C D E | F G A |"
-     */
     toAbc() {
         let abc = `V:${this.#id || 1}`;
-
-        // Propriedades do cabeçalho da Voz
         if (this.#options.nome) abc += ` name="${this.#options.nome}"`;
         if (this.#options.sinonimo) abc += ` nm="${this.#options.sinonimo}"`;
-
         if (this.#options.clave instanceof Clave) {
             const clave = this.#options.clave;
-            if (clave) {
-                abc += ` ${clave.toVoz()}`;
-            }
+            if (clave) abc += ` ${clave.toVoz()}`;
         }
-
-        if (this.#options.direcaoHaste !== 'auto') {
-            abc += ` stem=${this.#options.direcaoHaste}`;
-        }
-
+        if (this.#options.direcaoHaste !== 'auto') abc += ` stem=${this.#options.direcaoHaste}`;
         if (this.#options.stafflines) abc += ` stafflines=${this.#options.stafflines}`;
         if (this.#options.middle) abc += ` middle=${this.#options.middle}`;
-
         abc += "\n";
+        abc += `V:${this.#id || 1}\n`;
+        if (this.#options.metrica) abc += this.#options.metrica.toCompasso();
 
-        if ( this.#options.metrica ) {
-            abc += this.#options.metrica.toCompasso();
-        }
+        let configQuebraLinha = this.getQuebraDeLinha() || 5;
+        if (configQuebraLinha <= 0) configQuebraLinha = 5;
 
-        let configQuebraLinha = this.#options.quebraDeLinha || 5;
-        if ( configQuebraLinha <= 0 ) {
-            configQuebraLinha = 5;
-        }
-        abc += "|";
-        abc += this.#compassos.map((compasso, index) => {
-            const textoABC = compasso.toAbc( );
-
-            // Se for o último compasso do array, não adiciona nenhum separador no final
-            if (index === this.#compassos.length - 1) {
-                return textoABC;
+        let compassoCount = 0;
+        const qtdeCompassos = this.#compassos.length;
+        if (this.#compassos.length > 0) {
+            let c = this.#compassos[0];
+            if (c.options && !c.options.barraInicial) {
+                c.options.barraInicial = TipoBarra.STANDARD;
             }
+        }
+        const compassosString = this.#compassos.map((compasso, index) => {
+            let compassoStr = '';
+            compassoStr += compasso.toAbc();
 
-            // Se o compasso atual for o 4º, 8º, 12º... a cauda é um \n. Senão, é um espaço.
-            const separador = ((index + 1) % configQuebraLinha === 0) ? '\n' : ' ';
+            compassoCount++;
+            if ( (index < (qtdeCompassos - 1)) && (compassoCount % configQuebraLinha === 0)) {
+                compassoStr += '\n|';
+            }
+            return compassoStr;
+        }).join('').trim();
 
-            return textoABC + separador;
+        abc += compassosString;
 
-        }).join(''); // Junta tudo sem adicionar caracteres extras
+        if (!abc.endsWith('|') && !abc.endsWith(':') && !abc.endsWith(']') && !abc.endsWith('\n')) {
+            abc += '|';
+        }
         abc += "\n";
 
         const lyrics = this.#compassos
             .filter(compasso => compasso.letra && compasso.letra.length > 0)
             .map(compasso => compasso.letra.join('-'))
             .join(' - ');
-
-        if (lyrics) {
-            abc += `w: ${lyrics}\n`;
-        }
+        if (lyrics) abc += `w: ${lyrics}\n`;
 
         return abc;
     }
 
-    /**
-     * Converte a instância da Voz para um objeto JSON que pode ser usado para recriá-la.
-     * @returns {Object}
-     */
     toJSON() {
         const json = {
             id: this.#id,
             compassos: this.#compassos.map(c => c.toJSON())
         };
-
         const options = {};
         const opt = this.#options;
-        if (opt.nome) {
-            options.nome = opt.nome;
-        }
-        if (opt.sinonimo) {
-            options.sinonimo = opt.sinonimo;
-        }
-        if (opt.direcaoHaste && opt.direcaoHaste !== 'auto') {
-            options.direcaoHaste = opt.direcaoHaste;
-        }
-        if (opt.clave) {
-            options.clave = opt.clave.toJSON();
-        }
-        if (opt.stafflines) {
-            options.stafflines = opt.stafflines;
-        }
-        if (opt.middle) {
-            options.middle = opt.middle;
-        }
-        if (opt.quebraDeLinha && opt.quebraDeLinha !== 5) {
-            options.quebraDeLinha = opt.quebraDeLinha;
-        }
-        if (opt.metrica) {
-            options.metrica = opt.metrica.toString();
-        }
-        if (opt.unidadeTempo) {
-            options.unidadeTempo = opt.unidadeTempo.toString();
-        }
-
-        if (Object.keys(options).length > 0) {
-            json.options = options;
-        }
-
+        if (opt.nome) options.nome = opt.nome;
+        if (opt.sinonimo) options.sinonimo = opt.sinonimo;
+        if (opt.direcaoHaste && opt.direcaoHaste !== 'auto') options.direcaoHaste = opt.direcaoHaste;
+        if (opt.clave) options.clave = opt.clave.toJSON();
+        if (opt.stafflines) options.stafflines = opt.stafflines;
+        if (opt.middle) options.middle = opt.middle;
+        if (opt.quebraDeLinha && opt.quebraDeLinha !== 5) options.quebraDeLinha = opt.quebraDeLinha;
+        if (opt.metrica) options.metrica = opt.metrica.toString();
+        if (opt.unidadeTempo) options.unidadeTempo = opt.unidadeTempo.toString();
+        if (Object.keys(options).length > 0) json.options = options;
         return json;
     }
 
-    /**
-     * USAGE: Obtém a Obra à qual esta voz pertence.
-     */
     get obra() { return this.#options.obra; }
-
-    /**
-     * USAGE: Associa esta voz a uma Obra. Valida a instância.
-     */
     set obra(val) {
-        if (val != null && !(val instanceof Obra)) {
-            throw new TypeError("Voz: 'obra' deve ser uma instância de Obra.");
-        }
+        if (val != null && !(val instanceof Obra)) throw new TypeError("Voz: 'obra' deve ser uma instância de Obra.");
         this.#options.obra = val;
     }
 
-    /**
-     * USAGE: Obtém o identificador único da voz.
-     */
     get id() { return this.#id; }
-
-    /**
-     * USAGE: Define o identificador da voz (usado no V: do ABC).
-     */
     set id(val) { this.#id = val; }
 
-    /**
-     * USAGE: Retorna a coleção de compassos da voz.
-     */
     get compassos() { return this.#compassos; }
-
-    /**
-     * USAGE: Substitui a coleção de compassos, garantindo a integridade dos objetos.
-     */
     set compassos(arrayCompassos) {
-        if (!Array.isArray(arrayCompassos)) {
-            throw new TypeError('Voz: Compassos devem ser fornecidos em um Array.');
-        }
+        if (!Array.isArray(arrayCompassos)) throw new TypeError('Voz: Compassos devem ser fornecidos em um Array.');
         this.#compassos = [];
         arrayCompassos.forEach(c => this.addCompasso(c));
     }
-    /**
-     * USAGE: Adiciona um compasso à voz, definindo seu índice e vinculando a referência de voz.
-     * @param {Compasso} compasso
-     */
+
     addCompasso(compasso) {
-        if (!(compasso instanceof Compasso)) {
-            throw new TypeError('Voz: O objeto compasso adicionado deve ser uma instância de Compasso.');
-        }
+        if (!(compasso instanceof Compasso)) throw new TypeError('Voz: O objeto compasso adicionado deve ser uma instância de Compasso.');
         compasso.index = this.#compassos.length + 1;
         compasso.options.voz = this;
         this.#compassos.push(compasso);
     }
+
     getUnidadeTempo() {
-        if ( this.#options.unidadeTempo ) {
-            return this.#options.unidadeTempo;
-        }
-        if ( this.#options.obra ) {
+        if (this.#options.unidadeTempo) return this.#options.unidadeTempo;
+        if (this.#options.obra) {
             const obra = this.#options.obra;
-            if ( obra instanceof Obra) {
-                return obra.getUnidadeTempo();
-            } else if ( obra.options.unidadeTempo ) {
-                return obra.options.unidadeTempo;
-            }
+            if (obra instanceof Obra) return obra.getUnidadeTempo();
+            if (obra.options.unidadeTempo) return obra.options.unidadeTempo;
         }
         return null;
+    }
 
-    }
-    get unidadeTempo() {
-        return this.#options.unidadeTempo;
-    }
-    set unidadeTempo(val) {
-        this.#options.unidadeTempo = val;
+    get unidadeTempo() { return this.#options.unidadeTempo; }
+    set unidadeTempo(val) { this.#options.unidadeTempo = val; }
+    getQuebraDeLinha() {
+        if (this.#options.obra) {
+            const obra = this.#options.obra;
+            if (obra instanceof Obra) return obra.options.quebraDeLinha;
+            if (obra.options.quebraDeLinha) return obra.options.quebraDeLinha;
+        }
+        return this.#options.quebraDeLinha;
     }
     getClave() {
-        if ( this.#options.clave ) {
-            return this.#options.clave;
-        }
-        if ( this.#options.obra ) {
+        if (this.#options.clave) return this.#options.clave;
+        if (this.#options.obra) {
             const obra = this.#options.obra;
-            if ( obra instanceof Obra) {
-                return obra.clave;
-            } else if ( obra.options.clave ) {
-                return obra.options.clave;
-            }
+            if (obra instanceof Obra) return obra.clave;
+            if (obra.options.clave) return obra.options.clave;
         }
         return null;
     }
-    /**
-     * USAGE: Obtém a configuração atual da haste das notas.
-     */
-    get direcaoHaste() { return this.#options.direcaoHaste; }
 
-    /**
-     * USAGE: Define a direção das hastes ('up', 'down', 'auto').
-     */
+    get direcaoHaste() { return this.#options.direcaoHaste; }
     set direcaoHaste(val) {
         if (val == null) { this.#options.direcaoHaste = 'auto'; return; }
-        if (val !== 'auto' && val !== 'up' && val !== 'down') {
-            throw new TypeError("Voz: Direção da haste deve ser 'auto', 'up' ou 'down'.");
-        }
+        if (!['auto', 'up', 'down'].includes(val)) throw new TypeError("Voz: Direção da haste deve ser 'auto', 'up' ou 'down'.");
         this.#options.direcaoHaste = val;
     }
+
     getMetrica() {
-        if ( this.#options.metrica ) {
-            return this.#options.metrica;
-        }
-        if ( this.#options.obra ) {
+        if (this.#options.metrica) return this.#options.metrica;
+        if (this.#options.obra) {
             const obra = this.#options.obra;
-            if ( obra instanceof Obra) {
-                return obra.getMetrica();
-            } else if ( obra.options.metrica ) {
-                return obra.options.metrica;
-            }
+            if (obra instanceof Obra) return obra.getMetrica();
+            if (obra.options.metrica) return obra.options.metrica;
         }
         return null;
     }
 
-    get metrica() {
-        return this.#options.metrica;
-    }
+    get metrica() { return this.#options.metrica; }
     set metrica(val) {
         if (val == null) { this.#options.metrica = null; return; }
         if (!(val instanceof TempoMetrica)) throw new TypeError('Voz: TempoMetrica inválido.');
         this.#options.metrica = val;
     }
+
     get options() { return this.#options; }
-    /**
-     * USAGE: Helper estático para criação rápida de Voz a partir de um JSON.
-     * Ex: Voz.create( { "compassos": [ { "elementos": [ { "freq": "C" }, { "notas": [ { "freq": "E" } ] }, {} ], "options": { "tempo": "1", "duracao": "1/8" } }, { "elementos": [ { "freq": "C" }, { "notas": [ { "freq": "E" } ] }, {} ], "options": { "tempo": "1", "duracao": "1/8" } } ], "options": { "nome": "Metais", "sinonimo": "mtl", "direcaoHaste": "up", "clave": {}, "stafflines": 5, "middle": "B" } } );
-     *
-     * @param {Object} [json={}] - Objeto raiz contendo os dados brutos da voz.
-     * @param {Array<Object>} [json.compassos=[]] - Matriz de objetos JSON literais que serão hidratados em instâncias de Compasso.
-     * @param {Object} [json.options={}] - Objeto interno com as configurações e metadados da voz.
-     * @param {Number|String|null} [json.options.id=null] - Identificador único no ABC.
-     * @param {Obra|null} [json.options.obra=null] - Vinculação imediata com a Obra.
-     * @param {String|null} [json.options.nome=null] - Nome completo da voz (ex: "Viola Ponteada").
-     * @param {String|null} [json.options.sinonimo=null] - Abreviação (nm=) da voz.
-     * @param {String} [json.options.direcaoHaste='auto'] - Direção das hastes ('up', 'down', 'auto').
-     * @param {Object|null} [json.options.clave=null] - Objeto literal (JSON) que será hidratado em uma instância de Clave.
-     * @param {Number|null} [json.options.stafflines=null] - Número de linhas da pauta (padrão 5).
-     * @param {String|null} [json.options.middle=null] - Define a nota central da pauta.
-     * @returns {Voz} Uma nova instância hidratada de Voz.
-     */
+
     static create(json = {}) {
         if (json instanceof Voz) return json;
         if (json?.id === undefined || json?.id === null) {
             throw new TypeError("Voz.create: Erro na estrutura dos dados: O ID da voz é obrigatório.");
-            return;
         }
-
-        // 1. Validação via Zod
         const resultado = vozSchema.safeParse(json);
-
         if (!resultado.success) {
-            throw new TypeError("Voz.create: Erro na estrutura dos dados: " +
-                JSON.stringify(resultado.error.format(), null, 2));
+            throw new TypeError("Voz.create: Erro na estrutura dos dados: " + JSON.stringify(resultado.error.format(), null, 2));
         }
-
         const { id, compassos, options } = resultado.data;
-        // 2. Processamento das Opções Complexas PRIMEIRO
         const optionsProcessado = { ...options };
-
-        if (options.unidadeTempo) {
-            optionsProcessado.unidadeTempo = TempoDuracao.create(options.unidadeTempo);
-        }
-        if (options.metrica) {
-            optionsProcessado.metrica = TempoMetrica.create(options.metrica);
-        }
-
-        if (options.clave ) {
-            optionsProcessado.clave = Clave.create(options.clave);
-        }
-
-        // 3. Criação da Instância da Voz (ainda SEM os compassos)
-        // Passamos um array vazio [] para não estourar nenhuma validação no construtor
+        if (options.unidadeTempo) optionsProcessado.unidadeTempo = TempoDuracao.create(options.unidadeTempo);
+        if (options.metrica) optionsProcessado.metrica = TempoMetrica.create(options.metrica);
+        if (options.clave) optionsProcessado.clave = Clave.create(options.clave);
         const voz = new Voz(id, [], optionsProcessado);
-
-        // 4. Instanciação Recursiva dos Compassos (agora sim, com a Voz pronta!)
         const instanciasCompassos = compassos.map(c => {
             if (c.constructor.name === 'Compasso') {
-                // Se já for instância, apenas garante o vínculo
                 c.options = c.options || {};
                 c.options.voz = voz;
                 return c;
             }
-
-            // Se for JSON literal: Injeta a Voz no objeto cru ANTES do create
             c.options = c.options || {};
             c.options.voz = voz;
-
-            // O Compasso.create agora vai rodar com o options.voz preenchido!
-            // Logo, quando ele criar as Notas, elas terão acesso à Voz (e sua unidadeTempo).
             return Compasso.create(c);
         });
-
-        // 5. Atribuir os compassos hidratados à voz usando o seu setter
-        // (Isso garante que índices e vinculações internas finais sejam respeitadas)
         voz.compassos = instanciasCompassos;
-
         return voz;
     }
 
-    /**
-     * USAGE: Cria uma nova instância de Voz a partir de um bloco de notação ABC.
-     * @param {{declaration: string, lines: Array<string>}} group - O grupo de linhas da voz.
-     * @param {Object} contextOptions - Opções herdadas do cabeçalho da Obra (L, M, K).
-     * @returns {Voz} Uma nova instância da classe Voz.
-     */
-    static parseAbc(group, contextOptions) {
-        const { declaration, lines } = group;
+    static #collectVoiceHeaders(declaration, contextOptions) {
         const voiceOptions = { ...contextOptions };
-
-        // 1. Parse da linha de declaração da Voz (V:)
         const declarationParts = declaration.split(/\s+/);
         const voiceId = declarationParts[0].substring(2);
 
@@ -396,27 +224,93 @@ export class Voz {
 
         const synonymMatch = declaration.match(/nm="([^"]+)"/);
         if (synonymMatch) voiceOptions.sinonimo = synonymMatch[1];
-        
+
         const clefMatch = declaration.match(/clef=([^\s]+)/);
-        if (clefMatch) {
-            voiceOptions.clave = Clave.create(clefMatch[1]);
+        if (clefMatch) voiceOptions.clave = Clave.create(clefMatch[1]);
+
+        return { voiceId, voiceOptions };
+    }
+
+    static #collectCompassos(musicString) {
+        const tokens = [':|:', '|:', ':|', '||', '|]', '|'];
+        const tokensSetInicio = new Set(['|:']);
+        const tokensSetFim = new Set([':|', '|]']);
+        const tokenizer = new RegExp(`(${tokens.map(t => t.replace(/\|/g, '\\|')).join('|')})`);
+        
+        let parts = musicString.split(tokenizer).filter(p => p);
+        const compassos = [];
+        let i = 0;
+
+        while (parts.length > 0) {
+            let content = '';
+            let options = {};
+            let barraInicio = null;
+            let barraFim = null;
+            if (tokenizer.test( parts[0]) ) {
+                const part = parts[0];
+                barraInicio = getBarType( part );
+                content = parts[1];
+                parts = parts.slice(2);
+            } else {
+                content = parts[0];
+                parts = parts.slice(1);
+            }
+            if (tokenizer.test( parts[0]) ) {
+                barraFim = getBarType( parts[0] );
+                parts = parts.slice(1);
+            }
+            if (content && content.length > 0) {
+                if ( barraInicio === TipoBarra.REPEAT_OPEN ) {
+                    options.barraInicial = barraInicio;
+                }
+                if ( barraFim ) {
+                    options.barraFinal = barraFim;
+                }
+                options.content = content;
+                compassos.push( options );
+            }
+            if ( parts.length <= 0 ) {
+                break;
+            }
+        }
+        const lastCompasso = compassos[compassos.length - 1];
+        if ( lastCompasso ) {
+            const opt = lastCompasso;
+            if ( !opt.barraFinal || (opt.barraFinal === TipoBarra.NONE) || (opt.barraFinal === TipoBarra.STANDARD)) {
+                lastCompasso.barraFinal = TipoBarra.FINAL;
+            }
         }
 
-        // 2. Combina todas as linhas de música em uma única string e remove comentários
-        const musicString = lines.map(line => {
+        function getBarType(barString) {
+            for (const key in TipoBarra) {
+                if (TipoBarra[key].abc === barString) return TipoBarra[key];
+            }
+            return TipoBarra.NONE;
+        }
+
+        return compassos.filter(c => c.content.length > 0);
+    }
+
+    static parseAbc(group, contextOptions) {
+        const { declaration, lines } = group;
+        const { voiceId, voiceOptions } = this.#collectVoiceHeaders(declaration, contextOptions);
+
+        let musicString = lines.map(line => {
             const commentIndex = line.indexOf('%');
             return commentIndex !== -1 ? line.substring(0, commentIndex).trim() : line.trim();
-        }).join(' ');
+        }).join(' ').trim();
+        musicString = musicString.replaceAll('| |', '|').replaceAll('||', '|');
+        const compassoTokens = this.#collectCompassos(musicString);
 
-        // 3. Divide a string de música pelos compassos
-        // Filtra strings vazias que podem surgir de barras de compasso no início/fim
-        const compassoStrings = musicString.split('|').map(s => s.trim()).filter(s => s);
+        const compassos = compassoTokens.map(token => {
+            const compassoOptions = {
+                ...voiceOptions,
+                barraInicial: token.barraInicial,
+                barraFinal: token.barraFinal
+            };
+            return Compasso.parseAbc(token.content, compassoOptions);
+        });
 
-        // 4. Deleta o parsing para a classe Compasso
-        // Passa o contexto (unidade de tempo, métrica, etc.) para cada compasso
-        const compassos = compassoStrings.map(cs => Compasso.parseAbc(cs, voiceOptions));
-
-        // 5. Cria e retorna a instância da Voz
         return new Voz(voiceId, compassos, voiceOptions);
     }
 }

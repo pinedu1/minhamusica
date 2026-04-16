@@ -282,7 +282,21 @@ export class Nota extends ElementoMusical {
         const altura = NotaFrequencia.getByAbc(alturaAbc);
 
         // 3. Duração
-        const unidadeTempo = contextOptions.unidadeTempo || new TempoDuracao(1, 8); // Fallback
+        const unidadeTempo = (function() {
+            if (contextOptions.voz) {
+                const voz = contextOptions.voz;
+                if ( voz.getUnidadeTempo() && voz.getUnidadeTempo() instanceof TempoDuracao ) {
+                    return voz.getUnidadeTempo();
+                }
+            }
+            if (contextOptions.obra) {
+                const obra = contextOptions.obra;
+                if ( obra.getUnidadeTempo() && obra.getUnidadeTempo() instanceof TempoDuracao ) {
+                    return obra.getUnidadeTempo();
+                }
+            }
+            return new TempoDuracao(1, 8);
+        })();
         let duracao;
 
         if (duracaoStr) {

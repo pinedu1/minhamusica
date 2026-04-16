@@ -65,6 +65,7 @@ export class Obra {
      * @param {String|Array<String>|null} [options.titulo=null] - T: Título da música. Use Array para títulos alternativos ou subtítulos.
      * @param {Array<String>} [options.letra=[]] -                W: Letras (Words) da música, geralmente exibidas ao final da partitura.
      * @param {String|null} [options.notaTranscricao=null] -      Z: Nota de transcrição; nome de quem digitou ou converteu o arquivo.
+     * @param {Array<String>} [options.diretivas=[]] -            %%: Diretivas de formatação e metadados (ex: %%textfont, %%text).
      */
     constructor(index, vozes = [], options = {}) {
         this.#options = {
@@ -89,6 +90,7 @@ export class Obra {
             , titulo: options.titulo || null  // T: Title -see part one of this tutorial for further details
             , letra: options.letra || []  // W: Words -see below for further details
             , notaTranscricao: options.notaTranscricao || null  // Z: Transcription note - the identity of the transcriber or the source of the transcription, eg Z:Steve Mansfield
+            , diretivas: options.diretivas || [] // %%: Directives
             , ...options
         };
         this.index = index;
@@ -132,6 +134,11 @@ export class Obra {
         
         // A: Area
         if (opt.areaGeografica) abc += `A:${opt.areaGeografica}\n`;
+
+        // Diretivas do cabeçalho (Ex: %%textfont)
+        if (opt.diretivas && opt.diretivas.length > 0) {
+            opt.diretivas.forEach(d => abc += `%%${d}\n`);
+        }
 
         // M: Meter (Time Signature)
         if (opt.metrica) {
@@ -254,7 +261,7 @@ export class Obra {
             if (opt.clave.oitava === 0) {
                 options.clave = opt.clave.key;
             } else {
-                return {tipo: opt.clave.tipo, oitava: opt.clave.oitava};
+                options.clave = {tipo: opt.clave.tipo, oitava: opt.clave.oitava};
             }
         }
         if (opt.tempoAndamento) {
@@ -293,6 +300,9 @@ export class Obra {
         }
         if (opt.fonte && opt.fonte.length > 0) {
             options.fonte = opt.fonte;
+        }
+        if (opt.diretivas && opt.diretivas.length > 0) {
+            options.diretivas = opt.diretivas;
         }
         /* String */
         if (opt.notaTranscricao) {
@@ -349,6 +359,17 @@ export class Obra {
     set options(options) {
         this.#options = options;
     }
+
+    /**
+     *
+     * @param val {Numer}
+     */
+    set quebraDeLinha(val) {
+        if (typeof val !== 'number') {
+            this.#options.quebraDeLinha=5;
+        }
+        this.#options.quebraDeLinha = val;
+    }
     get vozes() {
         return this.#vozes;
     }
@@ -380,39 +401,6 @@ export class Obra {
     /**
      * USAGE: Criação estática limpa a partir de dados JSON.
      * Combina o parse e validação dos schemas e instanciacoes em cascata.
-     * Ex: JSON
-     * {
-     *    index: 88
-     *    , options: {
-     *        unidadeTempo: "1/4"
-     *        , metrica: "4/4"
-     *        , clave: {}
-     *        , areaGeografica: "América do Sul"
-     *        , origemGeografica: "Brasil"
-     *        , livro: options.livro || [ "Enciclopédia de Folclore", "Revista Toca-Toca" ]
-     *        , compositor: ["Zé da Silva", "João de Minas"]
-     *        , discografia: options.discografia || ["Grandes Clássicos", "Zé da Silva - Coletânia, vol. 1"]
-     *        , nomeArquivo: "http://www.mskl.com.br/amor-nao-chora.abc"
-     *        , grupoInstrumento: 'OUTROS'
-     *        , historia: ["Música Incidental"]  // H: History - Multiple H: fields may be used as needed to record text about the history of the tune.
-     *        , informacoes: []
-     *        , tonalidade: 'C'
-     *        , notas: ["Esta música foi originalmente composta em cavaquinho", "Depois trasposta para Violão", "e finalmente para Viola caipira"]
-     *        , partes: null
-     *        , tempoAndamento: { tempo: '4/4', duracao: 95 }
-     *        , ritmo: 'REEL'
-     *        , fonte: ["Internet", "Sitio do caboclo"]
-     *        , titulo: ["Amor não chora", "Semente minha"]
-     *        , letra: null
-     *        , notaTranscricao: ["Antonio dedilhado"]
-     *    }
-     *    , vozes:[{
-     *            id: "V1"
-     *            , options: { nome: "Melodia" }
-     *            , compassos: [{elementos: [{ altura: "C", duracao: '1/4' }, { altura: "D", duracao: '1/4' }]}]
-     *        }
-     *    ]
-     * }
      */
     static create(dados) {
         if (dados instanceof Obra) return dados;
@@ -464,21 +452,32 @@ export class Obra {
             fonte: opt.fonte,
             titulo: opt.titulo,
             letra: opt.letra,
-            notaTranscricao: opt.notaTranscricao
+            notaTranscricao: opt.notaTranscricao,
+            diretivas: opt.diretivas
         });
     }
 
     /**
      * USAGE: Cria uma nova instância de Obra a partir de uma string em notação ABC.
-     * Este método funciona como o ponto de entrada, orquestrando o parsing do
-     * cabeçalho e do corpo da música.
      * @param {string} abcString - A string completa no formato ABC.
      * @returns {Obra} Uma nova instância da classe Obra.
      */
     static parseAbc(abcString) {
+        const normalize = (abcString) => {
+            return abcString
+                .split('\n')
+                .map(line => {
+                    const commentIndex = line.indexOf('%');
+                    if (line.startsWith('%%')) return line.trim();
+                    return (commentIndex !== -1 ? line.substring(0, commentIndex) : line).trim();
+                })
+                .filter(line => line.length > 0)
+                .join('\n');
+        };
+        abcString = normalize(abcString);
+
         const lines = abcString.split('\n').map(l => l.trim()).filter(l => l);
 
-        // 1. Separa o cabeçalho e o corpo. A Tonalidade (K:) é a última linha do cabeçalho.
         const keyIndex = lines.findIndex(l => l.startsWith('K:'));
         if (keyIndex === -1) {
             throw new Error("Obra.parseAbc: Tonalidade (K:) não encontrada na string ABC.");
@@ -487,48 +486,81 @@ export class Obra {
         const headerLines = lines.slice(0, keyIndex + 1);
         const bodyLines = lines.slice(keyIndex + 1);
 
-        // 2. Faz o parsing do cabeçalho para extrair o índice e as opções.
         const { index, options } = Obra.#parseHeader(headerLines);
 
-        // 3. Garante a existência de uma voz (Voz) implícita, se necessário.
-        // Se houver linhas de música antes da primeira declaração 'V:' ou se não houver 'V:' de todo,
-        // injeta uma declaração de voz padrão 'V:1'.
-        const firstVoiceTagIndex = bodyLines.findIndex(l => l.startsWith('V:'));
-        const firstMusicalLineIndex = bodyLines.findIndex(l => 
-            !l.startsWith('%%') && !l.startsWith('P:') && l.match(/[a-zA-Z]/)
+        const firstMusicalLineIndex = bodyLines.findIndex(l =>
+            !l.startsWith('%%') && !l.startsWith('P:') && !l.startsWith('W:') && l.match(/[a-zA-Z]/)
         );
-        
-        if (firstMusicalLineIndex !== -1 && (firstVoiceTagIndex === -1 || firstMusicalLineIndex < firstVoiceTagIndex)) {
-            bodyLines.unshift('V:1');
-        }
-        
-        // 4. Agrupa as linhas do corpo por cada declaração de voz.
-        const voiceGroups = [];
-        let currentGroup = null;
 
-        for (const line of bodyLines) {
-            if (line.startsWith('V:')) {
-                if (currentGroup) {
-                    voiceGroups.push(currentGroup);
+        if (firstMusicalLineIndex !== -1 && !bodyLines.some(l => l.startsWith('V:'))) {
+            bodyLines.splice(Math.max(0, firstMusicalLineIndex), 0, 'V:1');
+        }
+
+        const voiceGroupsMap = new Map();
+        let currentVoiceId = null;
+
+        const getNextValidLine = (startIndex) => {
+            for (let j = startIndex + 1; j < bodyLines.length; j++) {
+                const nextLine = bodyLines[j].trim();
+                if (nextLine && !nextLine.startsWith('%')) {
+                    return nextLine;
                 }
-                currentGroup = { declaration: line, lines: [] };
             }
-            // Adiciona a linha ao grupo atual, ignorando comentários de linha e outros metadados do corpo
-            else if (currentGroup && line.trim() && !line.startsWith('%%')) {
-                currentGroup.lines.push(line);
+            return null;
+        };
+
+        for (let i = 0; i < bodyLines.length; i++) {
+            const line = bodyLines[i].trim();
+
+            if (!line || line.startsWith('%')) {
+                continue;
+            }
+
+            if (line.startsWith('W:')) {
+                options.letra = options.letra || [];
+                options.letra.push(line.substring(2).trim());
+            } else if (line.startsWith('V:')) {
+                const voiceDeclarationMatch = line.match(/^V:(\S+)(.*)$/);
+                if (!voiceDeclarationMatch) {
+                    console.warn(`Linha V: malformada encontrada: ${line}`);
+                    continue;
+                }
+                const voiceId = voiceDeclarationMatch[1];
+                const voiceMetadata = voiceDeclarationMatch[2].trim();
+                const nextValidLine = getNextValidLine(i);
+
+                const isPureVoiceDeclaration = voiceMetadata === '';
+                const nextIsHeaderInstruction = nextValidLine && nextValidLine.match(/^[A-Z]:/);
+
+                if (!isPureVoiceDeclaration || nextIsHeaderInstruction) {
+                    if (!voiceGroupsMap.has(voiceId)) {
+                        voiceGroupsMap.set(voiceId, { declaration: line, lines: [] });
+                    } else {
+                        voiceGroupsMap.get(voiceId).declaration = line;
+                    }
+                    currentVoiceId = voiceId;
+                } else {
+                    if (!voiceGroupsMap.has(voiceId)) {
+                        voiceGroupsMap.set(voiceId, { declaration: `V:${voiceId}`, lines: [] });
+                    }
+                    currentVoiceId = voiceId;
+                }
+            } else if (currentVoiceId !== null) {
+                const currentGroup = voiceGroupsMap.get(currentVoiceId);
+                if (currentGroup) {
+                    currentGroup.lines.push(line);
+                }
             }
         }
-        if (currentGroup) {
-            voiceGroups.push(currentGroup);
-        }
 
-        // 5. Deleta o parsing de cada grupo para a classe Voz.
-        // As opções do cabeçalho (L, M, K) são passadas para o contexto do parsing da voz.
-        const vozes = voiceGroups.map(group => Voz.parseAbc(group, options));
+        const voiceGroups = Array.from(voiceGroupsMap.values());
+        const obraParsed = new Obra(index, [], options);
+        const vozes = voiceGroups.map(group => Voz.parseAbc(group, { obra: obraParsed }));
+        obraParsed.vozes = vozes;
 
-        // 6. Cria e retorna a instância final da Obra.
-        return new Obra(index, vozes, options);
+        return obraParsed;
     }
+
 
     /**
      * @private
@@ -537,72 +569,78 @@ export class Obra {
      * @returns {{index: number, options: Object}} - O índice da obra e um objeto de opções.
      */
     static #parseHeader(headerLines) {
-        const options = {};
-        let index = 1;
-
-        const extractMulti = (prefix, line, target) => {
-            const value = line.substring(prefix.length).trim();
-            if (!target) return [value];
-            target.push(value);
-            return target;
+        const options = {
+            titulo: [], compositor: [], livro: [], discografia: [], historia: [], 
+            informacoes: [], notas: [], fonte: [], letra: [], diretivas: []
         };
+        let index = 1;
 
         for (const line of headerLines) {
             if (line.startsWith('X:')) {
-                index = parseInt(line.substring(2).trim(), 10);
+                const keyValue = line.split(':');
+                if ( Number( keyValue[1] ) ) {
+                    index = parseInt(line.substring(2).trim(), 10);
+                }
             } else if (line.startsWith('T:')) {
-                options.titulo = extractMulti('T:', line, options.titulo);
+                options.titulo.push(line.substring(2).trim());
             } else if (line.startsWith('C:')) {
-                options.compositor = extractMulti('C:', line, options.compositor);
+                options.compositor.push(line.substring(2).trim());
             } else if (line.startsWith('M:')) {
                 options.metrica = TempoMetrica.create(line.substring(2).trim());
             } else if (line.startsWith('L:')) {
                 options.unidadeTempo = TempoDuracao.create(line.substring(2).trim());
             } else if (line.startsWith('Q:')) {
-                options.tempoAndamento = TempoAndamento.create(line.substring(2).trim());
+                const andamento = line.substring(2).trim();
+                if (andamento.includes('=')) {
+                    const [tempo, duracao] = andamento.split('=');
+                    options.tempoAndamento = TempoAndamento.create({ tempo, duracao });
+                }
             } else if (line.startsWith('K:')) {
                 const content = line.substring(2).trim();
                 const parts = content.split(/\s+/);
                 options.tonalidade = Tonalidade.create(parts[0]);
-                
                 const clefPart = parts.find(p => p.startsWith('clef='));
-                if (clefPart) {
-                    options.clave = Clave.create(clefPart.substring('clef='.length));
-                }
+                if (clefPart) options.clave = Clave.create(clefPart.substring('clef='.length));
             } else if (line.startsWith('R:')) {
-                options.ritmo = Ritmo.create(line.substring(2).trim());
+                options.ritmo = Ritmo.getByNome(line.substring(2).trim());
             } else if (line.startsWith('A:')) {
                 options.areaGeografica = line.substring(2).trim();
             } else if (line.startsWith('O:')) {
                 options.origemGeografica = line.substring(2).trim();
             } else if (line.startsWith('B:')) {
-                options.livro = extractMulti('B:', line, options.livro);
+                options.livro.push(line.substring(2).trim());
             } else if (line.startsWith('D:')) {
-                options.discografia = extractMulti('D:', line, options.discografia);
+                options.discografia.push(line.substring(2).trim());
             } else if (line.startsWith('F:')) {
                 options.nomeArquivo = line.substring(2).trim();
             } else if (line.startsWith('G:')) {
-                options.grupoInstrumento = GrupoInstrumento.create(line.substring(2).trim());
+                options.grupoInstrumento = GrupoInstrumento.getByNome(line.substring(2).trim());
             } else if (line.startsWith('H:')) {
-                options.historia = extractMulti('H:', line, options.historia);
+                options.historia.push(line.substring(2).trim());
             } else if (line.startsWith('I:')) {
-                options.informacoes = extractMulti('I:', line, options.informacoes);
+                options.informacoes.push(line.substring(2).trim());
             } else if (line.startsWith('N:')) {
-                options.notas = extractMulti('N:', line, options.notas);
+                options.notas.push(line.substring(2).trim());
             } else if (line.startsWith('P:')) {
                 options.partes = line.substring(2).trim();
             } else if (line.startsWith('S:')) {
-                options.fonte = extractMulti('S:', line, options.fonte);
+                options.fonte.push(line.substring(2).trim());
             } else if (line.startsWith('W:')) {
-                options.letra = extractMulti('W:', line, options.letra);
+                options.letra.push(line.substring(2).trim());
             } else if (line.startsWith('Z:')) {
                 options.notaTranscricao = line.substring(2).trim();
+            } else if (line.startsWith('%%')) {
+                options.diretivas.push(line.substring(2).trim());
             }
         }
 
-        if (options.titulo && options.titulo.length === 1) {
-            options.titulo = options.titulo[0];
-        }
+        if (options.titulo.length === 1) options.titulo = options.titulo[0];
+        if (options.titulo.length === 0) delete options.titulo;
+
+        // Limpa arrays vazios
+        ['compositor', 'livro', 'discografia', 'historia', 'informacoes', 'notas', 'fonte', 'letra', 'diretivas'].forEach(key => {
+            if (options[key] && options[key].length === 0) delete options[key];
+        });
 
         return { index, options };
     }

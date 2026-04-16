@@ -34,12 +34,14 @@ export const setupMusic = async (visualSelector, audioSelector, abcString) => {
         add_classes: true,
         // Forçamos a renderização da tablatura vinculada à voz
         visualTranspose: 0,
+/*
         tablature: [
             {
                 instrument: "guitar",
                 label: "Violão"
             }
         ],
+*/
         clickListener: function(abcElem, tuneNumber, classes, analysis, drag, mouseEvent) {
 
             // 1. Verifica primeiro se clicou em um texto anexado (Letra ou Acorde)

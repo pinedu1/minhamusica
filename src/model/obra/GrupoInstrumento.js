@@ -29,6 +29,11 @@ export class GrupoInstrumento {
         }
         return new GrupoInstrumento(key);
     }
+    static getByNome( nome ) {
+        const g = GrupoInstrumentoAbc.getByNome(nome);
+        if ( !g ) return null;
+        return new GrupoInstrumento(g.key);
+    }
 }
 /**
  * Enum para Grupo de Instrumentos (Campo G: no ABC).
@@ -37,34 +42,37 @@ export class GrupoInstrumento {
  */
 export const GrupoInstrumentoAbc = Object.freeze({
     // --- CORDAS (STRINGS) ---
-    CORDAS: { nome: "Cordas", valor: "Strings" },
-    CORDAS_DILACERADAS: { nome: "Cordas Dedilhadas", valor: "Plucked Strings" }, // Violão, Harpa, Viola
-    CORDAS_FRICCIONADAS: { nome: "Cordas Friccionadas", valor: "Bowed Strings" }, // Violino, Violoncelo
+    CORDAS: { nome: "Cordas", valor: "Strings", key: "CORDAS" },
+    CORDAS_DILACERADAS: { nome: "Cordas Dedilhadas", valor: "Plucked Strings", key: "CORDAS_DILACERADAS" }, // Violão, Harpa, Viola
+    CORDAS_FRICCIONADAS: { nome: "Cordas Friccionadas", valor: "Bowed Strings", key: "CORDAS_FRICCIONADAS" }, // Violino, Violoncelo
 
     // --- MADEIRAS (WOODWINDS) ---
-    MADEIRAS: { nome: "Madeiras", valor: "Woodwinds" },
-    FLAUTAS: { nome: "Flautas", valor: "Flutes" },
-    PALHETAS: { nome: "Palhetas", valor: "Reeds" }, // Clarinete, Oboé, Sax
+    MADEIRAS: { nome: "Madeiras", valor: "Woodwinds", key: "MADEIRAS" },
+    FLAUTAS: { nome: "Flautas", valor: "Flutes", key: "FLAUTAS" },
+    PALHETAS: { nome: "Palhetas", valor: "Reeds", key: "PALHETAS" }, // Clarinete, Oboé, Sax
 
     // --- METAIS (BRASS) ---
-    METAIS: { nome: "Metais", valor: "Brass" },
+    METAIS: { nome: "Metais", valor: "Brass", key: "METAIS" },
 
     // --- PERCUSSÃO (PERCUSSION) ---
-    PERCUSSAO: { nome: "Percussão", valor: "Percussion" },
-    PERCUSSAO_RITMICA: { nome: "Percussão Rítmica", valor: "Unpitched Percussion" },
-    PERCUSSAO_MELODICA: { nome: "Percussão Melódica", valor: "Pitched Percussion" }, // Xilofone, Tímpanos
+    PERCUSSAO: { nome: "Percussão", valor: "Percussion", key: "PERCUSSAO" },
+    PERCUSSAO_RITMICA: { nome: "Percussão Rítmica", valor: "Unpitched Percussion", key: "PERCUSSAO_RITMICA" },
+    PERCUSSAO_MELODICA: { nome: "Percussão Melódica", valor: "Pitched Percussion", key: "PERCUSSAO_MELODICA" }, // Xilofone, Tímpanos
 
     // --- TECLAS E FOLES ---
-    TECLAS: { nome: "Teclas", valor: "Keyboards" }, // Piano, Cravo
-    FOLES: { nome: "Foles", valor: "Free Reeds" }, // Acordeom, Concertina, Bandoneón
+    TECLAS: { nome: "Teclas", valor: "Keyboards", key: "TECLAS" }, // Piano, Cravo
+    FOLES: { nome: "Foles", valor: "Free Reeds", key: "FOLES" }, // Acordeom, Concertina, Bandoneón
 
     // --- VOZES HUMANAS ---
-    VOZES: { nome: "Vozes", valor: "Voices" },
-    CORO: { nome: "Coro", valor: "Choir" },
+    VOZES: { nome: "Vozes", valor: "Voices", key: "VOZES" },
+    CORO: { nome: "Coro", valor: "Choir", key: "CORO" },
 
     // --- ELETRÔNICOS ---
-    ELETRONICOS: { nome: "Eletrônicos", valor: "Electronic" },
+    ELETRONICOS: { nome: "Eletrônicos", valor: "Electronic", key: "ELETRONICOS" },
 
     // --- GERAL ---
-    OUTROS: { nome: "Outros", valor: "Other" }
+    OUTROS: { nome: "Outros", valor: "Other", key: "OUTROS" },
+    getByNome: function(nome) {
+        return Object.values(this).find(tipo => tipo.nome === nome);
+    }
 });

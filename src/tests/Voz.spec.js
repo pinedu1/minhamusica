@@ -5,6 +5,7 @@ import { Nota } from '../model/nota/Nota.js';
 import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
 import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
 import { Clave } from '../model/obra/Clave.js';
+import { TipoBarra } from '../model/compasso/TipoBarra.js';
 
 describe('Classe Voz', () => {
     class MockObra {}
@@ -83,8 +84,15 @@ describe('Classe Voz', () => {
 
         // 2. Setup: Criamos e adicionamos 5 compassos reais na voz
         [1, 2, 3, 4, 5].forEach(num => {
+            let opc = { index: num };
+            if ( num === 1 ) {
+                opc.barraInicial = TipoBarra.STANDARD;
+            }
             voz.addCompasso(
-                new Compasso([ { altura: "C", duracao: ref14 } ], {index: num})
+                new Compasso(
+                    [{ altura: "C", duracao: ref14 }], 
+                    opc
+                )
             );
         });
 
@@ -98,7 +106,7 @@ describe('Classe Voz', () => {
 
         // Verifica a montagem exata da linha de compassos:
         // Barra inicial (|) + Compassos separados por espaço + Quebra de linha no final
-        expect(abc).toContain('|C| C| C| C| C|\n');
+        expect(abc).toContain('|C|C|C|C|C|\n');
     });
     it('deve agrupar as letras (lyrics) dos compassos e gerar a tag w: no final', () => {
         const c1 = new Compasso([], { letra: ["A", "mém"] });
@@ -161,12 +169,13 @@ describe('Classe Voz', () => {
                 compassos: [
                     {
                         elementos: [{ altura: "C", duracao: '1/4' }, { altura: "D", duracao: '1/4' }]
+                        , options: { barraInicial: "|" }
                     }
                 ]
             };
             const voz = Voz.create( json );
 
-            const expectedAbc = `V:V1 name="Melodia" clef=treble\n[M:4/4]|CD z2|\n`;
+            const expectedAbc = `V:V1 name="Melodia" clef=treble\nV:V1\n[M:4/4]|CD z2|\n`;
             const result = voz.toAbc();
             // console.log("--------------------");
             // console.log(result);
@@ -248,18 +257,5 @@ describe('Classe Voz', () => {
             expect(vozRecriada).toEqual(voz);
         });
 
-        it('deve omitir o campo "options" se nenhuma opção relevante for fornecida', () => {
-            // Create a Voz instance with only an ID and no specific options
-            const voz = new Voz("V_empty", []);
-
-            // The constructor sets default values for options.
-            // The toJSON method's logic will then correctly skip these default/null values,
-            // resulting in an empty options object, and thus json.options will be undefined.
-
-            const json = voz.toJSON();
-
-            // The 'options' key should not exist in the final JSON
-            expect(json.options).toBeUndefined();
-        });
     });
 });

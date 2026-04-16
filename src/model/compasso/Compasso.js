@@ -119,7 +119,7 @@ export class Compasso {
         const ut = this.getUnidadeTempo();
         let pulsosTotais = this.getPulsos( ut );
 
-        if (this.#options.barraInicial && this.#options.barraInicial !== TipoBarra.NONE) {
+        if ( this.#options.barraInicial && (this.#options.barraInicial !== TipoBarra.NONE) ) {
             abc += this.#options.barraInicial.abc;
         }
 
@@ -164,7 +164,7 @@ export class Compasso {
         // --- NOVO BLOCO: COMPLEMENTO DE PAUSA (CORRIGIDO) ---
         const pulsosFaltantes = pulsosTotais - pulsosAcumulados;
 
-        if (pulsosFaltantes > 0.001) {
+        if (pulsosFaltantes > 0.001 && pulsosAcumulados > 0) {
             const razaoPausa = pulsosFaltantes * ut.razao;
 
             // Busca o denominador musical perfeito (1, 2, 4, 8, 16, 32, 64)
@@ -183,13 +183,12 @@ export class Compasso {
 
             const pausaPreenchimento = new Pausa(duracaoFaltante, {
                 unidadeTempo: ut,
-                invisivel: false
             });
 
             abc += " " + pausaPreenchimento.toAbc();
         }
         // --- FIM DO BLOCO NOVO ---
-        if (this.#options.barraFinal) {
+        if (this.#options.barraFinal && (this.#options.barraFinal !== TipoBarra.NONE) ) {
             abc += this.#options.barraFinal.abc;
         }
 
@@ -274,15 +273,37 @@ export class Compasso {
             // 3. A SUA LÓGICA DE ROTEAMENTO:
             // Verifica se já é uma instância de Nota ou se o JSON tem a propriedade 'altura'
             if (el.constructor.name === 'Nota' || el.altura !== undefined) {
+                const notaOpc = Object.fromEntries(
+                    Object.entries(
+                        (({ obra, voz, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, hammerOn, pullOff, ligada, mordente, upperMordent, trinado, roll, fermata, ghostNote, graceNote, arpeggio, dedilhado, sustenido, beQuad }) => ({
+                            obra, voz, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, hammerOn, pullOff, ligada, mordente, upperMordent, trinado, roll, fermata, ghostNote, graceNote, arpeggio, dedilhado, sustenido, beQuad
+                        }))(el.options || {})
+                    ).filter(([chave, valor]) => valor != null) // Filtra fora null e undefined
+                );
+
+                el.options = notaOpc;
                 return Nota.create(el);
             }
 
             // Verifica se já é uma instância de Acorde ou se o JSON tem um array 'notas'
             if (el.constructor.name === 'Acorde' || el.notas !== undefined) {
+                const acordeOpc = Object.fromEntries(
+                    Object.entries(
+                        (({ obra, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, ligada, arpeggio, fermata, ghostNote, roll, trinado, mordente, upperMordent, graceNote, dedilhado }) => ({
+                            obra, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, ligada, arpeggio, fermata, ghostNote, roll, trinado, mordente, upperMordent, graceNote, dedilhado }))(el.options || {})
+                    ).filter(([chave, valor]) => valor != null) // Filtra fora null e undefined
+                );
+
+                el.options = acordeOpc;
                 return Acorde.create(el);
             }
 
-            // Se não for nenhum dos dois, assume que é uma Pausa
+            const pausaOpc = Object.fromEntries(
+                Object.entries(
+                    (({ obra, voz, compasso, unidadeTempo, fermata, breath, invisivel }) => ({ obra, voz, compasso, unidadeTempo, fermata, breath, invisivel }))(el.options || {})
+                ).filter(([chave, valor]) => valor != null) // Filtra fora null e undefined
+            );
+            el.options = pausaOpc;
             return Pausa.create(el);
         });
     }
@@ -400,6 +421,12 @@ export class Compasso {
         // 1. Processamento de Options (Tempo e Métrica) PRIMEIRO
         const optionsProcessado = { ...options };
 
+        if (options.barraInicial) {
+            optionsProcessado.barraInicial = TipoBarra.getByAbc(options.barraInicial);
+        }
+        if (options.barraFinal) {
+            optionsProcessado.barraFinal = TipoBarra.getByAbc(options.barraFinal);
+        }
         if (options.mudancaDeTom) {
             optionsProcessado.mudancaDeTom = Tonalidade.create(options.mudancaDeTom);
         }

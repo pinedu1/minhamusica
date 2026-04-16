@@ -59,10 +59,16 @@ export class TempoAndamento {
         // 1. TempoAndamento.create({ tempo: '4/4', duracao: 95 })
         // 2. TempoAndamento.create('4/4', 95)
         let jsonDados;
-        if (typeof dados === 'object' && dados !== null && 'tempo' in dados) {
+        if ((typeof dados === 'object') && (dados !== null) && ('tempo' in dados) && ('duracao' in dados)) {
+            dados.duracao = parseInt( dados.duracao );
             jsonDados = dados;
         } else {
-            jsonDados = { tempo: dados, duracao: duracaoOpcional };
+            jsonDados = dados;
+            if (duracaoOpcional && duracaoOpcional > 0) {
+                jsonDados.duracao = duracaoOpcional;
+            } else {
+                jsonDados.duracao = 95;
+            }
         }
 
         // Validação usando o Zod Schema

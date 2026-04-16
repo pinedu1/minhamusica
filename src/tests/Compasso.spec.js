@@ -120,7 +120,7 @@ describe('Classe Compasso', () => {
 
             const abcResult = compasso.toAbc();
             // Ordem esperada: Barra -> Metrica -> Tom -> (elementos vazios) -> Barra final
-            expect(abcResult).toBe("|:[M:4/4][K:G] z4:|");
+            expect(abcResult).toBe("|:[M:4/4][K:G]:|");
         });
         describe('Helper estático Compasso.create()', () => {
             it('deve instanciar Notas, Pausas e Acordes a partir de um JSON puro', () => {
@@ -284,7 +284,7 @@ describe('Classe Compasso', () => {
             expect(compasso.metrica.denominador).toBe(8);
             expect(compasso.mudancaDeTom.valor).toBe(Tonalidade.create('Fm').valor);
             const result = compasso.toAbc();
-            expect(result).toBe("[M:6/8][K:Fm] z3|");
+            expect(result).toBe("[M:6/8][K:Fm]|");
         });
         it('deve permitir instanciar elementos usando classes reais em vez de objetos vazios', () => {
             const nota = Nota.create({ altura: "G", duracao: "1/4", options: { unidadeTempo: "1/4"} });
