@@ -1,4 +1,4 @@
-import { mzk_0, mzk_1, mzk_2, mzk_3 } from "./data/score.js";
+import { mzk_0, mzk_1, mzk_2, mzk_3, mzk_4 } from "./data/score.js";
 import { setupMusic } from "./services/musicEngine.js";
 import { exportarParaPDF } from "./services/print.js";
 import "./styles/main.scss";
@@ -9,7 +9,7 @@ const initApp = async () => {
     try {
         // Inicializa o ABCJS (Desenho + Áudio)
         // Passamos os IDs dos containers definidos no seu HTML
-        const visualObj = await setupMusic("paper", "#audio-controls", mzk_0);
+        const visualObj = await setupMusic("paper", "#audio-controls", mzk_3);
 
         // Após o ABCJS renderizar, o SVG existirá no DOM.
         // Agora podemos configurar seus cliques customizados:
