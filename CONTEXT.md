@@ -26,31 +26,37 @@ O projeto utiliza aliases de caminho para simplificar os imports e manter a orga
 -   `@styles`: Para arquivos de estilização.
 -   `@tests`: Para arquivos de teste.
 
-## 3. Regras para a IA (Diretrizes de Escrita)
+## 3. Regras para a IA (Diretrizes de Escrita e Conduta)
 
-Para garantir consistência e eficiência, siga as seguintes regras:
+Para garantir consistência, eficiência e a preservação do trabalho do desenvolvedor, siga as seguintes regras:
 
-1.  **Use Sempre os Path Aliases:** **SEMPRE** utilize os aliases (`@domain`, `@adapters`, etc.) em vez de caminhos relativos.
-2.  **Assuma Módulos ES6:** Utilize exclusivamente a sintaxe `import`/`export`.
-3. **Documentação JSDoc Proativa (OBRIGATÓRIO):**
-    - **Preservação:** NUNCA remova ou simplifique JSDocs existentes.
-    - **Geração Automática:** Se encontrar um método, classe ou propriedade sem JSDoc, você DEVE criá-lo do zero.
-    - **Requisitos do Help:** O JSDoc gerado deve conter obrigatoriamente:
-        - `@param {Tipo}`: Com a descrição clara do parâmetro.
-        - `@returns {Tipo}`: Com a descrição do retorno.
-        - `@example`: Um exemplo prático de uso musical (ex: como instanciar uma Nota ou Pausa).
-    - **Integração:** Trate o JSDoc como código funcional; se a lógica mudar, o JSDoc deve ser expandido para refletir a nova realidade.
-4.  **Separação de Preocupações:** Mantenha a lógica de domínio (Teoria Musical) isolada em `@domain`. Lógicas de entrada/saída (ABC, JSON) devem morar em `@adapters`.
-5.  **Padrão de Criação:** Prefira métodos estáticos de fábrica (Static Factories) nos adaptadores (ex: `PausaJson.fromJson`) para instanciar classes de domínio.
+1.  **PRESERVAÇÃO DA NATUREZA LÓGICA:** A IA está terminantemente proibida de alterar a arquitetura, a hierarquia de classes ou a lógica de negócio estabelecida sem solicitação explícita.
+2.  **PROTOCOLO DE SUGESTÃO:** Se a IA identificar um Pattern de projeto ou refatoração que considere mais proveitosa, ela **NÃO deve aplicar no código diretamente**. Ela deve sugerir no chat precedida pelo aviso: **!!!!! ATENÇÃO !!!!!**.
+3.  **Use Sempre os Path Aliases:** **SEMPRE** utilize os aliases (`@domain`, `@adapters`, etc.) em vez de caminhos relativos.
+4.  **Assuma Módulos ES6:** Utilize exclusivamente a sintaxe `import`/`export`.
+5.  **Documentação JSDoc Proativa (OBRIGATÓRIO):**
+    -   **Preservação:** NUNCA remova ou simplifique JSDocs existentes.
+    -   **Geração Automática:** Se encontrar um método, classe ou propriedade sem JSDoc, você DEVE criá-lo do zero.
+    -   **Requisitos do Help:** O JSDoc gerado deve conter obrigatoriamente:
+        -   `@param {Tipo}`: Com a descrição clara do parâmetro.
+        -   `@returns {Tipo}`: Com a descrição do retorno.
+        -   `@example`: Um exemplo prático de uso musical (ex: como instanciar uma Nota ou Pausa).
+    -   **Integração:** Trate o JSDoc como código funcional; se a lógica mudar, o JSDoc deve ser expandido para refletir a nova realidade.
+6.  **Separação de Preocupações:** Mantenha a lógica de domínio (Teoria Musical) isolada em `@domain`. Lógicas de entrada/saída (ABC, JSON) devem morar em `@adapters`.
+7.  **Padrão de Criação:** Prefira métodos estáticos de fábrica (Static Factories) nos adaptadores (ex: `PausaJson.fromJson`) para instanciar classes de domínio.
+
 ## 4. Estilo de Código (Formatação Obrigatória)
-1. **Comma First:** Em objetos ou arrays multilinhas, a vírgula deve vir no INÍCIO da linha.
-    - Exemplo:
-      const obj = {
-          item1: 1
-          , item2: 2
-      };
-2. **Espaçamento de Parênteses:** Sempre inclua espaços dentro de parênteses de funções e chamadas.
-    - Exemplo: `funcao( arg1, arg2 );`
-3. **Espaçamento de Chaves:** Use espaços dentro de chaves de objetos e blocos.
-    - Exemplo: `{ a: 1 }` ou `if ( true ) { ... }`
-4. **Semicolons:** Sempre use ponto e vírgula `;` ao final das instruções.
+
+1.  **Comma First:** Em objetos ou arrays multilinhas, a vírgula deve vir no **INÍCIO** da linha.
+    -   Exemplo:
+        ```javascript
+        const obj = {
+            item1: 1
+            , item2: 2
+        };
+        ```
+2.  **Espaçamento de Parênteses:** Sempre inclua espaços dentro de parênteses de funções e chamadas.
+    -   Exemplo: `funcao( arg1, arg2 );`
+3.  **Espaçamento de Chaves:** Use espaços dentro de chaves de objetos e blocos.
+    -   Exemplo: `{ a: 1 }` ou `if ( true ) { ... }`
+4.  **Semicolons:** Sempre use ponto e vírgula `;` ao final das instruções.

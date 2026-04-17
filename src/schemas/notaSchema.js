@@ -9,7 +9,6 @@ export const notaSchema = z.object({
         obra: z.any().nullable().optional(),
         voz: z.any().nullable().optional(),
         compasso: z.any().nullable().optional(),
-        unidadeTempo: uniaoTempoDuracao.nullable().optional(),
 
         acento: z.boolean().default(false),
         marcato: z.boolean().default(false),

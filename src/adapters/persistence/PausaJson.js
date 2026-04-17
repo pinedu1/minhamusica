@@ -5,36 +5,27 @@
 
 import { Pausa } from '@domain/nota/Pausa.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { pausaSchema } from "@schemas/pausaSchema.js";
 
 /**
  * Classe responsável por serializar e desserializar Pausas em JSON.
  */
 export class PausaJson {
     /**
-     * @param {Pausa} pausa - A instância de domínio da Pausa.
-     */
-    constructor( pausa ) {
-        this.pausa = pausa;
-    }
-
-    /**
      * Converte a pausa para um objeto JSON padronizado.
-     *
+     * @param {Pausa} pausa - A pausa a ser convertida.
      * @returns {Object} Representação JSON da pausa.
      * @example
      * const json = adaptador.toJson();
      */
-    toJson() {
+    static toJson(pausa) {
         return {
             tipo: 'pausa'
-            , duracao: {
-                valor: this.pausa.duracao.valor
-                , unidade: this.pausa.duracao.unidade
-            }
-            , invisivel: this.pausa.invisivel
-            , fermata: this.pausa.fermata
-            , breath: this.pausa.breath
-            , acordes: this.pausa.acordes
+            , duracao: `${pausa.duracao.toString()}`
+            , invisivel: pausa.invisivel
+            , fermata: pausa.fermata
+            , breath: pausa.breath
+            , acordes: pausa.acordes
         };
     }
 
@@ -44,29 +35,25 @@ export class PausaJson {
      * @param {Object} data - O objeto JSON representando a Pausa.
      * @returns {Pausa} Uma nova instância de domínio de Pausa.
      * @example
-     * const novaPausa = PausaJson.fromJson({ duracao: { valor: 1, unidade: 4 }, invisivel: true });
+     * const novaPausa = PausaJson.fromJson({ duracao: "1/4", options: {invisivel: true }});
      */
     static fromJson( data ) {
-        if ( !data || !data.duracao ) {
-            throw new Error( 'Dados JSON inválidos para criação de Pausa.' );
-        }
+	    const resultado = pausaSchema.safeParse(data);
 
-        const duracao = new TempoDuracao( data.duracao.valor, data.duracao.unidade );
-        
-        const options = {};
-        if ( data.invisivel !== undefined ) {
-            options.invisivel = data.invisivel;
-        }
-        if ( data.fermata !== undefined ) {
-            options.fermata = data.fermata;
-        }
-        if ( data.breath !== undefined ) {
-            options.breath = data.breath;
-        }
-        if ( data.acordes !== undefined ) {
-            options.acordes = data.acordes;
-        }
+	    // 1. Validação do Schema
+	    if (!resultado.success) {
+		    throw new TypeError("Pausa.create: Erro na estrutura dos dados: " + resultado.error.message);
+	    }
 
-        return new Pausa( duracao, options );
+	    const { duracao, options } = resultado.data;
+
+	    // 3. Instanciação das dependências
+	    const instanciaDuracao = TempoDuracao.fromJson(duracao);
+
+	    // 4. Tratamento específico para unidadeTempo se ela existir no options
+	    const optionsProcessado = { ...options };
+
+	    // Retorno usando o spread para manter o DRY em todas as propriedades de options
+	    return new Pausa(instanciaDuracao, optionsProcessado);
     }
 }

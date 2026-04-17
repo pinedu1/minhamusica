@@ -15,43 +15,6 @@ export class ElementoMusical {
         this._options = options;
     }
 
-	/**
-	 * Formata a duração rítmica para o padrão textual do ABCJS.
-	 * Sobrescreve o método base para garantir a compatibilidade.
-	 * @returns {string} A duração formatada (ex: "1/4", "2").
-	 * @example
-	 * pausa.formatarDuracaoAbc( ); // Retorna "1/2"
-	 */
-	_formatarDuracaoAbc() {
-        const razao = this._duracao.razao / this.getUnidadeTempo().razao;
-        if (Math.abs(razao - 1) < 0.000001) return "";
-
-        // Se for um número inteiro (ex: 2, 3, 4), retorna direto
-        if (Number.isInteger(Number(razao.toFixed(8)))) {
-            return Math.round(razao).toString();
-        }
-
-        const d = Number(razao.toFixed(8));
-
-        // Transforma o decimal em uma fração musical perfeita (bases 2, 4, 8, 16...)
-        for (let denominador = 2; denominador <= 64; denominador *= 2) {
-            const numerador = Math.round(d * denominador);
-
-            // Verifica se a fração bate perfeitamente com o decimal original
-            if (Math.abs((numerador / denominador) - d) < 0.000001) {
-
-                // Sintaxe simplificada do ABC para frações
-                if (numerador === 1 && denominador === 2) return "/"; // Ex: C/
-                if (numerador === 1) return `/${denominador}`;        // Ex: C/4
-
-                // Retorna a fração completa
-                return `${numerador}/${denominador}`;                 // Ex: C3/2, z5/2
-            }
-        }
-
-        // Fallback de extrema segurança (teoricamente nunca deve cair aqui se a música estiver no compasso)
-        return razao.toString();
-    }
 
     // Getters e Setters comuns
 	/**
@@ -129,6 +92,26 @@ export class ElementoMusical {
 			}
 		}
 		return 0;
+	}
+	getAcordes() {
+		if (this._options.acordes === undefined || this._options.acordes === null) {
+			return [];
+		}
+		if (this._options.acordes.constructor.name !== 'Array') {
+			return [];
+		}
+		if (this._options.acordes.length === 0) {
+			return this._options.acordes;
+		}
+		return this._options.acordes.map ( acorde => this.transpoeAcorde ( acorde ) );
+	}
+	setAcordes(acordes) {
+		if (acordes === undefined) return;
+		if (!acordes) {
+			this._options.acordes = [];
+			return;
+		}
+		if (!Array.isArray(acordes)) {}
 	}
     /**
      * Busca a unidade de tempo ativa na hierarquia da nota/pausa/unissono.
@@ -232,24 +215,4 @@ export class ElementoMusical {
         }
         this._options = val;
     }
-	getAcordes() {
-		if (this._options.acordes === undefined || this._options.acordes === null) {
-			return [];
-		}
-		if (this._options.acordes.constructor.name !== 'Array') {
-			return [];
-		}
-		if (this._options.acordes.length === 0) {
-			return this._options.acordes;
-		}
-		return this._options.acordes.map ( acorde => this.transpoeAcorde ( acorde ) );
-	}
-	setAcordes(acordes) {
-		if (acordes === undefined) return;
-		if (!acordes) {
-			this._options.acordes = [];
-			return;
-		}
-		if (!Array.isArray(acordes)) {}
-	}
 }
