@@ -84,7 +84,7 @@ describe( 'Unissono', () => {
         expect( unissono.notas[ 1 ] ).toBe( notaMock3 );
         
         // Testar validação no setter
-        expect( () => { unissono.notas = [ {} ]; } ).toThrowError( "A nota deve ser uma instância de Nota." );
+        expect( () => { unissono.notas = [ {} ]; } ).toThrowError( "Todos os elementos do array de notas devem ser instâncias de Nota." );
         expect( () => { unissono.notas = null; } ).toThrowError( "As notas de um unissono devem ser fornecidas como um array de instâncias de Nota." );
     } );
 
