@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/UnissonoJson.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Unissono.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Unissono.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,7 +166,7 @@
       <workItem from="1776435000511" duration="12000" />
       <workItem from="1776435021969" duration="860000" />
       <workItem from="1776435889120" duration="1595000" />
-      <workItem from="1776437493556" duration="26296000" />
+      <workItem from="1776437493556" duration="26954000" />
     </task>
     <servers />
   </component>
