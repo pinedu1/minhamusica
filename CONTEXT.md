@@ -16,7 +16,7 @@ O projeto utiliza a seguinte stack:
 
 O projeto utiliza aliases de caminho para simplificar os imports e manter a organização. Os seguintes aliases estão configurados no `vite.config.js` e `jsconfig.json`:
 
--   `@model`: Para classes de modelo de domínio.
+-   `@domain`: Para classes de modelo de domínio.
 -   `@schemas`: Para esquemas de validação com Zod.
 -   `@services`: Para serviços, como chamadas de API ou lógica de negócio.
 -   `@styles`: Para arquivos de estilização (CSS, SCSS, etc.).

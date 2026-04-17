@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@model/*": ["src/model/*"],
+      "@domain/*": ["src/domain/*"],
       "@schemas/*": ["src/schemas/*"],
       "@services/*": ["src/services/*"],
       "@styles/*": ["src/styles/*"],

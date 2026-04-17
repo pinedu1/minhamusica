@@ -6,8 +6,27 @@
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CONTEXT.md" beforeDir="false" afterPath="$PROJECT_DIR$/CONTEXT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/jsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/compasso/TipoBarra.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/TipoBarra.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/compasso/Tonalidade.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Tonalidade.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Nota.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/nota/NotaFrequencia.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/NotaFrequencia.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/nota/Pausa.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Pausa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/nota/Unissono.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Unissono.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/obra/ArmaduraClave.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/ArmaduraClave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/obra/Clave.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/Clave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/obra/ClaveTipo.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/ClaveTipo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/obra/GrupoInstrumento.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/GrupoInstrumento.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/obra/Obra.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/Obra.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/obra/Ritmo.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/Ritmo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/tempo/TempoAndamento.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoAndamento.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/tempo/TempoDuracao.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoDuracao.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/tempo/TempoMetrica.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoMetrica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/voz/Voz.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/voz/Voz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +179,7 @@
       <workItem from="1776434806296" duration="187000" />
       <workItem from="1776435000511" duration="12000" />
       <workItem from="1776435021969" duration="860000" />
-      <workItem from="1776435889120" duration="336000" />
+      <workItem from="1776435889120" duration="410000" />
     </task>
     <servers />
   </component>
