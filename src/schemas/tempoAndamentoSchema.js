@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { uniaoTempoDuracao } from './tempoDuracaoSchema.js';
+import { uniaoTempoDuracao } from '@schemas/tempoDuracaoSchema.js';
 
 export const tempoAndamentoSchema = z.object({
     // Usa o schema já definido e modular para TempoDuracao,

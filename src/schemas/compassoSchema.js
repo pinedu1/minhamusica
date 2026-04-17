@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { notaSchema } from './notaSchema.js';
-import { pausaSchema } from './pausaSchema.js';
-import { unissonoSchema } from './unissonoSchema.js';
-import { tempoDuracaoSchema } from './tempoDuracaoSchema.js';
-import { tempoMetricaSchema } from './tempoMetricaSchema.js';
-import { tipoBarraSchema } from './tipoBarraSchema.js';
+import { notaSchema } from '@schemas/notaSchema.js';
+import { pausaSchema } from '@schemas/pausaSchema.js';
+import { unissonoSchema } from '@schemas/unissonoSchema.js';
+import { tempoDuracaoSchema } from '@schemas/tempoDuracaoSchema.js';
+import { tempoMetricaSchema } from '@schemas/tempoMetricaSchema.js';
+import { tipoBarraSchema } from '@schemas/tipoBarraSchema.js';
 
 /**
  * Schema para validação de anotações e cifras

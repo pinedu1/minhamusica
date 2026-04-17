@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ClaveTipo } from '../domain/obra/ClaveTipo.js';
+import { ClaveTipo } from '@domain/obra/ClaveTipo.js';
 
 const chavesClave = Object.keys(ClaveTipo);
 

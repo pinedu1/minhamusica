@@ -1,12 +1,12 @@
 import { z } from 'zod';
-import { vozSchema } from './vozSchema.js';
-import { tempoDuracaoSchema } from './tempoDuracaoSchema.js';
-import { tempoMetricaSchema } from './tempoMetricaSchema.js';
-import { tempoAndamentoSchema } from './tempoAndamentoSchema.js';
-import { tonalidadeSchema } from './tonalidadeSchema.js';
-import { ritmoSchema } from './ritmoSchema.js';
-import { grupoInstrumentoSchema } from './grupoInstrumentoSchema.js';
-import { claveSchema } from './claveSchema.js';
+import { vozSchema } from '@schemas/vozSchema.js';
+import { tempoDuracaoSchema } from '@schemas/tempoDuracaoSchema.js';
+import { tempoMetricaSchema } from '@schemas/tempoMetricaSchema.js';
+import { tempoAndamentoSchema } from '@schemas/tempoAndamentoSchema.js';
+import { tonalidadeSchema } from '@schemas/tonalidadeSchema.js';
+import { ritmoSchema } from '@schemas/ritmoSchema.js';
+import { grupoInstrumentoSchema } from '@schemas/grupoInstrumentoSchema.js';
+import { claveSchema } from '@schemas/claveSchema.js';
 
 export const obraSchema = z.object({
     // X: Índice da obra (Reference Number). Deve ser inteiro positivo.

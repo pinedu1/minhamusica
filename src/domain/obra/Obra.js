@@ -1,13 +1,13 @@
-import { Voz } from '../voz/Voz.js';
-import { Compasso } from '../compasso/Compasso.js';
-import { TempoAndamento } from '../tempo/TempoAndamento.js';
-import { TempoDuracao } from '../tempo/TempoDuracao.js';
-import { TempoMetrica } from '../tempo/TempoMetrica.js';
-import { Tonalidade } from '../compasso/Tonalidade.js';
-import { Ritmo } from './Ritmo.js';
+import { Voz } from '@domain/voz/Voz.js';
+import { Compasso } from '@domain/compasso/Compasso.js';
+import { TempoAndamento } from '@domain/tempo/TempoAndamento.js';
+import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
+import { Tonalidade } from '@domain/compasso/Tonalidade.js';
+import { Ritmo } from '@domain/obra/Ritmo.js';
 import { GrupoInstrumento } from './GrupoInstrumento.js';
-import { Clave } from './Clave.js';
-import { obraSchema } from '../../schemas/obraSchema.js';
+import { Clave } from '@domain/obra/Clave.js';
+import { obraSchema } from '@schemas/obraSchema.js';
 
 /*
 A:	(Geographical) Area : eg A:Brittany or A:Sussex

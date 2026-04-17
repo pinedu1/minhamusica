@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Tonalidade, TonalidadeEnum } from '../domain/compasso/Tonalidade.js';
+import { Tonalidade, TonalidadeEnum } from '@domain/compasso/Tonalidade.js';
 
 // Extrai as chaves do enum (ex: 'A', 'Ab', 'Csm')
 const chavesTonalidade = Object.keys(TonalidadeEnum);

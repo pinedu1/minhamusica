@@ -1,4 +1,4 @@
-import { Nota } from './Nota.js';
+import { Nota } from '@domain/nota/Nota.js';
 import { Altura } from './Altura.js';
 import { Duracao, DuracaoBase } from './Duracao.js';
 

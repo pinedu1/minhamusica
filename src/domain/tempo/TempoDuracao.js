@@ -1,4 +1,4 @@
-import { tempoDuracaoSchema, uniaoTempoDuracao } from '../../schemas/tempoDuracaoSchema.js';
+import { tempoDuracaoSchema, uniaoTempoDuracao } from '@schemas/tempoDuracaoSchema.js';
 
 /**
  * Representa a fração de tempo de uma nota (ex: 1/4, 3/8).
@@ -87,6 +87,14 @@ export class TempoDuracao {
     toAbc() {
         return `L:${this.toString()}`;
     }
+    
+    toJSON() {
+        return {
+            numerador: this.#numerador,
+            denominador: this.#denominador
+        };
+    }
+
     // 2. O Helper Estático
     static create(dados) {
         // Se já for uma instância de TempoDuracao, não precisa recriar

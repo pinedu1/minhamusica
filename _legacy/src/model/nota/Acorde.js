@@ -1,6 +1,6 @@
-import { TempoPadrao } from "../tempo/TempoPadrao.js";
-import { TempoNota } from "../tempo/TempoNota.js";
-import { Nota } from "../nota/Nota.js";
+import { TempoPadrao } from "@domain/tempo/TempoPadrao.js";
+import { TempoNota } from "@domain/tempo/TempoNota.js";
+import { Nota } from "@domain/nota/Nota.js";
 
 /**
  * Representa um acorde musical, um conjunto de notas tocadas simultaneamente.

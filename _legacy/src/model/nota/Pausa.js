@@ -1,5 +1,5 @@
-import { TempoNota } from "../tempo/TempoNota.js";
-import { TempoPadrao } from "../tempo/TempoPadrao.js";
+import { TempoNota } from "@domain/tempo/TempoNota.js";
+import { TempoPadrao } from "@domain/tempo/TempoPadrao.js";
 
 /**
  * Representa um silêncio (pausa) na pauta musical.

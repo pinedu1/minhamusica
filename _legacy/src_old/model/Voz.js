@@ -1,5 +1,5 @@
 import { HasteDirecao } from './HasteDirecao.js';
-import { Nota } from './Nota.js';
+import { Nota } from '@domain/nota/Nota.js';
 import { Acorde } from './Acorde.js'; // Importação necessária para o novo tipo
 
 export class Voz {

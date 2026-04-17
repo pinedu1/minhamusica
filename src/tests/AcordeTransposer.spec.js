@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { AcordeTransposer } from '../transposer/AcordeTransposer';
+import { AcordeTransposer } from '@domain/nota/AcordeTransposer.js';
 
 describe('AcordeTransposer', () => {
     let transposer;
@@ -89,6 +89,13 @@ describe('AcordeTransposer', () => {
             // console.log(`[Maior] Original: ${original.padEnd(5)} | +2 semitons -> Transposto: ${transposto}`);
             expect(transposto).toBe('D');
         });
+	    it('deve transpor e manter a qualidade Maior para Bemol', () => {
+		    const original = 'C';
+		    const transposto = transposer.transporAcorde(original, -2);
+
+		    // console.log(`[Maior] Original: ${original.padEnd(5)} | +2 semitons -> Transposto: ${transposto}`);
+		    expect(transposto).toBe('A#');
+	    });
 
         it('deve transpor e manter a qualidade Menor', () => {
             const original = 'Cm';

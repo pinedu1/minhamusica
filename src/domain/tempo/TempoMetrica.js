@@ -1,4 +1,4 @@
-import { tempoMetricaSchema, uniaoTempoMetrica } from '../../schemas/tempoMetricaSchema.js';
+import { tempoMetricaSchema, uniaoTempoMetrica } from '@schemas/tempoMetricaSchema.js';
 /**
  * Representa a fração de tempo de uma nota (ex: 1/4, 3/8).
  * M:	Meter :see part one of this tutorial for further details

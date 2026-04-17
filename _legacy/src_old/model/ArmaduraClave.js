@@ -1,4 +1,4 @@
-import { Tonalidade } from './Tonalidade.js';
+import { Tonalidade } from '@domain/compasso/Tonalidade.js';
 /**
  * Representa a Armadura de Clave de um trecho ou compasso.
  */

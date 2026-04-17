@@ -1,3 +1,4 @@
+import { configDefaults } from 'vitest/config';
 import { defineConfig } from 'vite';
 import path from 'path';
 
@@ -11,6 +12,13 @@ export default defineConfig({
         '@data': path.resolve(__dirname, './src/data'),
         '@tests': path.resolve(__dirname, './src/tests'),
         '@tranposer': path.resolve(__dirname, './src/transposer'),
+	    '@adapters': path.resolve(__dirname, './src/adapters'),
+	    '@abcjs': path.resolve(__dirname, './src/adapters/abcjs'),
+	    '@persistence': path.resolve(__dirname, './src/adapters/persistence')
     }
   }
+	, test: {
+		// Mantém as exclusões originais e adiciona a sua pasta de quarentena
+		exclude: [...configDefaults.exclude, '_legacy/**'],
+	}
 });

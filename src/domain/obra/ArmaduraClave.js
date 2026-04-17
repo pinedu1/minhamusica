@@ -1,4 +1,4 @@
-import { Tonalidade } from '../compasso/Tonalidade.js';
+import { Tonalidade } from '@domain/compasso/Tonalidade.js';
 /**
  * Representa a Armadura de Clave de um trecho ou compasso.
  */
@@ -63,7 +63,7 @@ export class ArmaduraClave {
         if ( tom === undefined || tom === null ) {
             tom = "C";
         }
-        const tom = Tonalidade[tonalidade];
+        tom = Tonalidade[tonalidade];
         if (!(tom instanceof Tonalidade)) {
             throw new TypeError("A tonalidade deve ser instância de Tonalidade.");
         }

@@ -1,8 +1,8 @@
-import { Compasso } from '../domain/Compasso.js';
-import { Nota } from '../domain/Nota.js';
-import { EstruturaTempo } from '../domain/EstruturaTempo.js';
-import { Duracao, DuracaoBase } from '../domain/Duracao.js';
-import { Acorde } from '../domain/Acorde.js';
+import { Compasso } from '@domain/Compasso.js';
+import { Nota } from '@domain/Nota.js';
+import { EstruturaTempo } from '@domain/EstruturaTempo.js';
+import { Duracao, DuracaoBase } from '@domain/Duracao.js';
+import { Acorde } from '@domain/Acorde.js';
 
 /**
  * Utilitário responsável por converter strings de texto ABC em objetos musicais,

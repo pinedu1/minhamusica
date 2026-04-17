@@ -1,7 +1,7 @@
-import { Compasso } from '../domain/Compasso.js';
-import { Nota } from '../domain/Nota.js';
-import { AlturaMidi } from '../domain/AlturaMidi.js';
-import { Duracao } from '../domain/Duracao.js';
+import { Compasso } from '@domain/Compasso.js';
+import { Nota } from '@domain/Nota.js';
+import { AlturaMidi } from '@domain/AlturaMidi.js';
+import { Duracao } from '@domain/Duracao.js';
 
 export class CompassoParser {
     /**

@@ -33,26 +33,26 @@ export class Pausa {
      * @param {number} duracao - Use preferencialmente Duracao.[CHAVE].valor
      * @param {boolean} invisivel
      */
-    constructor(duracao = Duracao.QUARTER.valor, invisivel = false) {
-        this.#duracao = duracao;
-        this.#invisivel = invisivel;
+    constructor(duracao, options = {}) {
+	    super(duracao, options);
+
+	    this.duracao = duracao;
+
+	    // 2. Mesclamos os padrões com o que veio do options diretamente no "this"
+	    this._options = Object.assign({
+		    obra: null,
+		    voz: null, // <- Adicionei a voz que faltava!
+		    compasso: null,
+		    unidadeTempo: null,
+		    fermata: false,
+		    breath: null,
+		    invisivel: false,
+		    ...options // Sobrescreve os nulls/false se o usuário mandar algo
+	    });
     }
 
-    /**
-     * Converte para a representação ABC.
-     * @example "z2" (Pausa de mínima), "x/2" (Pausa invisível de colcheia)
-     */
-    toAbc() {
-        const caractere = this.#invisivel ? 'x' : 'z';
-        // Lógica simples: se for 1 (semínima), o ABC não precisa de sufixo
-        const sufixo = this.#duracao === 1 ? "" : this.#duracao;
-
-        // Se houver fermata, ela vem antes: !fermata!z
-        const ornamentos = this.#articulacoes.join("");
-
-        return `${ornamentos}${caractere}${sufixo}`;
-    }
 
     get duracao() { return this.#duracao; }
+	get invisivel() { return this.#invisivel; }
     get tempoInico() { return this.#tempoInico; }
 }

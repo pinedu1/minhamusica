@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { notaSchema } from './notaSchema.js';
-import { tempoDuracaoSchema } from './tempoDuracaoSchema.js';
+import { notaSchema } from '@schemas/notaSchema.js';
+import { tempoDuracaoSchema } from '@schemas/tempoDuracaoSchema.js';
 
 /**
  * Schema para validação de dados de um Unissono Musical.

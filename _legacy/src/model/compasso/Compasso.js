@@ -1,11 +1,11 @@
-import { TipoBarra } from "../compasso/TipoBarra.js";
-import { Nota } from "../nota/Nota.js";
-import { Pausa } from "../nota/Pausa.js"; 
+import { TipoBarra } from "@domain/compasso/TipoBarra.js";
+import { Nota } from "@domain/nota/Nota.js";
+import { Pausa } from "@domain/nota/Pausa.js"; 
 import { Acorde } from "../nota/Acorde.js";
-import { Voz } from "../voz/Voz.js";
-import { Obra } from "../obra/Obra.js";
-import { TempoCompasso } from "../tempo/TempoCompasso.js";
-import { Tonalidade } from "../compasso/Tonalidade.js";
+import { Voz } from "@domain/voz/Voz.js";
+import { Obra } from "@domain/obra/Obra.js";
+import { TempoCompasso } from "@domain/tempo/TempoCompasso.js";
+import { Tonalidade } from "@domain/compasso/Tonalidade.js";
 
 /**
  * Representa um compasso musical, organizando notas, pausas e acordes dentro de uma métrica.

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TipoBarra } from "../domain/compasso/TipoBarra.js";
+import { TipoBarra } from "@domain/compasso/TipoBarra.js";
 
 // 1. Extraímos as chaves e os valores válidos
 const nomesValidos = Object.keys(TipoBarra).filter(k => k !== 'getByAbc');

@@ -1,6 +1,6 @@
-import { NotaFrequencia } from "./NotaFrequencia.js";
-import { TempoNota } from "../tempo/TempoNota.js";
-import { TempoPadrao } from "../tempo/TempoPadrao.js";
+import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
+import { TempoNota } from "@domain/tempo/TempoNota.js";
+import { TempoPadrao } from "@domain/tempo/TempoPadrao.js";
 
 /**
  * Representa uma nota musical completa, integrando altura, duração e atributos de execução.

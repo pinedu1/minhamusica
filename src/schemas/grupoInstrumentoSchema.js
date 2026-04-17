@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GrupoInstrumento, GrupoInstrumentoAbc } from '../domain/obra/GrupoInstrumento.js';
+import { GrupoInstrumento, GrupoInstrumentoAbc } from '@domain/obra/GrupoInstrumento.js';
 
 export const grupoInstrumentoSchema = z.union([
     // 1. Aceita a instância já criada da classe

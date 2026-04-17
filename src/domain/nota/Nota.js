@@ -1,9 +1,9 @@
-import { NotaFrequencia } from "./NotaFrequencia.js";
-import { TempoDuracao } from "../tempo/TempoDuracao.js";
-import { notaSchema } from "../../schemas/notaSchema.js";
-import { NotaFrequenciaSchema } from "../../schemas/notaFrequenciaSchema.js";
-import { TempoDuracaoSchema } from "../../schemas/tempoDuracaoSchema.js";
-import { ElementoMusical } from "./ElementoMusical.js";
+import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { notaSchema } from "@schemas/notaSchema.js";
+import { NotaFrequenciaSchema } from "@schemas/notaFrequenciaSchema.js";
+import { TempoDuracaoSchema } from "@schemas/tempoDuracaoSchema.js";
+import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 /**
  * Representa uma nota musical completa, integrando altura, duração e atributos de execução.
  */

@@ -1,5 +1,5 @@
-import { TempoDuracao } from "./TempoDuracao.js";
-import { tempoAndamentoSchema } from "../../schemas/tempoAndamentoSchema.js";
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
 
 /**
  * Representa a fração de tempo de uma nota (ex: 1/4, 3/8).

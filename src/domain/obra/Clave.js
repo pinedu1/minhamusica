@@ -1,5 +1,5 @@
-import { ClaveTipo } from './ClaveTipo.js';
-import { ClaveSchema } from '../../schemas/claveSchema.js';
+import { ClaveTipo } from '@domain/obra/ClaveTipo.js';
+import { ClaveSchema } from '@schemas/claveSchema.js';
 
 export class Clave {
     /** @type {keyof typeof ClaveTipo} */

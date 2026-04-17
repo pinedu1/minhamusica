@@ -1,13 +1,13 @@
-import { TipoBarra } from "./TipoBarra.js";
-import { Nota } from "../nota/Nota.js";
-import { Pausa } from "../nota/Pausa.js";
-import { Unissono } from "../nota/Unissono.js";
-import { Voz } from "../voz/Voz.js";
-import { Obra } from "../obra/Obra.js";
-import { TempoMetrica } from "../tempo/TempoMetrica.js";
-import { TempoDuracao } from "../tempo/TempoDuracao.js";
-import { Tonalidade } from "./Tonalidade.js";
-import { compassoSchema } from "../../schemas/compassoSchema.js";
+import { TipoBarra } from "@domain/compasso/TipoBarra.js";
+import { Nota } from "@domain/nota/Nota.js";
+import { Pausa } from "@domain/nota/Pausa.js";
+import { Unissono } from "@domain/nota/Unissono.js";
+import { Voz } from "@domain/voz/Voz.js";
+import { Obra } from "@domain/obra/Obra.js";
+import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { Tonalidade } from "@domain/compasso/Tonalidade.js";
+import { compassoSchema } from "@schemas/compassoSchema.js";
 
 
 /**

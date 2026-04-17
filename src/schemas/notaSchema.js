@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { uniaoTempoDuracao } from './tempoDuracaoSchema.js';
-import { notaFrequenciaSchema } from './notaFrequenciaSchema.js';
+import { uniaoTempoDuracao } from '@schemas/tempoDuracaoSchema.js';
+import { notaFrequenciaSchema } from '@schemas/notaFrequenciaSchema.js';
 
 export const notaSchema = z.object({
     altura: notaFrequenciaSchema,

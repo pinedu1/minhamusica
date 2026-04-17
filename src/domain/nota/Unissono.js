@@ -1,10 +1,10 @@
-import { TempoDuracao } from "../tempo/TempoDuracao.js";
-import { Nota } from "./Nota.js";
-import { ElementoMusical } from "./ElementoMusical.js";
-import { unissonoSchema } from "../../schemas/unissonoSchema.js";
-import { NotaFrequencia } from "./NotaFrequencia.js";
-import { NotaFrequenciaSchema } from "../../schemas/notaFrequenciaSchema.js";
-import { TempoDuracaoSchema } from "../../schemas/tempoDuracaoSchema.js";
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { Nota } from "@domain/nota/Nota.js";
+import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
+import { unissonoSchema } from "@schemas/unissonoSchema.js";
+import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
+import { NotaFrequenciaSchema } from "@schemas/notaFrequenciaSchema.js";
+import { TempoDuracaoSchema } from "@schemas/tempoDuracaoSchema.js";
 /**
  * Representa um unissono musical, um conjunto de notas tocadas simultaneamente.
  * Suporta atributos de execução globais e notas de adorno (grace notes).

@@ -1,5 +1,5 @@
 import { Dinamica } from './Dinamica.js';
-import { TipoBarra } from './TipoBarra.js';
+import { TipoBarra } from '@domain/compasso/TipoBarra.js';
 import { EstruturaTempo } from './EstruturaTempo.js';
 import { Clave } from './Clave.js';
 import { Voz } from './Voz.js';
@@ -7,7 +7,7 @@ import { Ligadura } from './Ligadura.js';
 import { ArmaduraClave } from './ArmaduraClave.js';
 import { Anotacao } from './Anotacao.js';
 import { Acorde } from './Acorde.js';
-import { Nota } from './Nota.js';
+import { Nota } from '@domain/nota/Nota.js';
 import { MarcaExpressao } from './MarcaExpressao.js';
 
 /**

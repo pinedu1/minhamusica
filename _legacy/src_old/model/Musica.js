@@ -6,7 +6,7 @@ import { Clave } from './Clave.js';
 import { ArmaduraClave } from './ArmaduraClave.js';
 import { Instrumento } from './Instrumento.js';
 import { TempoBase } from './TempoBase.js';
-import { ClaveTipo } from "./ClaveTipo.js";
+import { ClaveTipo } from "@domain/obra/ClaveTipo.js";
 
 /**
  * Classe Raiz que representa uma obra musical completa.

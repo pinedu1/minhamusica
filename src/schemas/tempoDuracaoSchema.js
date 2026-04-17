@@ -1,28 +1,15 @@
 import { z } from 'zod';
 
-// 1. Formatos de dados puros
+const regex = /^[0-9]+\/(?!0+$)[0-9]+$/;
 const formatoObjeto = z.object({
-    numerador: z.number().int().positive(),
-    denominador: z.number().int().positive()
+    duracao: z.string().regex(regex)
 }).strict();
 
-const formatoStringObjeto = z.object({
-    duracao: z.string().regex(/^\d+\/[1-9]\d*$/)
-}).strict();
+const formatoStringPura = z.string().regex( regex );
 
-const formatoStringPura = z.string().regex(/^\d+\/[1-9]\d*$/);
-
-// 2. A União (O "Motor" de validação)
 export const uniaoTempoDuracao = z.union([
     formatoObjeto,
-    formatoStringObjeto,
     formatoStringPura,
-    // Validação segura para evitar import circular
-    z.any().refine((val) => {
-        return val && typeof val === 'object' && val.constructor.name === 'TempoDuracao';
-    }, { message: "Deve ser uma instância de TempoDuracao" })
 ]);
 
-// 3. O EXPORT CORRIGIDO (Sem o objeto em volta)
-// Antes era: z.object({ unidadeTempo: uniaoTempoDuracao }) -> ISSO CAUSA O ERRO
 export const tempoDuracaoSchema = uniaoTempoDuracao;

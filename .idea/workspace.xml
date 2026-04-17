@@ -5,31 +5,74 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jsLinters/eslint.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/PausaAbc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/PausaJson.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/domain/Pausa.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CONTEXT.md" beforeDir="false" afterPath="$PROJECT_DIR$/CONTEXT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/model/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/model/compasso/Compasso.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/model/nota/Acorde.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/model/nota/Acorde.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/model/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/model/nota/Nota.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/model/nota/Pausa.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/model/nota/Pausa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/model/obra/Clave.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/model/obra/Clave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/model/voz/Voz.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/model/voz/Voz.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Acorde.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Acorde.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Compasso.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Compasso.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Nota.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Pausa.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Pausa.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Voz.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Voz.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Acorde.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Acorde.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/ArmaduraClave.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/ArmaduraClave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Clave.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Clave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Compasso_old.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Compasso_old.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Musica.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Musica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Pausa.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Pausa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Voz.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Voz.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_legacy/src_old/parser/CompassoParser.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/parser/CompassoParser.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_legacy/src_old/parser/FluxoMusicalParser.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/parser/FluxoMusicalParser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_legacy/src_old/tests/Compasso.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/tests/Compasso.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_legacy/src_old/tests/FluxoMusicalParser.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/tests/FluxoMusicalParser.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_legacy/src_old/tests/Musica.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/tests/Musica.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_legacy/src_old/tests/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/tests/Nota.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/jsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Nota.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Pausa.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Pausa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Unissono.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Unissono.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/obra/ArmaduraClave.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/ArmaduraClave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/obra/Clave.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/Clave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/obra/Obra.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/Obra.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoAndamento.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoAndamento.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoDuracao.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoDuracao.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoMetrica.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoMetrica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/voz/Voz.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/voz/Voz.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/claveSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/claveSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/compassoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/compassoSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/grupoInstrumentoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/grupoInstrumentoSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/notaFrequenciaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/notaFrequenciaSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/notaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/notaSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/obraSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/obraSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/pausaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/pausaSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/ritmoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/ritmoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/tempoDuracaoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoDuracaoSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/tipoBarraSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tipoBarraSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/tonalidadeSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tonalidadeSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/Compasso.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/Compasso.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/Nota.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/Nota.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/Obra.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/Obra.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/Parser.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/Parser.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/Pausa.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/Pausa.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/TempoDuracao.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/TempoDuracao.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/Unissono.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/Unissono.spec.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/Voz.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/Voz.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/vozSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/vozSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/AcordeTransposer.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/AcordeTransposer.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Compasso.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Nota.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Obra.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Parser.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Pausa.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/TempoDuracao.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Unissono.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/Voz.spec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/transposer/AcordeTransposer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/AcordeTransposer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,12 +111,16 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "criando-parser",
-    "last_opened_file_path": "/home/eduardo/vendas/minhamusica/vite.config.js",
+    "js.linters.configure.manually.selectedeslint": "true",
+    "last_opened_file_path": "/home/eduardo/vendas/minhamusica/src/tests",
     "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
     "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.eslint": "/home/eduardo/vendas/minhamusica/node_modules/eslint",
+    "node.js.selected.package.standard": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
@@ -82,28 +129,28 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "settings.vite",
+    "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
     "ts.external.directory.path": "/home/eduardo/.local/share/JetBrains/IntelliJIdea2025.2/javascript-plugin/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/tests" />
       <recent name="$PROJECT_DIR$/src/model/voz" />
       <recent name="$PROJECT_DIR$/src/schemas" />
       <recent name="$PROJECT_DIR$/_legacy/src/model/voz" />
       <recent name="$PROJECT_DIR$/src/model/obra" />
-      <recent name="$PROJECT_DIR$/src/model" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/domain/nota" />
       <recent name="$PROJECT_DIR$/src/tests" />
       <recent name="$PROJECT_DIR$/_legacy/src/tests" />
       <recent name="$PROJECT_DIR$/_legacy/src_old" />
       <recent name="$PROJECT_DIR$/src" />
-      <recent name="$PROJECT_DIR$/_legacy" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.npm dev">
+  <component name="RunManager" selected="npm.npm test">
     <configuration name="localhost:5173" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:5173/">
       <method v="2" />
     </configuration>
@@ -120,7 +167,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="Voz" />
+      <arguments value="Pausa" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -182,19 +229,13 @@
       <workItem from="1776434806296" duration="187000" />
       <workItem from="1776435000511" duration="12000" />
       <workItem from="1776435021969" duration="860000" />
-      <workItem from="1776435889120" duration="449000" />
+      <workItem from="1776435889120" duration="1595000" />
+      <workItem from="1776437493556" duration="14927000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <watches-manager>
-      <configuration name="js.build_tools.npm">
-        <watch expression="dados.options.compasso[&quot;##options&quot;].barraFinal" />
-      </configuration>
-    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
