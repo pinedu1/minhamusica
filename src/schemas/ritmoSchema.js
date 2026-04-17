@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Ritmo, RitmoAbc } from '../model/obra/Ritmo.js';
+import { Ritmo, RitmoAbc } from '../domain/obra/Ritmo.js';
 
 export const ritmoSchema = z.union([
     // 1. Aceita a instância já criada da classe Ritmo

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TempoDuracao } from '../../src/model/tempo/TempoDuracao.js';
+import { TempoDuracao } from '../../src/domain/tempo/TempoDuracao.js';
 
 describe('TempoDuracao', () => {
     describe('Factory Method (create)', () => {

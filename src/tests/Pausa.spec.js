@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Pausa } from '../model/nota/Pausa.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
+import { Pausa } from '../domain/nota/Pausa.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
 
 describe('Pausa', () => {
     describe('Funcionalidades Básicas', () => {

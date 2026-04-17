@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { NotaFrequencia } from '../model/nota/NotaFrequencia.js';
+import { NotaFrequencia } from '../domain/nota/NotaFrequencia.js';
 
 export const notaFrequenciaSchema = z.union([
     // 1. Aceita a instância direta

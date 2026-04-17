@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { Voz } from '../model/voz/Voz.js';
-import { Compasso } from '../model/compasso/Compasso.js';
-import { Nota } from '../model/nota/Nota.js';
-import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
-import { Clave } from '../model/obra/Clave.js';
-import { TipoBarra } from '../model/compasso/TipoBarra.js';
+import { Voz } from '../domain/voz/Voz.js';
+import { Compasso } from '../domain/compasso/Compasso.js';
+import { Nota } from '../domain/nota/Nota.js';
+import { TempoMetrica } from '../domain/tempo/TempoMetrica.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
+import { Clave } from '../domain/obra/Clave.js';
+import { TipoBarra } from '../domain/compasso/TipoBarra.js';
 
 describe('Classe Voz', () => {
     class MockObra {}

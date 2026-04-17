@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Nota } from '../model/nota/Nota.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
+import { Nota } from '../domain/nota/Nota.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
 
 describe('Classe Nota', () => {
 

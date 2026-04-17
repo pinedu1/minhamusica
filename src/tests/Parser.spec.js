@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Obra } from '../model/obra/Obra.js';
+import { Obra } from '../domain/obra/Obra.js';
 import { mzk_0, mzk_1, mzk_2, mzk_3 } from '../data/score.js';
 
 /**

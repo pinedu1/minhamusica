@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { Obra } from '../model/obra/Obra.js';
-import { Voz } from '../model/voz/Voz.js';
-import { Compasso } from '../model/compasso/Compasso.js';
-import { Nota } from '../model/nota/Nota.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
-import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
-import { Clave } from '../model/obra/Clave.js';
-import { Tonalidade } from '../model/compasso/Tonalidade.js';
-import { TempoAndamento } from '../model/tempo/TempoAndamento.js';
-import { Ritmo } from '../model/obra/Ritmo.js';
-import { GrupoInstrumento } from '../model/obra/GrupoInstrumento.js';
+import { Obra } from '../domain/obra/Obra.js';
+import { Voz } from '../domain/voz/Voz.js';
+import { Compasso } from '../domain/compasso/Compasso.js';
+import { Nota } from '../domain/nota/Nota.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
+import { TempoMetrica } from '../domain/tempo/TempoMetrica.js';
+import { Clave } from '../domain/obra/Clave.js';
+import { Tonalidade } from '../domain/compasso/Tonalidade.js';
+import { TempoAndamento } from '../domain/tempo/TempoAndamento.js';
+import { Ritmo } from '../domain/obra/Ritmo.js';
+import { GrupoInstrumento } from '../domain/obra/GrupoInstrumento.js';
 
 describe('Classe Obra', () => {
     describe('Construtor Manual', () => {

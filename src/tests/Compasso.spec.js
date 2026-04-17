@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { Compasso } from '../model/compasso/Compasso.js';
-import { Nota } from '../model/nota/Nota.js';
-import { Pausa } from '../model/nota/Pausa.js';
-import { Unissono } from '../model/nota/Unissono.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
-import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
-import { Tonalidade } from '../model/compasso/Tonalidade.js';
+import { Compasso } from '../domain/compasso/Compasso.js';
+import { Nota } from '../domain/nota/Nota.js';
+import { Pausa } from '../domain/nota/Pausa.js';
+import { Unissono } from '../domain/nota/Unissono.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
+import { TempoMetrica } from '../domain/tempo/TempoMetrica.js';
+import { Tonalidade } from '../domain/compasso/Tonalidade.js';
 // Mocks simples baseados na suposição da sua estrutura de Enums
 const MockTipoBarra = {
     NONE: { abc: "" },

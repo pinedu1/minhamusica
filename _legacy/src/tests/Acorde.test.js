@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Acorde } from '../model/nota/Acorde.js';
-import { Nota } from '../model/nota/Nota.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
+import { Acorde } from '../domain/nota/Acorde.js';
+import { Nota } from '../domain/nota/Nota.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
 
 describe('Classe Acorde', () => {
 

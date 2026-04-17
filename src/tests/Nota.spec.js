@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Nota } from '../model/nota/Nota.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
-import { NotaFrequencia } from '../model/nota/NotaFrequencia.js';
+import { Nota } from '../domain/nota/Nota.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
+import { NotaFrequencia } from '../domain/nota/NotaFrequencia.js';
 
 describe('Nota', () => {
     const ref14 = new TempoDuracao(1, 4); // L: 1/4

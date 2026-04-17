@@ -1,12 +1,12 @@
 /*
 import { describe, it, expect } from 'vitest';
-import { Voz } from '../model/voz/Voz.js';
-import { Compasso } from '../model/compasso/Compasso.js';
-import { Clave } from '../model/obra/Clave.js';
-import { ClaveTipo } from '../model/obra/ClaveTipo.js';
-import { Obra } from '../model/obra/Obra.js';
-import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
+import { Voz } from '../domain/voz/Voz.js';
+import { Compasso } from '../domain/compasso/Compasso.js';
+import { Clave } from '../domain/obra/Clave.js';
+import { ClaveTipo } from '../domain/obra/ClaveTipo.js';
+import { Obra } from '../domain/obra/Obra.js';
+import { TempoMetrica } from '../domain/tempo/TempoMetrica.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
 
 describe('Voz', () => {
 /!*

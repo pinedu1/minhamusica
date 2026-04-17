@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { Nota } from '../src/model/Nota.js';
-import { Altura } from '../src/model/Altura.js';
-import { Duracao, DuracaoBase } from '../src/model/Duracao.js';
-import { EstruturaTempo } from '../src/model/EstruturaTempo.js';
-import { UnidadeDuracao } from '../src/model/UnidadeDuracao.js';
+import { Nota } from '../src/domain/Nota.js';
+import { Altura } from '../src/domain/Altura.js';
+import { Duracao, DuracaoBase } from '../src/domain/Duracao.js';
+import { EstruturaTempo } from '../src/domain/EstruturaTempo.js';
+import { UnidadeDuracao } from '../src/domain/UnidadeDuracao.js';
 describe('Classe Nota', () => {
     it('deve calcular corretamente o sufixo de duração baseado na unidadeBase 4 tempos', () => {
         const altura = Altura.resolverAltura("G");

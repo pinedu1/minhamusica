@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { Compasso } from '../model/compasso/Compasso.js';
-import { TipoBarra } from '../model/compasso/TipoBarra.js';
-import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
-import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
-import { Tonalidade } from '../model/compasso/Tonalidade.js';
-import { Nota } from '../model/nota/Nota.js';
-import { Pausa } from '../model/nota/Pausa.js';
-import { Acorde } from '../model/nota/Acorde.js';
+import { Compasso } from '../domain/compasso/Compasso.js';
+import { TipoBarra } from '../domain/compasso/TipoBarra.js';
+import { TempoMetrica } from '../domain/tempo/TempoMetrica.js';
+import { TempoDuracao } from '../domain/tempo/TempoDuracao.js';
+import { Tonalidade } from '../domain/compasso/Tonalidade.js';
+import { Nota } from '../domain/nota/Nota.js';
+import { Pausa } from '../domain/nota/Pausa.js';
+import { Acorde } from '../domain/nota/Acorde.js';
 
 describe('Classe Compasso', () => {
 

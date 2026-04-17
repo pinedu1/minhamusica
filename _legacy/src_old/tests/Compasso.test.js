@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { Compasso } from '../src/model/Compasso.js'; // Ajuste o caminho se necessário
-import { EstruturaTempo } from '../src/model/EstruturaTempo.js';
-import { Clave } from '../src/model/Clave.js';
-import { ClaveTipo } from "../src/model/ClaveTipo.js";
-import { ArmaduraClave } from "../src/model/ArmaduraClave.js";
-import { Nota } from "../src/model/Nota.js";
-import { Duracao } from "../src/model/Duracao.js";
-import { Altura } from "../src/model/Altura.js";
+import { Compasso } from '../src/domain/Compasso.js'; // Ajuste o caminho se necessário
+import { EstruturaTempo } from '../src/domain/EstruturaTempo.js';
+import { Clave } from '../src/domain/Clave.js';
+import { ClaveTipo } from "../src/domain/ClaveTipo.js";
+import { ArmaduraClave } from "../src/domain/ArmaduraClave.js";
+import { Nota } from "../src/domain/Nota.js";
+import { Duracao } from "../src/domain/Duracao.js";
+import { Altura } from "../src/domain/Altura.js";
 
 describe('Classe Compasso', () => {
 
