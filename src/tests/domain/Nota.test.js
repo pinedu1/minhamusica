@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { Nota } from '@domain/nota/Nota.js';
 import { NotaFrequencia } from '@domain/nota/NotaFrequencia.js';
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+
 
 describe( 'Nota', () => {
     it( 'deve inicializar com valores padrão', () => {
         const alturaMock = Object.create( NotaFrequencia.prototype );
-        const duracaoMock = { valor: 1 };
+        const duracaoMock = new TempoDuracao(1,4);
         const nota = new Nota( alturaMock, duracaoMock );
 
         expect( nota.altura ).toBe( alturaMock );
@@ -16,13 +18,13 @@ describe( 'Nota', () => {
     } );
 
     it( 'deve falhar se altura não for NotaFrequencia', () => {
-        const duracaoMock = { valor: 1 };
+        const duracaoMock = new TempoDuracao(1,4);
         expect( () => new Nota( {}, duracaoMock ) ).toThrowError( "A altura deve ser NotaFrequencia." );
     } );
 
     it( 'deve configurar opções personalizadas', () => {
-        const alturaMock = Object.create( NotaFrequencia.prototype );
-        const duracaoMock = { valor: 1 };
+        const alturaMock = NotaFrequencia.getByKey('C1');
+        const duracaoMock = new TempoDuracao(1,4);
         const options = {
             ligada: true
             , acento: true
@@ -41,8 +43,8 @@ describe( 'Nota', () => {
     } );
 
     it( 'deve permitir atualizar ligada', () => {
-        const alturaMock = Object.create( NotaFrequencia.prototype );
-        const duracaoMock = { valor: 1 };
+        const alturaMock = NotaFrequencia.getByAbc('^C');
+        const duracaoMock = new TempoDuracao( 1, 4 );
         const nota = new Nota( alturaMock, duracaoMock );
         
         expect( nota.ligada ).toBe( false );
@@ -52,7 +54,7 @@ describe( 'Nota', () => {
 
     it( 'deve falhar se graceNote for inválido', () => {
         const alturaMock = Object.create( NotaFrequencia.prototype );
-        const duracaoMock = { valor: 1 };
+        const duracaoMock = new TempoDuracao(1,4);
         expect( () => new Nota( alturaMock, duracaoMock, { graceNote: true } ) ).toThrowError( "Falha ao criar Nota: 'graceNote' deve ser false, null ou Array<Nota>." );
         expect( () => new Nota( alturaMock, duracaoMock, { graceNote: {} } ) ).toThrowError( "Falha ao criar Nota: 'graceNote' deve ser false, null ou Array<Nota>." );
     } );
