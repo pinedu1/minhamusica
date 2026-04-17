@@ -5,7 +5,7 @@ import { Nota } from "@domain/nota/Nota.js";
 export class UnissonoAbc extends ElementoMusicalAbc {
 	/**
 	 * Cria a string abcJs do unissono.
-	 * @param unissono
+	 * @param unissono {Unissono}
 	 * @return {string}
 	 */
 	static toAbc( unissono ) {

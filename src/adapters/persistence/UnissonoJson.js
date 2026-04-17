@@ -59,7 +59,7 @@ export class UnissonoJson {
 
 	/**
 	 * Cria uma instancia de Unissono a partir de um JSON.
-	 * @param dados
+	 * @param dados {object} { notas: ['A', 'B'], duracao: '1/4'}
 	 * @return {Unissono}
 	 */
 	static fromJson(dados) {
