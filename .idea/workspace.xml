@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/usr/bin/php" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="3BOcd7F20Ti7erCAR0zdn9ciVqN" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+    <option name="showVisibilityIcons" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JavaScript Debug.localhost:5173.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "criando-parser",
+    "last_opened_file_path": "/home/eduardo/vendas/minhamusica/vite.config.js",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "npm.npm dev.executor": "Run",
+    "npm.npm test.executor": "Debug",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "settings.vite",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/model/voz" />
+      <recent name="$PROJECT_DIR$/src/schemas" />
+      <recent name="$PROJECT_DIR$/_legacy/src/model/voz" />
+      <recent name="$PROJECT_DIR$/src/model/obra" />
+      <recent name="$PROJECT_DIR$/src/model" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/tests" />
+      <recent name="$PROJECT_DIR$/_legacy/src/tests" />
+      <recent name="$PROJECT_DIR$/_legacy/src_old" />
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/_legacy" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.npm dev">
+    <configuration name="localhost:5173" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:5173/">
+      <method v="2" />
+    </configuration>
+    <configuration name="npm dev" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="npm test" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="test" />
+      <arguments value="Voz" />
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="JavaScript Debug.localhost:5173" />
+      <item itemvalue="npm.npm test" />
+      <item itemvalue="npm.npm dev" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.localhost:5173" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28539.33" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28539.33" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="" />
+      <created>1774363641674</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774363641674</updated>
+      <workItem from="1774363642586" duration="6740000" />
+      <workItem from="1775042380371" duration="4059000" />
+      <workItem from="1775304475605" duration="15747000" />
+      <workItem from="1775389489439" duration="11120000" />
+      <workItem from="1775473821202" duration="141000" />
+      <workItem from="1775473981128" duration="27496000" />
+      <workItem from="1775566718649" duration="21086000" />
+      <workItem from="1775646603248" duration="41624000" />
+      <workItem from="1775733792125" duration="11497000" />
+      <workItem from="1775763714572" duration="12253000" />
+      <workItem from="1775833981224" duration="1558000" />
+      <workItem from="1775835553413" duration="951000" />
+      <workItem from="1775837612245" duration="2878000" />
+      <workItem from="1775840521786" duration="67000" />
+      <workItem from="1775840607078" duration="2424000" />
+      <workItem from="1775843038783" duration="16000" />
+      <workItem from="1775843061487" duration="12018000" />
+      <workItem from="1775869886028" duration="2674000" />
+      <workItem from="1775907789239" duration="22185000" />
+      <workItem from="1776082562177" duration="5999000" />
+      <workItem from="1776088736266" duration="38082000" />
+      <workItem from="1776167778291" duration="28147000" />
+      <workItem from="1776253213234" duration="32098000" />
+      <workItem from="1776341388305" duration="8965000" />
+      <workItem from="1776351044986" duration="22657000" />
+      <workItem from="1776426746351" duration="5738000" />
+      <workItem from="1776432493600" duration="2155000" />
+      <workItem from="1776434658312" duration="141000" />
+      <workItem from="1776434806296" duration="187000" />
+      <workItem from="1776435000511" duration="12000" />
+      <workItem from="1776435021969" duration="840000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="js.build_tools.npm">
+        <watch expression="dados.options.compasso[&quot;##options&quot;].barraFinal" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
