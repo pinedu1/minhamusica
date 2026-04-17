@@ -3,6 +3,7 @@ import { setupMusic } from "./services/musicEngine.js";
 import { exportarParaPDF } from "./services/print.js";
 import "./styles/main.scss";
 
+
 const initApp = async () => {
     // console.log("Iniciando interface...");
 

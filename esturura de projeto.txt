@@ -1,0 +1,47 @@
+src/
+├── assets/                 # Imagens, SVGs e recursos estáticos
+├── data/                   # Arquivos de partituras (ex: score.js)
+├── main.js                 # Ponto de entrada (Inicializa a Máquina de Estados e os Adapters)
+│
+├── domain/                 # 1. CORE / DOMÍNIO (Nenhuma dependência externa aqui)
+│   ├── compasso/           # Compasso.js, TipoBarra.js, Tonalidade.js
+│   ├── nota/
+│   │   ├── AcordeTransposer.js <-- A classe de matemática musical pura
+│   │   ├── ElementoMusical.js
+│   │   ├── NotaFrequencia.js
+│   │   ├── NotaState.js    <-- Estado puro da nota (Sem ABC ou JSON)
+│   │   ├── Pausa.js
+│   │   └── Unissono.js
+│   ├── obra/               # Obra.js, Clave.js, etc.
+│   ├── tempo/              # TempoDuracao.js, TempoMetrica.js, etc.
+│   └── voz/                # Voz.js
+│
+├── adapters/               # 2. ADAPTADORES (Falam com o mundo externo)
+│   ├── abcjs/
+│   │   ├── NotaAbc.js      <-- Traduz de/para ABCJS
+│   │   └── AbcjsMotor.js   <-- Wrapper que encapsula o abcjs.renderAbc()
+│   ├── vexflow/
+│   │   └── NotaVexflow.js  <-- Traduz de/para VexFlow (Futuro)
+│   └── persistence/
+│       └── NotaJson.js     <-- Serializa/Deserializa para LocalStorage/API
+│
+├── schemas/                # 3. VALIDAÇÕES (Zod - Mantém como está)
+│   ├── notaSchema.js
+│   ├── tempoDuracaoSchema.js
+│   └── ...
+│
+├── state/                  # 4. MÁQUINA DE ESTADOS (O "Cérebro" da IDE)
+│   └── IdeStateMachine.js  <-- Gerencia cliques, edições e chama os Adapters
+│
+├── services/               # 5. SERVIÇOS AUXILIARES
+│   ├── musicEngine.js
+│   └── print.js
+│
+├── styles/                 # 6. SCSS (Mantém a estrutura modular atual)
+│   ├── main.scss
+│   └── partials/
+│
+└── tests/                  # 7. TESTES (Vitest)
+    ├── domain/             # Testa matemática, saltos de tom (AcordeTransposer.spec.js) e NotaState
+    ├── adapters/           # Testa se NotaAbc.js gera as strings corretas
+    └── state/              # Testa as transições da máquina de estados
