@@ -1,60 +1,43 @@
-import './style.css'
-import javascriptLogo from './assets/javascript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.js'
+import { mzk_0, mzk_1, mzk_2, mzk_3, mzk_4 } from "./data/score.js";
+import { setupMusic } from "./services/musicEngine.js";
+import { exportarParaPDF } from "./services/print.js";
+import "./styles/main.scss";
 
-document.querySelector('#app').innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${javascriptLogo}" class="framework" alt="JavaScript logo"/>
-    <img src=${viteLogo} class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.js</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
 
-<div class="ticks"></div>
+const initApp = async () => {
+    // console.log("Iniciando interface...");
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src=${viteLogo} alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-          <img class="button-icon" src="${javascriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+    try {
+        // Inicializa o ABCJS (Desenho + Áudio)
+        // Passamos os IDs dos containers definidos no seu HTML
+        const visualObj = await setupMusic("paper", "#audio-controls", mzk_3);
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+        // Após o ABCJS renderizar, o SVG existirá no DOM.
+        // Agora podemos configurar seus cliques customizados:
+        const svgElement = document.querySelector('#paper svg');
 
-setupCounter(document.querySelector('#counter'))
+/*
+        if (svgElement) {
+            svgElement.addEventListener('click', (e) => {
+                const rect = svgElement.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Exemplo de desenho manual sobre o SVG da partitura
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", x);
+                circle.setAttribute("cy", y);
+                circle.setAttribute("r", "5");
+                circle.setAttribute("fill", "red");
+                svgElement.appendChild(circle);
+            });
+        }
+*/
+
+    } catch (error) {
+        console.error("Falha ao carregar a música:", error);
+    }
+};
+
+// No ES6 moderno com Vite, você pode usar apenas:
+document.addEventListener('DOMContentLoaded', initApp);
