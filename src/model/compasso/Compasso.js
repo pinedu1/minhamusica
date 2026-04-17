@@ -1,7 +1,7 @@
 import { TipoBarra } from "./TipoBarra.js";
 import { Nota } from "../nota/Nota.js";
 import { Pausa } from "../nota/Pausa.js";
-import { Acorde } from "../nota/Acorde.js";
+import { Unissono } from "../nota/Unissono.js";
 import { Voz } from "../voz/Voz.js";
 import { Obra } from "../obra/Obra.js";
 import { TempoMetrica } from "../tempo/TempoMetrica.js";
@@ -11,13 +11,13 @@ import { compassoSchema } from "../../schemas/compassoSchema.js";
 
 
 /**
- * Representa um compasso musical, organizando notas, pausas e acordes dentro de uma métrica.
+ * Representa um compasso musical, organizando notas, pausas e unissonos dentro de uma métrica.
  */
 export class Compasso {
     /** @type {number} */
     #index = 0;
 
-    /** @type {Array<Nota|Pausa|Acorde>} */
+    /** @type {Array<Nota|Pausa|Unissono>} */
     #elements = [];
 
     /** @type {Object} */
@@ -35,7 +35,7 @@ export class Compasso {
     /**
      * USAGE: Construtor do Compasso. Inicializa o conteúdo e valida metadados.
      *
-     * @param {Array<Nota|Pausa|Acorde>} elements - Matriz de elementos musicais.
+     * @param {Array<Nota|Pausa|Unissono>} elements - Matriz de elementos musicais.
      * @param {Object} [options={}] - Configurações detalhadas.
      */
     constructor(elements = [], options = {}) {
@@ -68,22 +68,22 @@ export class Compasso {
         return null;
     }
     getMetrica() {
-        if ( this.#options.metrica ) {
+        if (this.#options.metrica) {
             return this.#options.metrica;
         }
-        if ( this.#options.voz ) {
+        if (this.#options.voz) {
             const voz = this.#options.voz;
-            if ( voz instanceof Voz) {
+            if (voz instanceof Voz) {
                 return voz.getMetrica();
-            } else if ( voz.options.metrica ) {
+            } else if (voz.options.metrica) {
                 return voz.options.metrica;
             }
         }
-        if ( this.#options.obra ) {
+        if (this.#options.obra) {
             const obra = this.#options.obra;
-            if ( obra instanceof Voz) {
+            if (obra instanceof Voz) {
                 return obra.getMetrica();
-            } else if ( obra.options.metrica ) {
+            } else if (obra.options.metrica) {
                 return obra.options.metrica;
             }
         }
@@ -117,9 +117,9 @@ export class Compasso {
         let abc = "";
         // Resolvendo unidade de tempo local com fallback para 1/8 exclusivo deste método
         const ut = this.getUnidadeTempo();
-        let pulsosTotais = this.getPulsos( ut );
+        let pulsosTotais = this.getPulsos(ut);
 
-        if ( this.#options.barraInicial && (this.#options.barraInicial !== TipoBarra.NONE) ) {
+        if (this.#options.barraInicial && (this.#options.barraInicial !== TipoBarra.NONE)) {
             abc += this.#options.barraInicial.abc;
         }
 
@@ -134,7 +134,7 @@ export class Compasso {
 
         // Arredonda para cima para dar prioridade à primeira metade em casos ímpares
         const pontoDeCorte = Math.ceil(pulsosTotais / 2);
-        
+
         let pulsosAcumulados = 0;
         let meioAlcancado = false;
 
@@ -188,7 +188,7 @@ export class Compasso {
             abc += " " + pausaPreenchimento.toAbc();
         }
         // --- FIM DO BLOCO NOVO ---
-        if (this.#options.barraFinal && (this.#options.barraFinal !== TipoBarra.NONE) ) {
+        if (this.#options.barraFinal && (this.#options.barraFinal !== TipoBarra.NONE)) {
             abc += this.#options.barraFinal.abc;
         }
 
@@ -253,7 +253,7 @@ export class Compasso {
     }
 
     /**
-     * USAGE: Elementos musicais (Nota, Pausa, Acorde).
+     * USAGE: Elementos musicais (Nota, Pausa, Unissono).
      */
     get elements() { return this.#elements; }
     set elements(val) {
@@ -267,7 +267,7 @@ export class Compasso {
 
             // 2. Injeta o compasso como pai.
             // Isso dispensa a necessidade de copiar a unidadeTempo manualmente,
-            // pois a Nota/Pausa/Acorde agora sabe subir a árvore para procurar!
+            // pois a Nota/Pausa/Unissono agora sabe subir a árvore para procurar!
             el.options.compasso = this;
 
             // 3. A SUA LÓGICA DE ROTEAMENTO:
@@ -285,17 +285,17 @@ export class Compasso {
                 return Nota.create(el);
             }
 
-            // Verifica se já é uma instância de Acorde ou se o JSON tem um array 'notas'
-            if (el.constructor.name === 'Acorde' || el.notas !== undefined) {
-                const acordeOpc = Object.fromEntries(
+            // Verifica se já é uma instância de Unissono ou se o JSON tem um array 'notas'
+            if (el.constructor.name === 'Unissono' || el.notas !== undefined) {
+                const unissonoOpc = Object.fromEntries(
                     Object.entries(
                         (({ obra, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, ligada, arpeggio, fermata, ghostNote, roll, trinado, mordente, upperMordent, graceNote, dedilhado }) => ({
                             obra, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, ligada, arpeggio, fermata, ghostNote, roll, trinado, mordente, upperMordent, graceNote, dedilhado }))(el.options || {})
                     ).filter(([chave, valor]) => valor != null) // Filtra fora null e undefined
                 );
 
-                el.options = acordeOpc;
-                return Acorde.create(el);
+                el.options = unissonoOpc;
+                return Unissono.create(el);
             }
 
             const pausaOpc = Object.fromEntries(
@@ -357,7 +357,7 @@ export class Compasso {
     }
     get unidadeTempo() { return this.#options.unidadeTempo; }
 
-    set unidadeTempo( tempo ) {
+    set unidadeTempo(tempo) {
         if (!(tempo instanceof TempoDuracao)) {
             throw new TypeError("O 'unidadeTempo' do compasso deve ser do tipo TempoDuracao.");
         }
@@ -385,7 +385,7 @@ export class Compasso {
      * @return {Array<string>}
      * */
     get letra() { return this.#options.letra; }
-    
+
     /**
      * Usage: Letra pertencente ao compasso
      * Nota: Está nota não pode ser usada no metodo toAbc() do Compasso
@@ -394,7 +394,7 @@ export class Compasso {
      * @param {Array<string>} letra
      * @return {void}
      * */
-    set letra( letra ) {
+    set letra(letra) {
         if (!Array.isArray(letra)) {
             throw new TypeError("Compasso: A propriedade 'letra' deve ser um Array de strings.");
         }
@@ -440,7 +440,7 @@ export class Compasso {
         // 2. CRIAÇÃO DA INSTÂNCIA PRIMEIRO (Ainda sem elementos para não engatilhar validação)
         const compasso = new Compasso([], optionsProcessado);
 
-        // 3. Roteamento e Instanciação dos Elementos (Nota, Pausa ou Acorde)
+        // 3. Roteamento e Instanciação dos Elementos (Nota, Pausa ou Unissono)
         const instanciasElementos = elementos.map(el => {
 
             // Garante que o objeto options exista no JSON cru
@@ -451,7 +451,7 @@ export class Compasso {
 
             // Agora, quando o Nota.create validar a unidadeTempo, ele achará o compasso pai!
             if (el.constructor.name === 'Nota' || el.altura) return Nota.create(el);
-            if (el.constructor.name === 'Acorde' || el.notas) return Acorde.create(el);
+            if (el.constructor.name === 'Unissono' || el.notas) return Unissono.create(el);
             return Pausa.create(el);
         });
 
@@ -469,7 +469,7 @@ export class Compasso {
      * @returns {Compasso} Uma nova instância da classe Compasso.
      */
     static parseAbc(compassoString, contextOptions) {
-        // Regex para capturar notas, acordes, pausas e cifras
+        // Regex para capturar notas, unissonos, pausas e cifras
         const elementRegex = /"([^"]+)"|(\[([^\]]+)\])|([zxyZXY])|([=^_]?[a-gA-G][,']*)([0-9]*\/*[0-9]*-?)/g;
         const elements = [];
         let match;
@@ -480,15 +480,15 @@ export class Compasso {
         // Itera sobre todos os elementos musicais na string do compasso
         while ((match = elementRegex.exec(cleanString)) !== null) {
             const token = match[0];
-            
+
             if (token.startsWith('"')) {
                 // TODO: Implementar parsing de cifras e anotações
                 continue;
             }
 
             if (token.startsWith('[')) {
-                // É um acorde
-                elements.push(Acorde.parseAbc(token, contextOptions));
+                // É um unissono
+                elements.push(Unissono.parseAbc(token, contextOptions));
             } else if (/[zxyZXY]/.test(token[0])) {
                 // É uma pausa
                 elements.push(Pausa.parseAbc(token, contextOptions));

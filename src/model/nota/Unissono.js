@@ -1,19 +1,19 @@
 import { TempoDuracao } from "../tempo/TempoDuracao.js";
 import { Nota } from "./Nota.js";
 import { ElementoMusical } from "./ElementoMusical.js";
-import { acordeSchema } from "../../schemas/acordeSchema.js";
+import { unissonoSchema } from "../../schemas/unissonoSchema.js";
 import { NotaFrequencia } from "./NotaFrequencia.js";
 import { NotaFrequenciaSchema } from "../../schemas/notaFrequenciaSchema.js";
 import { TempoDuracaoSchema } from "../../schemas/tempoDuracaoSchema.js";
 /**
- * Representa um acorde musical, um conjunto de notas tocadas simultaneamente.
+ * Representa um unissono musical, um conjunto de notas tocadas simultaneamente.
  * Suporta atributos de execução globais e notas de adorno (grace notes).
  */
-export class Acorde extends ElementoMusical {
+export class Unissono extends ElementoMusical {
     /** @type {Array<Nota>} */
     #notas = [];
     /**
-     * @param {Array<Nota>} notas - Notas que compõem o acorde.
+     * @param {Array<Nota>} notas - Notas que compõem o unissono.
      * @param {TempoDuracao} duracao - Duração do conjunto.
      * @param {Object} [options={}] - Atributos e contexto.
      */
@@ -52,15 +52,15 @@ export class Acorde extends ElementoMusical {
         // Validação da propriedade graceNote (Idêntica à classe Nota)
         const gn = this._options.graceNote;
         if (gn !== false && gn !== null && !Array.isArray(gn)) {
-            throw new TypeError("Falha ao criar Acorde: 'graceNote' deve ser false, null ou um Array de instâncias de Nota.");
+            throw new TypeError("Falha ao criar Unissono: 'graceNote' deve ser false, null ou um Array de instâncias de Nota.");
         }
         if (Array.isArray(gn) && gn.some(n => !(n instanceof Nota))) {
-            throw new TypeError("Falha ao criar Acorde: Todos os elementos em 'graceNote' devem ser instâncias de Nota.");
+            throw new TypeError("Falha ao criar Unissono: Todos os elementos em 'graceNote' devem ser instâncias de Nota.");
         }
     }
 
     /**
-     * USAGE: Gera a string ABC do acorde processando notas internas e atributos globais.
+     * USAGE: Gera a string ABC do unissono processando notas internas e atributos globais.
      * @returns {string}
      */
     toAbc() {
@@ -85,10 +85,10 @@ export class Acorde extends ElementoMusical {
         
         if (opt.roll) abc += "~";
 
-        // Grace Notes (Adornos) aplicados ao acorde
+        // Grace Notes (Adornos) aplicados ao unissono
         abc += this.#toGraceNotes();
 
-        // 2. CORPO DO ACORDE
+        // 2. CORPO DO UNISSONO
         const notasAbc = this.#notas.map(nota => nota.toAbc(true)).join('');
         abc += `[${notasAbc}]`;
 
@@ -173,7 +173,7 @@ export class Acorde extends ElementoMusical {
     
     set notas(arrayNotas) {
         if (!Array.isArray(arrayNotas)) {
-            throw new TypeError('As notas de um acorde devem ser fornecidas como um array de instâncias de Nota.');
+            throw new TypeError('As notas de um unissono devem ser fornecidas como um array de instâncias de Nota.');
         }
         if (arrayNotas.some(nota => !(nota instanceof Nota))) {
             throw new TypeError('Todos os elementos do array de notas devem ser instâncias de Nota.');
@@ -183,23 +183,23 @@ export class Acorde extends ElementoMusical {
     }
 
     /**
-     * USAGE: Helper para criação rápida de Acorde a partir de um JSON.
+     * USAGE: Helper para criação rápida de Unissono a partir de um JSON.
      */
     static create(dados) {
-        if (dados instanceof Acorde) return dados;
+        if (dados instanceof Unissono) return dados;
 
         // 1. Validação via Zod
-        const resultado = acordeSchema.safeParse(dados);
+        const resultado = unissonoSchema.safeParse(dados);
 
         if (!resultado.success) {
-            throw new TypeError("Acorde.create: Erro na estrutura dos dados: " + resultado.error.message);
+            throw new TypeError("Unissono.create: Erro na estrutura dos dados: " + resultado.error.message);
         }
 
         const { notas, duracao, options } = resultado.data;
 
         // 2. Validação da Regra de Negócio (Hierarquia de Tempo)
         if (!options.unidadeTempo && !options.compasso && !options.voz && !options.obra) {
-            throw new TypeError("Acorde.create: A unidadeTempo Global deve ser definida em algum nível da hierarquia.");
+            throw new TypeError("Unissono.create: A unidadeTempo Global deve ser definida em algum nível da hierarquia.");
         }
 
         // 3. Instanciação recursiva das Notas
@@ -207,7 +207,7 @@ export class Acorde extends ElementoMusical {
             // GARANTE que o objeto options exista no JSON cru da nota
             n.options = n.options || {};
 
-            // Propaga o contexto do Acorde para a Nota, se a nota não tiver o seu próprio.
+            // Propaga o contexto do Unissono para a Nota, se a nota não tiver o seu próprio.
             if (!n.options.unidadeTempo && options.unidadeTempo) {
                 n.options.unidadeTempo = options.unidadeTempo;
             }
@@ -236,28 +236,28 @@ export class Acorde extends ElementoMusical {
             optionsProcessado.graceNote = options.graceNote.map(n => Nota.create(n));
         }
 
-        // 5. Retorna a nova instância de Acorde
-        return new Acorde(instanciasNotas, instanciaDuracao, optionsProcessado);
+        // 5. Retorna a nova instância de Unissono
+        return new Unissono(instanciasNotas, instanciaDuracao, optionsProcessado);
     }
 
     /**
-     * USAGE: Cria uma nova instância de Acorde a partir de uma string de notação ABC.
-     * @param {string} acordeString - A string do acorde (ex: "[CEG]2").
+     * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
+     * @param {string} unissonoString - A string do unissono (ex: "[CEG]2").
      * @param {Object} contextOptions - Opções de contexto (L, M, K).
-     * @returns {Acorde} Uma nova instância da classe Acorde.
+     * @returns {Unissono} Uma nova instância da classe Unissono.
      */
-    static parseAbc(acordeString, contextOptions) {
-        const acordeRegex = /\[([^\]]+)\]([0-9]*\/*[0-9]*)?(-)?/;
-        const match = acordeString.match(acordeRegex);
+    static parseAbc(unissonoString, contextOptions) {
+        const unissonoRegex = /\[([^\]]+)\]([0-9]*\/*[0-9]*)?(-)?/;
+        const match = unissonoString.match(unissonoRegex);
 
         if (!match) {
-            throw new Error(`Acorde.parseAbc: String de acorde inválida: "${acordeString}"`);
+            throw new Error(`Unissono.parseAbc: String de unissono inválida: "${unissonoString}"`);
         }
 
         const [, notasStr, duracaoStr, ligadura] = match;
-        const acordeOptions = { ...contextOptions };
+        const unissonoOptions = { ...contextOptions };
 
-        // 1. Duração do Acorde
+        // 1. Duração do Unissono
         const unidadeTempo = (function() {
             if (contextOptions.voz) {
                 const voz = contextOptions.voz;
@@ -291,7 +291,7 @@ export class Acorde extends ElementoMusical {
         }
 
         if (ligadura) {
-            acordeOptions.ligada = true;
+            unissonoOptions.ligada = true;
         }
 
         // 2. Parsing das notas internas
@@ -299,18 +299,18 @@ export class Acorde extends ElementoMusical {
         const notas = [];
         let notaMatch;
         while ((notaMatch = notaInternaRegex.exec(notasStr)) !== null) {
-            // A duração de cada nota interna é a mesma do acorde.
-            // Passamos a string da nota e o contexto, mas a duração será a do acorde.
+            // A duração de cada nota interna é a mesma do unissono.
+            // Passamos a string da nota e o contexto, mas a duração será a do unissono.
             const nota = Nota.parseAbc(notaMatch[0], contextOptions);
             notas.push(nota);
         }
 
-        // 3. Criação do Acorde
-        const acorde = new Acorde(notas, duracao, acordeOptions);
+        // 3. Criação do Unissono
+        const unissono = new Unissono(notas, duracao, unissonoOptions);
         
-        // Garante que a duração de cada nota individual seja a mesma do acorde
-        acorde.notas.forEach(n => n.duracao = acorde.duracao);
+        // Garante que a duração de cada nota individual seja a mesma do unissono
+        unissono.notas.forEach(n => n.duracao = unissono.duracao);
 
-        return acorde;
+        return unissono;
     }
 }

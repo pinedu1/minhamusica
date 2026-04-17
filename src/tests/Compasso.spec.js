@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { Compasso } from '../model/compasso/Compasso.js';
 import { Nota } from '../model/nota/Nota.js';
 import { Pausa } from '../model/nota/Pausa.js';
-import { Acorde } from '../model/nota/Acorde.js';
+import { Unissono } from '../model/nota/Unissono.js';
 import { TempoDuracao } from '../model/tempo/TempoDuracao.js';
 import { TempoMetrica } from '../model/tempo/TempoMetrica.js';
 import { Tonalidade } from '../model/compasso/Tonalidade.js';
@@ -123,12 +123,12 @@ describe('Classe Compasso', () => {
             expect(abcResult).toBe("|:[M:4/4][K:G]:|");
         });
         describe('Helper estático Compasso.create()', () => {
-            it('deve instanciar Notas, Pausas e Acordes a partir de um JSON puro', () => {
+            it('deve instanciar Notas, Pausas e Unissonos a partir de um JSON puro', () => {
                 const jsonCompasso = {
                     elementos: [
                         { altura: "C", duracao: "1/4" }, // Identificado como Nota
                         { duracao: "1/4" },              // Identificado como Pausa
-                        { notas: [{altura:"E", duracao:"1/4"}, {altura:"G", duracao:"1/4"}], duracao: "1/4" } // Acorde
+                        { notas: [{altura:"E", duracao:"1/4"}, {altura:"G", duracao:"1/4"}], duracao: "1/4" } // Unissono
                     ],
                     options: {
                         unidadeTempo: "1/4",
@@ -142,7 +142,7 @@ describe('Classe Compasso', () => {
                 expect(compasso).toBeInstanceOf(Compasso);
                 expect(compasso.elements[0]).toBeInstanceOf(Nota);
                 expect(compasso.elements[1]).toBeInstanceOf(Pausa);
-                expect(compasso.elements[2]).toBeInstanceOf(Acorde);
+                expect(compasso.elements[2]).toBeInstanceOf(Unissono);
                 expect(compasso.getMetrica()).toBeInstanceOf(TempoMetrica);
             });
         });
@@ -239,7 +239,7 @@ describe('Classe Compasso', () => {
         });
     });
     describe('Helper estático Compasso.create() com JSON', () => {
-        it('deve instanciar Nota, Pausa e Acorde implicitamente pelas propriedades do JSON', () => {
+        it('deve instanciar Nota, Pausa e Unissono implicitamente pelas propriedades do JSON', () => {
             const compasso = Compasso.create({
                 elementos: [
                     { duracao: "1/4" }, // Vírgula normal
@@ -259,7 +259,7 @@ describe('Classe Compasso', () => {
             expect(compasso.elements).toHaveLength(3);
             expect(compasso.elements[0]).toBeInstanceOf(Pausa);
             expect(compasso.elements[1]).toBeInstanceOf(Nota);
-            expect(compasso.elements[2]).toBeInstanceOf(Acorde);
+            expect(compasso.elements[2]).toBeInstanceOf(Unissono);
         });
         it('deve herdar as propriedades do options (tempo e unidadeTempo) para os elementos', () => {
             const compasso = Compasso.create({
@@ -267,9 +267,9 @@ describe('Classe Compasso', () => {
                 options: { metrica: "4/4", unidadeTempo: "1/4" }
             });
 
-            const acorde = compasso.elements[0];
-            expect(acorde.duracao.razao).toBe(2); // ratio de 2/1
-            expect(acorde.getUnidadeTempo().razao).toBe(0.25); // ratio de 1/4
+            const unissono = compasso.elements[0];
+            expect(unissono.duracao.razao).toBe(2); // ratio de 2/1
+            expect(unissono.getUnidadeTempo().razao).toBe(0.25); // ratio de 1/4
             const result = compasso.toAbc();
             expect(result).toBe("[M:4/4][C]8|"); // 2 / 0.25 = 8
         });

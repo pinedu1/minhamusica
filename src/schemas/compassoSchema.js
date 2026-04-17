@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { notaSchema } from './notaSchema.js';
 import { pausaSchema } from './pausaSchema.js';
-import { acordeSchema } from './acordeSchema.js';
+import { unissonoSchema } from './unissonoSchema.js';
 import { tempoDuracaoSchema } from './tempoDuracaoSchema.js';
 import { tempoMetricaSchema } from './tempoMetricaSchema.js';
 import { tipoBarraSchema } from './tipoBarraSchema.js';
@@ -29,10 +29,10 @@ export const compassoSchema = z.object({
         z.union([
             notaSchema,
             pausaSchema,
-            acordeSchema,
+            unissonoSchema,
             z.any().refine(val =>
-                    val && ['Nota', 'Pausa', 'Acorde'].includes(val.constructor.name),
-                { message: "O elemento deve ser uma instância de Nota, Pausa ou Acorde" }
+                    val && ['Nota', 'Pausa', 'Unissono'].includes(val.constructor.name),
+                { message: "O elemento deve ser uma instância de Nota, Pausa ou Unissono" }
             )
         ])
     ).default([]),

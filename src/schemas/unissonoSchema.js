@@ -3,11 +3,11 @@ import { notaSchema } from './notaSchema.js';
 import { tempoDuracaoSchema } from './tempoDuracaoSchema.js';
 
 /**
- * Schema para validação de dados de um Acorde Musical.
- * Reflete as propriedades da classe Acorde e garante a integridade dos dados antes da instanciação.
+ * Schema para validação de dados de um Unissono Musical.
+ * Reflete as propriedades da classe Unissono e garante a integridade dos dados antes da instanciação.
  */
-export const acordeSchema = z.object({
-    // O acorde é composto por um array de notas (conforme definido no notaSchema)
+export const unissonoSchema = z.object({
+    // O unissono é composto por um array de notas (conforme definido no notaSchema)
     notas: z.array(
         z.union([
             notaSchema,
@@ -16,9 +16,9 @@ export const acordeSchema = z.object({
             })
         ])
     ).min(1, {
-        message: "Um acorde deve conter pelo menos uma nota."
+        message: "Um unissono deve conter pelo menos uma nota."
     }),
-    // Duração global do acorde (ex: "1/4", "1/2")
+    // Duração global do unissono (ex: "1/4", "1/2")
     duracao: tempoDuracaoSchema,
 
     // Opções de execução e contexto hierárquico
