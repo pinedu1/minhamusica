@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/CompassoJson.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/VozAbc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/VozJson.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/voz/Voz.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/voz/Voz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/musicEngine.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/musicEngine.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +89,7 @@
       <recent name="$PROJECT_DIR$/_legacy/src_old" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.npm test">
+  <component name="RunManager" selected="npm.npm dev">
     <configuration name="localhost:5173" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:5173/">
       <method v="2" />
     </configuration>
@@ -166,7 +169,7 @@
       <workItem from="1776435000511" duration="12000" />
       <workItem from="1776435021969" duration="860000" />
       <workItem from="1776435889120" duration="1595000" />
-      <workItem from="1776437493556" duration="28297000" />
+      <workItem from="1776437493556" duration="29415000" />
     </task>
     <servers />
   </component>

@@ -10,7 +10,7 @@ const initApp = async () => {
     try {
         // Inicializa o ABCJS (Desenho + Áudio)
         // Passamos os IDs dos containers definidos no seu HTML
-        const visualObj = await setupMusic("paper", "#audio-controls", mzk_3);
+        const visualObj = await setupMusic("paper", "#audio-controls", mzk_4);
 
         // Após o ABCJS renderizar, o SVG existirá no DOM.
         // Agora podemos configurar seus cliques customizados:

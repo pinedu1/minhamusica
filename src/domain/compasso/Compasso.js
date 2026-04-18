@@ -23,14 +23,6 @@ export class Compasso {
     /** @type {Object} */
     #options;
 
-    /**
-     * Usage: Letra pertencente ao compasso
-     * Nota: Está nota não pode ser usada no metodo toAbc() do Compasso
-     * ela será manipulada no Objeto pai Voz, e dará o out da sequencia de letras dos seus compassos
-     * Estou apenas utilizando compasso como repositório de sua letra, para facilitar o toAbc() do Voz, em plotar este dado
-     * @type {Array<string>}
-     * */
-    #letra = [];
 
     /**
      * USAGE: Construtor do Compasso. Inicializa o conteúdo e valida metadados.
@@ -48,7 +40,6 @@ export class Compasso {
             , barraInicial: options.barraInicial || TipoBarra.NONE
             , barraFinal: options.barraFinal || TipoBarra.STANDARD
             , mudancaDeTom: options.mudancaDeTom || null
-            , letra: options.letra || []
             , ...options
         };
         this.elements = elements;

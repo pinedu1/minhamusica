@@ -33,15 +33,13 @@ export const setupMusic = async (visualSelector, audioSelector, abcString) => {
         paddingright: margin5mm,
         add_classes: true,
         // Forçamos a renderização da tablatura vinculada à voz
-        visualTranspose: 0,
-/*
+        /*visualTranspose: 0,*/
         tablature: [
             {
                 instrument: "guitar",
                 label: "Violão"
             }
         ],
-*/
         clickListener: function(abcElem, tuneNumber, classes, analysis, drag, mouseEvent) {
 
             // 1. Verifica primeiro se clicou em um texto anexado (Letra ou Acorde)
@@ -110,7 +108,7 @@ export const setupMusic = async (visualSelector, audioSelector, abcString) => {
         const synthControl = new abcjs.synth.SynthController();
 
         synthControl.load(audioSelector, { onEvent, onFinished: resetAll }, {
-            displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true
+            displayRestart: true, displayPlay: true, displayProgress: true/*, displayWarp: true*/
         });
 
         const createSynth = new abcjs.synth.CreateSynth();
