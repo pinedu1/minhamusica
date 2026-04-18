@@ -110,9 +110,9 @@ export class TempoMetrica {
             return new TempoMetrica(num, den);
         }
 
-        if (validado.duracao && regexFracao.test(validado.duracao)) {
+        if (validado.metrica && regexFracao.test(validado.metrica)) {
             // Se entrou como string "1/4", quebra e passa para o construtor
-            const partes = validado.duracao.split('/');
+            const partes = validado.metrica.split('/');
             const num = parseInt(partes[0], 10);
             const den = parseInt(partes[1], 10);
 

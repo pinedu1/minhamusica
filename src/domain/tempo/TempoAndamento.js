@@ -2,41 +2,41 @@ import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
 
 /**
- * Representa a fração de tempo de uma nota (ex: 1/4, 3/8).
+ * Representa a fração de andamento de uma nota (ex: 1/4, 3/8).
  */
 export class TempoAndamento {
     /** @type {TempoDuracao} */
-    #tempo;
+    #andamento;
     /** @type {PositiveNumber} */
-    #duracao;
+    #bpm;
 
     /**
      * USAGE: Cria uma Instancoa da Classe Tempo Formula
-     * @param {TempoDuracao} tempo - A marcação de tempo. Ex: 1/4
-     * @param {PositiveNumber} duracao - Duração desta nota
+     * @param {TempoDuracao} andamento - A marcação de andamento. Ex: 1/4
+     * @param {PositiveNumber} bpm - Duração desta nota
      * @returns {TempoAndamento}
      */
-    constructor(tempo, duracao) {
-        if ( tempo === null || tempo === undefined ) {
-            throw new TypeError("Falha ao criar TempoAndamento: 'tempo' ser válido.");
+    constructor(andamento, bpm) {
+        if ( andamento === null || andamento === undefined ) {
+            throw new TypeError("Falha ao criar TempoAndamento: 'andamento' ser válido.");
         }
-        if ( !(tempo instanceof TempoDuracao) ) {
-            throw new TypeError("Falha ao criar TempoAndamento: 'tempo' deve ser Uma instancia de TempoDuracao.");
+        if ( !(andamento instanceof TempoDuracao) ) {
+            throw new TypeError("Falha ao criar TempoAndamento: 'andamento' deve ser Uma instancia de TempoDuracao.");
         }
-        if ( duracao === null || duracao === undefined ) {
-            throw new TypeError("Falha ao criar TempoAndamento: 'duracao' ser válido.");
+        if ( bpm === null || bpm === undefined ) {
+            throw new TypeError("Falha ao criar TempoAndamento: 'bpm' ser válido.");
         }
-        if ( !Number.isInteger( duracao ) || Math.abs( duracao ) <= 0 ) {
-            throw new TypeError("Falha ao criar TempoAndamento: 'duracao' ser Inteiro e maior que Zero.");
+	    if ( (Number.isInteger( bpm ) === false) || (bpm <= 0) ) {
+            throw new TypeError("Falha ao criar TempoAndamento: 'bpm' ser Inteiro e maior que Zero.");
         }
-        this.#tempo = tempo;
-        this.#duracao = duracao;
+        this.#andamento = andamento;
+        this.#bpm = bpm;
     }
-    get tempo() { return this.#tempo; }
-    get duracao() { return this.#duracao; }
-    get razao() { return this.#tempo.razao / this.#duracao; }
+    get andamento() { return this.#andamento; }
+    get bpm() { return this.#bpm; }
+    get razao() { return this.#andamento.razao / this.#bpm; }
     toString() {
-        return `${this.#tempo.toString()}=${this.#duracao}`;
+        return `${this.#andamento.toString()}=${this.#bpm}`;
     }
     toCompasso() {
         return `[Q:${this.toString()}]`;
@@ -45,34 +45,17 @@ export class TempoAndamento {
         return `Q:${this.toString()}`;
     }
     toJSON() {
-        return { tempo: this.#tempo.toString(), duracao: this.#duracao };
+        return { andamento: this.#andamento.toString(), bpm: this.#bpm };
     }
     
     /**
-     * USAGE: Factory method. Aceita o formato JSON { tempo: '4/4', duracao: 95 } ou as propriedades soltas.
+     * USAGE: Factory method. Aceita o formato JSON { andamento: '4/4', bpm: 95 } ou as propriedades soltas.
      */
-    static create(dados, duracaoOpcional) {
+    static create(dados) {
         // Se vier instanciado, já retorna
         if (dados instanceof TempoAndamento) return dados;
-
-        // Adapta o suporte para os dois tipos de chamadas do programador:
-        // 1. TempoAndamento.create({ tempo: '4/4', duracao: 95 })
-        // 2. TempoAndamento.create('4/4', 95)
-        let jsonDados;
-        if ((typeof dados === 'object') && (dados !== null) && ('tempo' in dados) && ('duracao' in dados)) {
-            dados.duracao = parseInt( dados.duracao );
-            jsonDados = dados;
-        } else {
-            jsonDados = dados;
-            if (duracaoOpcional && duracaoOpcional > 0) {
-                jsonDados.duracao = duracaoOpcional;
-            } else {
-                jsonDados.duracao = 95;
-            }
-        }
-
         // Validação usando o Zod Schema
-        const resultado = tempoAndamentoSchema.safeParse(jsonDados);
+        const resultado = tempoAndamentoSchema.safeParse(dados);
 
         if (!resultado.success) {
             throw new TypeError("TempoAndamento.create: Falha na validação.\n" + resultado.error.message);
@@ -81,8 +64,8 @@ export class TempoAndamento {
         const validado = resultado.data;
 
         // Delega a criação limpa para o Factory estático da dependência em vez de refazer parsings manuais aqui
-        const tempoNotaInstancia = TempoDuracao.create(validado.tempo);
+        const andamento = TempoDuracao.create(validado.andamento);
 
-        return new TempoAndamento(tempoNotaInstancia, validado.duracao);
+        return new TempoAndamento(andamento, validado.bpm);
     }
 }

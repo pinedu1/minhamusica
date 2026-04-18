@@ -5,10 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/ClaveAbc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/ClaveJson.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/AdapterUtils.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/RitmoAbc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/RitmoJson.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/domain/TempoAndamento.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/domain/TempoDuracao.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/domain/TempoMetrica.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/obra/Clave.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/Clave.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/TempoDuracaoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/TempoDuracaoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/TempoDuracaoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoDuracaoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/obra/ArmaduraClave.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoAndamento.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoAndamento.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoDuracao.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoDuracao.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoMetrica.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoMetrica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/tempoDuracaoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoDuracaoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/tempoMetricaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoMetricaSchema.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,36 +52,36 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "JavaScript Debug.localhost:5173.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "criando-parser",
-    "js.linters.configure.manually.selectedeslint": "true",
-    "last_opened_file_path": "/home/eduardo/vendas/minhamusica/src/tests",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "/home/eduardo/vendas/minhamusica/node_modules/eslint",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "npm",
-    "npm.npm dev.executor": "Run",
-    "npm.npm test.executor": "Debug",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
-    "ts.external.directory.path": "/home/eduardo/.local/share/JetBrains/IntelliJIdea2025.2/javascript-plugin/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JavaScript Debug.localhost:5173.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;criando-parser&quot;,
+    &quot;js.linters.configure.manually.selectedeslint&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/eduardo/vendas/minhamusica/src/tests&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;/home/eduardo/vendas/minhamusica/node_modules/eslint&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.npm dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.npm test.executor&quot;: &quot;Debug&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.linters.eslint&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/home/eduardo/.local/share/JetBrains/IntelliJIdea2025.2/javascript-plugin/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/tests" />
@@ -79,14 +91,14 @@
       <recent name="$PROJECT_DIR$/src/model/obra" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/adapters" />
+      <recent name="$PROJECT_DIR$/src/tests/domain" />
       <recent name="$PROJECT_DIR$/src/adapters/persistence" />
       <recent name="$PROJECT_DIR$/src/domain/nota" />
       <recent name="$PROJECT_DIR$/src/tests" />
-      <recent name="$PROJECT_DIR$/_legacy/src/tests" />
-      <recent name="$PROJECT_DIR$/_legacy/src_old" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.npm dev">
+  <component name="RunManager" selected="npm.npm test">
     <configuration name="localhost:5173" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:5173/">
       <method v="2" />
     </configuration>
@@ -103,7 +115,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="Pausa" />
+      <arguments value="TempoAndamento" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -166,12 +178,24 @@
       <workItem from="1776435000511" duration="12000" />
       <workItem from="1776435021969" duration="860000" />
       <workItem from="1776435889120" duration="1595000" />
-      <workItem from="1776437493556" duration="30317000" />
+      <workItem from="1776437493556" duration="30912000" />
+      <workItem from="1776514921200" duration="9070000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
