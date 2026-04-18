@@ -5,13 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/TempoDuracaoAbc.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/TempoDuracaoJson.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/integration/TempoDuracaoIntegration.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/TempoMetricaAbc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoMetricaJson.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/TempoMetricaAbc.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/TempoMetricaJson.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/integration/TempoMetricaIntegration.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/TempoDuracaoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/TempoDuracaoAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoDuracao.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoDuracao.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/domain/TempoDuracao.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/TempoDuracao.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoMetrica.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoMetrica.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/TempoMetrica.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/TempoMetrica.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +107,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="TempoAndamento" />
+      <arguments value="TempoMetricaJson" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -170,7 +171,7 @@
       <workItem from="1776435021969" duration="860000" />
       <workItem from="1776435889120" duration="1595000" />
       <workItem from="1776437493556" duration="30912000" />
-      <workItem from="1776514921200" duration="11932000" />
+      <workItem from="1776514921200" duration="14001000" />
     </task>
     <servers />
   </component>

@@ -18,7 +18,18 @@ export class TempoMetrica {
      * @throws {Error} Se algum dos argumentos for menor ou igual a zero.
      */
     constructor(numerador = 4, denominador = 4) {
-        // Utilizamos os setters para aplicar a validação
+	    /**
+	     * Validação de Integridade (Defensive Programming).
+	     * Embora o Schema e o extrairNumerosMetricaAbc já validem, garantimos que
+	     * o numerador e denominador finais sejam compatíveis com o domínio.
+	     */
+	    if ( ( Number.isInteger( numerador ) === false ) || ( numerador <= 0 ) ) {
+		    throw new TypeError( "TempoMetrica.fromJson: Numerador inválido. Deve ser inteiro positivo." );
+	    }
+
+	    if ( ( Number.isInteger( denominador ) === false ) || ( denominador <= 0 ) ) {
+		    throw new TypeError( "TempoMetrica.fromJson: Denominador inválido. Deve ser inteiro positivo." );
+	    }
         this.numerador = numerador;
         this.denominador = denominador;
     }
@@ -63,64 +74,10 @@ export class TempoMetrica {
     toString() {
         return `${this.#numerador}/${this.#denominador}`;
     }
-    toCompasso() {
-        return `[M:${this.toString()}]`;
-    }
-
     /**
      * @returns {number} O valor decimal da fração (ex: 0.25).
      */
     get razao() {
         return this.#numerador / this.#denominador;
-    }
-
-    /**
-     * USAGE: Retorna a representação ABC para a duração da nota.
-     * Simplifica a string omitindo o número 1 (ex: 1/4 vira /4, 2/1 vira 2).
-     * @returns {string}
-     */
-    toAbc() {
-        if (this.#numerador === 1 && this.#denominador === 1) return "1";
-        const num = this.#numerador === 1 ? "" : this.#numerador;
-        const den = this.#denominador === 1 ? "" : `/${this.#denominador}`;
-        return `M:${num}${den}`;
-    }
-    // 2. O Helper Estático
-    static create(dados) {
-        // Se já for uma instância de TempoDuracao, não precisa recriar
-        if (dados instanceof TempoMetrica) return dados;
-
-        // Usamos safeParse para não estourar o erro padrão do Zod
-        const resultado = uniaoTempoMetrica.safeParse(dados);
-
-        // Caso não validou, levanta o throw personalizado
-        if (!resultado.success) {
-            throw new TypeError("TempoMetrica.create: duracao deve ser uma string.");
-        }
-
-        // Se validou, extraímos os dados limpos
-        const validado = resultado.data;
-        const regexFracao = /^\d+\/[1-9]\d*$/;
-        if ( regexFracao.test(validado) ) {
-            // Se entrou como string "1/4", quebra e passa para o construtor
-            const partes = validado.split('/');
-            const num = parseInt(partes[0], 10);
-            const den = parseInt(partes[1], 10);
-
-            return new TempoMetrica(num, den);
-        }
-
-        if (validado.metrica && regexFracao.test(validado.metrica)) {
-            // Se entrou como string "1/4", quebra e passa para o construtor
-            const partes = validado.metrica.split('/');
-            const num = parseInt(partes[0], 10);
-            const den = parseInt(partes[1], 10);
-
-            return new TempoMetrica(num, den);
-        }
-        if (validado.numerador && validado.denominador) {
-            return new TempoMetrica(validado.numerador, validado.denominador);
-        }
-        return null;
     }
 }
