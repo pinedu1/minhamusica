@@ -5,19 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/TempoAndamentoAbc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoAndamentoJson.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoAndamentoAbc.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoAndamentoJson.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/integration/TempoAndamentoIntegration.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/domain/nota/Quialtera.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/tempo/TempoAndamento.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/tempo/TempoAndamento.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/TempoDuracaoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoDuracaoAbc.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/TempoDuracaoJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoDuracaoJson.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/TempoMetricaAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoMetricaAbc.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/TempoMetricaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoMetricaJson.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/domain/TempoAndamento.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/TempoAndamento.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/PausaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/PausaAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Pausa.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Pausa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/obra/Obra.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/obra/Obra.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/AcordeTransposer.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/AcordeTransposer.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Pausa.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Pausa.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,10 +83,10 @@
       <recent name="$PROJECT_DIR$/src/model/obra" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/tests/domain" />
       <recent name="$PROJECT_DIR$/src/tests/adapters/persistence" />
       <recent name="$PROJECT_DIR$/src/tests/adapters/abcjs" />
       <recent name="$PROJECT_DIR$/src/adapters" />
-      <recent name="$PROJECT_DIR$/src/tests/domain" />
       <recent name="$PROJECT_DIR$/src/adapters/persistence" />
     </key>
   </component>
@@ -112,7 +107,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="TempoAndamentoAbc" />
+      <arguments value="Pausa.test" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -176,7 +171,7 @@
       <workItem from="1776435021969" duration="860000" />
       <workItem from="1776435889120" duration="1595000" />
       <workItem from="1776437493556" duration="30912000" />
-      <workItem from="1776514921200" duration="20194000" />
+      <workItem from="1776514921200" duration="26959000" />
     </task>
     <servers />
   </component>
@@ -202,6 +197,12 @@
           <line>16</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="43" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/tests/domain/Pausa.test.js</url>
+          <line>213</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="45" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -1,7 +1,8 @@
 import { Pausa } from '@domain/nota/Pausa.js';
 import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
 import { TempoDuracaoAbc } from "@abcjs/TempoDuracaoAbc.js";
-import { Pausa } from "@domain/pausa/Pausa.js";
+import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
+import { Pausa } from "@domain/nota/Pausa.js";
 
 /**
  * Classe responsável por traduzir Pausas entre o modelo de domínio e o formato ABCJS.
@@ -17,91 +18,100 @@ export class PausaAbc extends ElementoMusicalAbc {
 	 * @example
 	 * const abc = PausaAbc.toAbc( pausaInstance ); // Ex: "{C}D2"
 	 */
-	static toAbc( pausa, isAcorde = false ) {
-		let abc = "";
+	static toAbc( pausa ) {
 		const opt = pausa.options;
+		let prefixo = "";
 
-		// Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
-		if ( isAcorde === true ) {
-			if (opt.sustenido) abc += "^";
-			if (opt.beQuad) abc += "=";
-			abc += pausa.altura.abc;
-			return abc;
+		// 1. TRATAMENTO DE PAUSA DE COMPASSO (Z ou X)
+		if ( opt.pausaDeCompasso === true ) {
+			const pausaChar = opt.invisivel ? "X" : "Z";
+			const qtdCompassos = pausa.calcularTempoPausaDeCompasso();
+
+			// Se for apenas 1 compasso, retorna apenas a letra. Se for > 1, anexa o número.
+			const sufixo = ( qtdCompassos === false || qtdCompassos <= 1 ) ? "" : qtdCompassos;
+			return `${pausaChar}${sufixo}`;
 		}
 
-		// 1. PREFIXOS (Decoradores e Ornamentos)
-		if (opt.fermata) abc += "!fermata!";
-		if (opt.breath) abc += "!breath!";
+		// 2. PAUSAS COMUNS (z ou x)
+		const pausaChar = opt.invisivel ? "x" : "z";
 
+		// A) PREFIXOS: Devem vir ANTES do caractere (ex: !fermata!z)
+		if ( opt.fermata ) {
+			prefixo += "!fermata!";
+		} else if ( opt.fermataInvertida ) {
+			prefixo += "!invertedfermata!";
+		}
 
-		// Grace Notes (Adornos)
-		abc += PausaAbc.toGraceNotes( pausa );
+		if ( opt.breath ) {
+			prefixo += "!breath!";
+		}
 
-		// 3. SUFIXO DE DURAÇÃO
-		abc += PausaAbc.formatarDuracaoAbc( pausa );
+		// B) SUFIXO DE DURAÇÃO: Deve vir DEPOIS do caractere (ex: z2)
+		const duracaoAbc = PausaAbc.formatarDuracaoAbc( pausa );
 
-		return abc;
+		// ORDEM FINAL: [Prefixos][Caractere][Duração]
+		return `${prefixo}${pausaChar}${duracaoAbc}`;
 	}
-
-	/**
-	 * Factory: Converte uma string ABC complexa em uma instância de Pausa.
-	 * Captura acordes (ex: "Am""G"), decoradores, altura e duração.
-	 * @param {string} abcString - A string completa vinda do parser ABC.
-	 * @returns {Pausa}
-	 */
 	/**
 	 * Factory: Converte uma string ABC de pausa em uma instância de Pausa.
 	 * Captura acordes, trata invisibilidade (x/z) e extrai a duração.
 	 * @param {string} abcString - A string vinda do parser (ex: '"Am"z2' ou '"G""C"x').
+	 * Ex:
+	 * "Am"z
+	 * "Bm"Hz
+	 * "C#m"H!breath!z2
+	 * "D#m"H!breath!x
+	 * "D#m"!fermata!!breath!z4
+	 * "D#m"!invertedfermata!!breath!z
 	 * @returns {Pausa}
 	 */
-	static fromAbc ( abcString ) {
+	static fromAbc( abcString ) {
 		const options = {
 			fermata: false
-			, ligada: false
-			, invisivel: false
+			, fermataInvertida: false
 			, breath: false
-			, acordes: [ ]
+			, invisivel: false
+			, acordes: []
 		};
 
 		let tempAbc = abcString;
 
-		// 1. CAPTURA DE ACORDES (Ex: "Am", "G""C")
-		// O regex captura o conteúdo entre aspas duplas
-		const matchesAcordes = tempAbc.match ( /"(.*?)"/g );
+		// 1. EXTRAÇÃO DE ACORDES
+		const matchesAcordes = tempAbc.match( /"(.*?)"/g );
 		if ( matchesAcordes ) {
-			options.acordes = matchesAcordes.map ( a => a.replace ( /"/g , '' ) );
-			// Limpa as aspas da string para não interferir na captura da pausa/duração
-			tempAbc = tempAbc.replace ( /"(.*?)"/g , '' );
+			options.acordes = matchesAcordes.map( a => a.replace( /"/g , "" ) );
+			tempAbc = tempAbc.replace( /"(.*?)"/g , "" );
 		}
 
-		// 2. IDENTIFICAÇÃO DE DECORADORES E ORNAMENTOS
-		if ( tempAbc.includes ( "!fermata!" ) ) options.fermata = true;
-		if ( tempAbc.includes ( "!breath!" ) ) options.breath = true;
-		if ( tempAbc.endsWith ( "-" ) ) options.ligada = true;
+		// 2. CAPTURA E LIMPEZA DE DECORADORES (Regex Power)
+		// Procuramos por !fermata! ou o atalho 'H'
+		if ( /(!fermata!|H)/.test( tempAbc ) ) {
+			options.fermata = true;
+			tempAbc = tempAbc.replace( /(!fermata!|H)/g , "" );
+		}
 
-		// 4. EXTRAÇÃO DO CARACTERE DE PAUSA E DURAÇÃO
-		// Removemos o que restou de decoradores para isolar a pausa pura (ex: z2 ou x)
-		const pausaLimpa = tempAbc.replace ( /!.*?!/g , "" )
-			.replace ( /[.~^=$]/g , "" )
-			.replace ( /^-/ , "" )
-			.trim ( )
-		;
+		if ( /!invertedfermata!/.test( tempAbc ) ) {
+			options.fermataInvertida = true;
+			tempAbc = tempAbc.replace( /!invertedfermata!/g , "" );
+		}
 
-		// Captura o tipo (z/x) e a duração numérica/fracionária
-		const matchPausa = pausaLimpa.match ( /([zZxX])(.*)/ );
+		if ( /!breath!/.test( tempAbc ) ) {
+			options.breath = true;
+			tempAbc = tempAbc.replace( /!breath!/g , "" );
+		}
+
+		// 3. IDENTIFICAÇÃO DE TIPO E INVISIBILIDADE
+		// O caractere 'x' ou 'X' define a pausa invisível
+		const matchPausa = tempAbc.trim().match( /^([zZxX])(.*)$/ );
 
 		if ( matchPausa ) {
-			const charPausa = matchPausa[ 1 ].toLowerCase ( );
-			// Define invisibilidade conforme sua regra: x/X = true, z/Z = false
-			if ( charPausa === 'x' ) {
-				options.invisivel = true;
-			}
+			const charPausa = matchPausa[ 1 ].toLowerCase();
+			options.invisivel = ( charPausa === "x" );
 
 			const duracaoString = matchPausa[ 2 ] || "";
-			const duracao = TempoDuracaoAbc.fromAbc ( duracaoString );
+			const duracao = TempoDuracaoAbc.fromAbc( duracaoString );
 
-			return new Pausa ( duracao , options );
+			return new Pausa( duracao , options );
 		}
 
 		return null;

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Pausa } from '@domain/nota/Pausa.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
 
 describe( 'Pausa', () => {
     it( 'deve inicializar com os valores padrão corretamente', () => {
@@ -114,4 +115,129 @@ describe( 'Pausa', () => {
 			expect(pausa.getUnidadeTempo()).toEqual(mockObra.unidadeTempo);
 		});
 	});
+
+	describe( 'Pausa de Compasso', () => {
+		it( 'deve identificar uma pausa de compasso quando a duração coincide com a métrica', () => {
+			// Setup: Compasso 4/4 (Razão 1.0)
+			const mockMetrica = new TempoMetrica( 4, 4 );
+			const mockCompasso = {
+				options: { metrica: mockMetrica }
+				, getMetrica() { return this.options.metrica; }
+			};
+
+			// Pausa de Semibreve (1/1 = Razão 1.0)
+			const duracaoSemibreve = new TempoDuracao( 1, 1 );
+			const pausa = new Pausa( duracaoSemibreve, { compasso: mockCompasso, pausaDeCompasso: true } );
+
+			// No domínio, ela deve detectar que ocupa o compasso todo
+			expect( pausa.pausaDeCompasso ).toBe( true );
+			expect( pausa.calcularTempoPausaDeCompasso() ).toBe( 1 );
+		} );
+
+		it( 'deve identificar pausa de múltiplos compassos (ex: Z2)', () => {
+			// Setup: Compasso 3/4 (Razão 0.75)
+			const mockMetrica = new TempoMetrica( 3, 4 );
+			const mockCompasso = {
+				options: { metrica: mockMetrica }
+				, getMetrica() { return this.options.metrica; }
+			};
+
+			// Pausa que dura 6 tempos de 1/4 (Razão 1.5, ou seja, 2 compassos de 3/4)
+			const duracaoLonga = new TempoDuracao( 6, 4 );
+			const pausa = new Pausa( duracaoLonga, { compasso: mockCompasso, pausaDeCompasso: true } );
+
+			expect( pausa.pausaDeCompasso ).toBe( true );
+			expect( pausa.calcularTempoPausaDeCompasso() ).toBe( 2 );
+		} );
+
+		it( 'não deve ser pausa de compasso se a duração for menor que a métrica', () => {
+			const mockMetrica = new TempoMetrica( 4, 4 );
+			const mockCompasso = {
+				options: { metrica: mockMetrica }
+				, getMetrica() { return this.options.metrica; }
+			};
+
+			// Pausa de 1/4 num compasso 4/4
+			const duracaoMinima = new TempoDuracao( 1, 4 );
+			const pausa = new Pausa( duracaoMinima, { compasso: mockCompasso, pausaDeCompasso: true } );
+
+			expect( pausa.pausaDeCompasso ).toBe( true );
+			expect( pausa.calcularTempoPausaDeCompasso() ).toBe( false );
+		} );
+
+		it( 'deve respeitar a invisibilidade em pausas de compasso (X vs Z)', () => {
+			const mockMetrica = new TempoMetrica( 4, 4 );
+			const mockCompasso = {
+				options: { metrica: mockMetrica }
+				, getMetrica() { return this.options.metrica; }
+			};
+
+			const pausaInvisivel = new Pausa( new TempoDuracao( 1, 1 ), {
+				compasso: mockCompasso
+				, invisivel: true
+				, pausaDeCompasso: true
+			} );
+
+			expect( pausaInvisivel.pausaDeCompasso ).toBe( true );
+			expect( pausaInvisivel.invisivel ).toBe( true );
+		} );
+	} );
+
+	describe( 'Pausa de Compasso (State-based)', () => {
+		it( 'deve registrar explicitamente que é uma pausa de compasso via options', () => {
+			const duracaoMock = new TempoDuracao( 1, 1 );
+			const options = {
+				pausaDeCompasso: true
+				, invisivel: false
+			};
+			const pausa = new Pausa( duracaoMock, options );
+
+			// Valida se o estado foi gravado corretamente
+			expect( pausa.options.pausaDeCompasso ).toBe( true );
+			expect( pausa.pausaDeCompasso ).toBe( true ); // Assumindo que você tem um getter
+		} );
+
+		it( 'deve retornar a quantidade de compassos ocupados quando for pausa de compasso', () => {
+			// Setup de métrica 4/4 (Razão 1.0)
+			const mockMetrica = new TempoMetrica( 4, 4 );
+			const mockCompasso = {
+				getMetrica() { return mockMetrica; }
+			};
+
+			// Pausa de 2/1 (Razão 2.0) em um compasso 4/4 deve resultar em 2 compassos
+			const duracaoDupla = new TempoDuracao( 2, 1 );
+			const pausa = new Pausa( duracaoDupla, {
+				compasso: mockCompasso,
+				pausaDeCompasso: true
+			} );
+
+			const qtd = pausa.calcularTempoPausaDeCompasso();
+			expect( qtd ).toBe( 2 );
+		} );
+
+		it( 'deve retornar false para o cálculo se a flag pausaDeCompasso for false', () => {
+			const mockMetrica = new TempoMetrica( 4, 4 );
+			const mockCompasso = { getMetrica() { return mockMetrica; } };
+
+			const duracaoSemibreve = new TempoDuracao( 1, 1 );
+			const pausa = new Pausa( duracaoSemibreve, {
+				compasso: mockCompasso,
+				pausaDeCompasso: false
+			} );
+
+			// Mesmo que a duração case com a métrica, a flag manda no comportamento
+			expect( pausa.pausaDeCompasso ).toBe( false );
+			expect( pausa.calcularTempoPausaDeCompasso() ).toBe( false );
+		} );
+
+		it( 'deve validar a combinação de pausa de compasso e invisibilidade (X)', () => {
+			const pausaInvisivel = new Pausa( new TempoDuracao( 1, 1 ), {
+				pausaDeCompasso: true,
+				invisivel: true
+			} );
+
+			expect( pausaInvisivel.pausaDeCompasso ).toBe( true );
+			expect( pausaInvisivel.invisivel ).toBe( true );
+		} );
+	} );
 } );

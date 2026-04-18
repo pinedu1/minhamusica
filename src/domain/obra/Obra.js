@@ -164,6 +164,12 @@ export class Obra {
     getUnidadeTempo() {
         return this.#options.unidadeTempo;
     }
+	get metrica() { return this.#options.metrica; }
+	set metrica(val) {
+		if (val == null) { this.#options.metrica = null; return; }
+		if (!(val instanceof TempoMetrica)) throw new TypeError('Voz: TempoMetrica inválido.');
+		this.#options.metrica = val;
+	}
     getMetrica() {
         return this.#options.metrica;
     }

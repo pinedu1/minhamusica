@@ -1,5 +1,6 @@
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { AcordeTransposer } from "@domain/nota/AcordeTransposer.js";
+import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 
 /**
  * Classe base para Nota e Pausa.
@@ -52,7 +53,20 @@ export class ElementoMusical {
 		}
 		return this._options.unidadeTempo;
 	}
-    set unidadeTempo(tempo) { this._options.unidadeTempo = tempo; }
+    set unidadeTempo(tempo) {
+		this._options.unidadeTempo = tempo;
+	}
+	get metrica() {
+		if (this._options.metrica === undefined || this._options.metrica === null) {
+			return null;
+		}
+		return this._options.metrica;
+	}
+	set metrica(val) {
+		if (val == null) { this.options.metrica = null; return; }
+		if (!(val instanceof TempoMetrica)) throw new TypeError('TempoMetrica inválido.');
+		this._options.metrica = val;
+	}
 	transpoeAcorde(acorde) {
 		const transposer = new AcordeTransposer();
 		const semitones = this.getTransposeUnits();
@@ -144,8 +158,42 @@ export class ElementoMusical {
         }
 
         // 4. Lança o erro se chegar ao topo da árvore sem encontrar nada
-        throw new TypeError("A unidadeTempo Global deve ser definida em algum nível da hierarquia (Pausa/Compasso/Voz/Obra).");
+        throw new TypeError("A unidadeTempo Global deve ser definida em algum nível da hierarquia ([Pausa|Nota|Unissono|Quialtera]/Compasso/Voz/Obra).");
     }
+	/**
+	 * Busca a unidade de tempo ativa na hierarquia da nota/pausa/unissono.
+	 * esta propriedade será definida nos objetos superiores. (compasso|voz|obra)
+	 * @returns {TempoDuracao}
+	 */
+	getMetrica() {
+		// 1. Retorna imediatamente se a unidade de tempo estiver no próprio elemento
+		if (this._options.metrica) {
+			return this._options.metrica;
+		}
+
+		// 2. Define a ordem de subida na árvore de hierarquia
+		const hierarquia = ['compasso', 'voz', 'obra'];
+
+		// 3. Percorre os pais dinamicamente
+		for (const nivel of hierarquia) {
+			const pai = this._options[nivel];
+
+			if (!pai) continue; // Pula para o próximo se este pai não existir
+
+			// Duck typing: Se o objeto tiver o método, executa. Senão, busca a propriedade direta (útil para JSON cru).
+			const tempo = (pai && (typeof pai.getMetrica === 'function'))
+				? pai.getMetrica()
+				: pai.metrica;
+
+			if (tempo) {
+				return tempo;
+			}
+		}
+
+		// 4. Lança o erro se chegar ao topo da árvore sem encontrar nada
+		throw new TypeError("A Metrica Global deve ser definida em algum nível da hierarquia ([Pausa|Nota|Unissono|Quialtera]/Compasso/Voz/Obra).");
+	}
+
     // E precisaria de getters para as heranças também
     get obra() {
 		if (this._options.obra === undefined || this._options.obra === null) {
