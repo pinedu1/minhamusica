@@ -41,6 +41,8 @@ export class TempoDuracaoAbc extends AdapterUtils {
 	 * Ex: "1/4", "/2", "/", "2", "1/"
 	 */
 	static toNota( tempoDuracao ) {
+		// Caso especial: 1/1 vira apenas "" (Padrão ABC)
+		if ( tempoDuracao.numerador === 1 && tempoDuracao.denominador === 1 ) return "";
 		// Caso especial: 1/2 vira apenas "/" (Padrão ABC)
 		if ( tempoDuracao.numerador === 1 && tempoDuracao.denominador === 2 ) return "/";
 		const num = tempoDuracao.numerador === 1 ? "" : tempoDuracao.numerador;

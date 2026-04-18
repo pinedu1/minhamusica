@@ -15,7 +15,18 @@ export class TempoDuracao {
      * @throws {Error} Se algum dos argumentos for menor ou igual a zero.
      */
     constructor(numerador = 1, denominador = 4) {
-        // Utilizamos os setters para aplicar a validação
+	    /**
+	     * Validação de Integridade (Defensive Programming).
+	     * Embora o Schema e o extrairNumerosDuracaoAbc já validem, garantimos que
+	     * o numerador e denominador finais sejam compatíveis com o domínio.
+	     */
+	    if ( ( Number.isInteger( numerador ) === false ) || ( numerador <= 0 ) ) {
+		    throw new TypeError( "TempoDuracao.fromJson: Numerador inválido. Deve ser inteiro positivo." );
+	    }
+
+	    if ( ( Number.isInteger( denominador ) === false ) || ( denominador <= 0 ) ) {
+		    throw new TypeError( "TempoDuracao.fromJson: Denominador inválido. Deve ser inteiro positivo." );
+	    }
         this.numerador = numerador;
         this.denominador = denominador;
     }
