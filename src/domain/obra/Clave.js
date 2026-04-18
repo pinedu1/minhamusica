@@ -21,18 +21,6 @@ export class Clave {
         this.#middle = obj.middle;
         this.#key = obj.key;
     }
-    /**
-     * Retorna a string base de configuração.
-     * @returns {string} Ex: "clef=treble-8"
-     */
-    get #toString() {
-        const base = this.#tipo.valor;
-        if (this.#oitava === 0) return `clef=${base}`;
-
-        // Se oitava for -1, o abcjs usa "-8"
-        const sufixo = this.#oitava > 0 ? `+${this.#oitava * 8}` : `${this.#oitava * 8}`;
-        return `clef=${base}${sufixo}`;
-    }
     toVoz() {
         let sufixo = ''; //this.#oitava != 0 ? `+${this.#oitava * 8}` : `-${this.#oitava * 8}`;
         if (this.#oitava > 0) {
@@ -42,23 +30,6 @@ export class Clave {
         }
         let meio = '' // this.#middle? ` middle=${this.#middle}` : '';  /* TODO: implementar futuramewnte */
         return `${this.#toString}${sufixo}${meio}`;
-    }
-    /**
-     * Gera a string de configuração para o abcjs.
-     * Ex: clef=treble-8 ou clef=bass
-     */
-    toAbc() {
-        return this.#toString;
-    }
-    /**
-     * Gera a string de configuração para o abcjs.
-     * Ex: clef=treble-8 ou clef=bass
-     */
-    toJSON() {
-        return {
-            tipo: this.#key,
-            oitava: this.oitava // ou this.#oitava, dependendo de como você declarou a propriedade
-        };
     }
     /**
      * Gera a string para mudança de clave no meio da pauta (dentro do Compasso).
@@ -122,38 +93,5 @@ export class Clave {
             throw new Error(`Tipo de Clave deve ser instância ClaveTipo`);
         }
         this.#tipo = tipo;
-    }
-    /**
-     * USAGE: Helper para criação rápida de Clave a partir de um JSON.
-     * Ex: Clave.create({ tipo: "TREBLE", oitava: 0 })
-     * @param {Object} json - Objeto com as propriedades tipo e oitava.
-     * @param {string} [json.tipo="TREBLE"] - Chave da Clave (TREBLE, BASS, ALTO, etc).
-     * @param {number} [json.oitava=0] - Oitava da Clave.
-     * @returns {Clave}
-     */
-    static create( json = {} ) {
-        if (json instanceof Clave) return json;
-        // 1. Desestrutura o objeto recebido por parâmetro
-        let { tipo, oitava } = json;
-
-        // 2. Se não enviou tipo, assume a CHAVE 'TREBLE' (como string)
-        if ( !tipo ) {
-            tipo = 'TREBLE';
-        }
-
-        // 3. Se não enviou oitava (checa undefined para não sobrescrever caso enviem oitava 0)
-        if ( oitava === undefined ) {
-            oitava = 0;
-        }
-
-        // 4. Busca o objeto correto dentro do Enum e instancia a Clave
-        const instanciaTipo = ClaveTipo[tipo];
-
-        // Segurança extra: se enviaram uma string que não existe no Enum (ex: tipo: "GUITARRA")
-        if ( !instanciaTipo ) {
-            throw new Error(`Tipo de Clave não encontrada. Deve ser uma destas chaves: ${Object.keys(ClaveTipo).join(', ')}`);
-        }
-
-        return new Clave( instanciaTipo, oitava );
     }
 }
