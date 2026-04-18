@@ -2,10 +2,6 @@ import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { AcordeTransposer } from "@domain/nota/AcordeTransposer.js";
 import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 
-/**
- * Classe base para Nota e Pausa.
- * Gerencia a lógica de tempo e contexto hierárquico.
- */
 export class ElementoMusical {
     /** @type {TempoDuracao} */
     _duracao;
@@ -17,15 +13,6 @@ export class ElementoMusical {
     }
 
 
-    // Getters e Setters comuns
-	/**
-	 * Duração da nota/pausa/unissono.
-	 * @return {TempoDuracao}
-	 * @example
-	 * const tempo = new TempoDuracao(4, 4);
-	 * const nota = new Nota(tempo);
-	 * nota.duracao = tempo;
-	 */
     get duracao() {
 		if (this._duracao === undefined || this._duracao === null) {
 			return null;

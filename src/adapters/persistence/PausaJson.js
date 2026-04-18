@@ -6,6 +6,7 @@
 import { Pausa } from '@domain/nota/Pausa.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { pausaSchema } from "@schemas/pausaSchema.js";
+import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
 
 /**
  * Classe responsável por serializar e desserializar Pausas em JSON.
@@ -24,8 +25,10 @@ export class PausaJson {
             , duracao: `${pausa.duracao.toString()}`
             , invisivel: pausa.invisivel
             , fermata: pausa.fermata
+	        , fermataInvertida: pausa.fermataInvertida
             , breath: pausa.breath
             , acordes: pausa.acordes
+	        , pausaDeCompasso: pausa.pausaDeCompasso
         };
     }
 
@@ -48,7 +51,7 @@ export class PausaJson {
 	    const { duracao, options } = resultado.data;
 
 	    // 3. Instanciação das dependências
-	    const instanciaDuracao = TempoDuracao.fromJson(duracao);
+	    const instanciaDuracao = TempoDuracaoJson.fromJson(duracao);
 
 	    // 4. Tratamento específico para unidadeTempo se ela existir no options
 	    const optionsProcessado = { ...options };

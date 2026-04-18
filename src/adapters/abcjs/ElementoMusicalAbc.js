@@ -51,11 +51,13 @@ export class ElementoMusicalAbc {
 	 * @param {Nota} nota - A nota a ser convertida.
 	 * @returns {string} A string de notas de enfeite formatada.
 	 */
-	static toGraceNote( nota) {
+	static toGraceNote( nota ) {
 		let abc = "";
 		if (this._options.sustenido) abc += "^";
 		if (this._options.beQuad) abc += "=";
-		abc += this.#altura.abc;
+		if ( this.constructor.name === "Nota" ) {
+			abc += this.altura.abc;
+		}
 		abc += this._formatarDuracaoAbc();
 		return abc;
 	}

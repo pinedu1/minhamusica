@@ -48,6 +48,13 @@ const formatoObjetoNumerico = z.object( {
 const formatoStringPura = z.string()
 	.regex( regexFracao )
 	.superRefine( validarLimitesDuracao );
+/*
+	.transform( ( val , ctx ) => {
+		const { numerador , denominador } = extrairFracao( val );
+		return { numerador , denominador };
+	} );
+*/
+
 
 // 4. Formato: { duracao: "1/4" }
 const formatoObjetoString = z.object( {

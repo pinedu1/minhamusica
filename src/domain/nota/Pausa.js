@@ -18,7 +18,7 @@ export class Pausa extends ElementoMusical {
      */
     constructor( duracao, options = {} ) {
         super( duracao, options );
-        this._options = Object.assign( {
+        this._options = {
             obra: null
             , voz: null
             , compasso: null
@@ -29,7 +29,8 @@ export class Pausa extends ElementoMusical {
             , invisivel: false
 	        , pausaDeCompasso: false
             , acordes: []
-        }, options );
+	        , ...options
+        };
         this._duracao = duracao;
     }
 
@@ -106,7 +107,7 @@ export class Pausa extends ElementoMusical {
 			this._options.unidadeTempo = null;
 			return;
 		}
-		if ( !(andamento instanceof TempoDuracao) ) {
+		if ( !(val instanceof TempoDuracao) ) {
 			throw new TypeError("Pausa.unidadeTempo: valor deve ser Uma instancia de TempoDuracao.");
 		}
 		this._options.unidadeTempo = val;
@@ -150,7 +151,9 @@ export class Pausa extends ElementoMusical {
 		// Se a duração da pausa não preencher compassos inteiros (ex: 1.5 compassos), é inválido para Z.
 		return false;
 	}
-	get pausaDeCompasso() {
-		return this._options.pausaDeCompasso;
-	}
+	get pausaDeCompasso() { return this._options.pausaDeCompasso; }
+	get fermataInvertida() { return this._options.fermataInvertida; }
+	get fermata() { return this._options.fermata; }
+	get invisivel() { return this._options.invisivel; }
+	get breath() { return this._options.breath; }
 }

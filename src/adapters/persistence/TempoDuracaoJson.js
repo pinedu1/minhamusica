@@ -38,6 +38,9 @@ export class TempoDuracaoJson extends AdapterUtils {
 		// 3. Extração dos dados validados.
 		// Usamos 'let' para permitir a normalização caso 'duracao' esteja presente.
 		let { numerador, denominador, duracao } = resultado.data;
+		if ( typeof resultado.data === 'string' ) {
+			duracao = resultado.data;
+		}
 
 		// 4. Se o formato for via string ABC ({ duracao: "1/4" }), traduzimos para números.
 		if ( duracao ) {

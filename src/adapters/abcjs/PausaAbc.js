@@ -1,7 +1,5 @@
-import { Pausa } from '@domain/nota/Pausa.js';
 import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
 import { TempoDuracaoAbc } from "@abcjs/TempoDuracaoAbc.js";
-import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 import { Pausa } from "@domain/nota/Pausa.js";
 
 /**
@@ -21,7 +19,10 @@ export class PausaAbc extends ElementoMusicalAbc {
 	static toAbc( pausa ) {
 		const opt = pausa.options;
 		let prefixo = "";
-
+		// 0 - Dropar os acordes (ex: "Am""G")
+		if ( opt.acordes.length > 0 ) {
+			opt.acordes.forEach( acorde => prefixo += `"${acorde}"` );
+		}
 		// 1. TRATAMENTO DE PAUSA DE COMPASSO (Z ou X)
 		if ( opt.pausaDeCompasso === true ) {
 			const pausaChar = opt.invisivel ? "X" : "Z";
@@ -29,7 +30,7 @@ export class PausaAbc extends ElementoMusicalAbc {
 
 			// Se for apenas 1 compasso, retorna apenas a letra. Se for > 1, anexa o número.
 			const sufixo = ( qtdCompassos === false || qtdCompassos <= 1 ) ? "" : qtdCompassos;
-			return `${pausaChar}${sufixo}`;
+			return `${prefixo}${pausaChar}${sufixo}`;
 		}
 
 		// 2. PAUSAS COMUNS (z ou x)
@@ -50,7 +51,8 @@ export class PausaAbc extends ElementoMusicalAbc {
 		const duracaoAbc = PausaAbc.formatarDuracaoAbc( pausa );
 
 		// ORDEM FINAL: [Prefixos][Caractere][Duração]
-		return `${prefixo}${pausaChar}${duracaoAbc}`;
+		const out = `${prefixo}${pausaChar}${duracaoAbc}`;
+		return out;
 	}
 	/**
 	 * Factory: Converte uma string ABC de pausa em uma instância de Pausa.
@@ -103,12 +105,21 @@ export class PausaAbc extends ElementoMusicalAbc {
 		// 3. IDENTIFICAÇÃO DE TIPO E INVISIBILIDADE
 		// O caractere 'x' ou 'X' define a pausa invisível
 		const matchPausa = tempAbc.trim().match( /^([zZxX])(.*)$/ );
-
 		if ( matchPausa ) {
-			const charPausa = matchPausa[ 1 ].toLowerCase();
-			options.invisivel = ( charPausa === "x" );
+			const charOriginal = matchPausa[ 1 ]; // Captura o caractere exato (z, Z, x ou X)
+			const charMinusculo = charOriginal.toLowerCase();
 
-			const duracaoString = matchPausa[ 2 ] || "";
+			// 1. Define a Invisibilidade (x ou X)
+			options.invisivel = ( charMinusculo === "x" );
+
+			// 2. Define se é Pausa de Compasso (Z ou X)
+			// Se o caractere original for igual ao seu UpperCase, ele é maiúsculo.
+			options.pausaDeCompasso = ( charOriginal === charOriginal.toUpperCase() );
+
+			const duracaoString = matchPausa[ 2 ] || "1/1";
+
+			// Para Z/X, o número que segue é a quantidade de compassos
+			// Para z/x, é a duração rítmica normal baseada em L:
 			const duracao = TempoDuracaoAbc.fromAbc( duracaoString );
 
 			return new Pausa( duracao , options );
