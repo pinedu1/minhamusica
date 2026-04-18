@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TempoDuracaoJson } from '@adapters/persistence/TempoDuracaoJson.js'
+import { TempoDuracaoJson } from '@persistence/TempoDuracaoJson.js'
 import { tempoDuracaoSchema } from '@schemas/tempoDuracaoSchema.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 

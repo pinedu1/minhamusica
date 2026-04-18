@@ -1,8 +1,7 @@
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
-import { tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
 
 /**
- * Representa a fração de andamento de uma nota (ex: 1/4, 3/8).
+ * Representa a fração de andamento de uma nota (ex: 1/4=90, 3/8=120, 5/4=60).
  */
 export class TempoAndamento {
     /** @type {TempoDuracao} */
@@ -37,35 +36,5 @@ export class TempoAndamento {
     get razao() { return this.#andamento.razao / this.#bpm; }
     toString() {
         return `${this.#andamento.toString()}=${this.#bpm}`;
-    }
-    toCompasso() {
-        return `[Q:${this.toString()}]`;
-    }
-    toAbc() {
-        return `Q:${this.toString()}`;
-    }
-    toJSON() {
-        return { andamento: this.#andamento.toString(), bpm: this.#bpm };
-    }
-    
-    /**
-     * USAGE: Factory method. Aceita o formato JSON { andamento: '4/4', bpm: 95 } ou as propriedades soltas.
-     */
-    static create(dados) {
-        // Se vier instanciado, já retorna
-        if (dados instanceof TempoAndamento) return dados;
-        // Validação usando o Zod Schema
-        const resultado = tempoAndamentoSchema.safeParse(dados);
-
-        if (!resultado.success) {
-            throw new TypeError("TempoAndamento.create: Falha na validação.\n" + resultado.error.message);
-        }
-
-        const validado = resultado.data;
-
-        // Delega a criação limpa para o Factory estático da dependência em vez de refazer parsings manuais aqui
-        const andamento = TempoDuracao.create(validado.andamento);
-
-        return new TempoAndamento(andamento, validado.bpm);
     }
 }

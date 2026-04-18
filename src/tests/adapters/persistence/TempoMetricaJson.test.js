@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TempoMetricaJson } from '@adapters/persistence/TempoMetricaJson.js';
+import { TempoMetricaJson } from '@persistence/TempoMetricaJson.js';
 import { tempoMetricaSchema } from '@schemas/tempoMetricaSchema.js';
 import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
 

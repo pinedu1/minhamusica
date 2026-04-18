@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TempoMetricaAbc } from '@adapters/abcjs/TempoMetricaAbc.js';
+import { TempoMetricaAbc } from '@abcjs/TempoMetricaAbc.js';
 import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
 
 describe( 'TempoMetricaAbc', () => {
