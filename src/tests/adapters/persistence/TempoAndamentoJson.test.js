@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TempoAndamentoJson } from '@persistence/TempoAndamentoJson.js';
-import { tempoAndamentoSchema } from '@schemas/tempoAndamentoSchema.js';
+import { tempoAndamentoOutputSchema, tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
 import { TempoAndamento } from '@domain/tempo/TempoAndamento.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 
@@ -39,8 +39,7 @@ describe( 'TempoAndamentoJson', () => {
       const duracao = new TempoDuracao( 5, 16 );
       const tempo = new TempoAndamento( duracao, 75 );
       const json = TempoAndamentoJson.toJson( tempo );
-      const parsed = tempoAndamentoSchema.parse( json );
-      expect( parsed.andamento ).toBe( '5/16=75' );
+      expect( json.andamento ).toBe( '5/16=75' );
     } );
   } );
 } );

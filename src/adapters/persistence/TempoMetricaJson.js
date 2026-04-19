@@ -1,5 +1,5 @@
 import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
-import { tempoMetricaSchema } from "@schemas/tempoMetricaSchema.js";
+import { tempoMetricaOutputSchema, tempoMetricaSchema } from "@schemas/tempoMetricaSchema.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
 
 export class TempoMetricaJson extends AdapterUtils {
@@ -7,12 +7,10 @@ export class TempoMetricaJson extends AdapterUtils {
 	 * Converte TempoMetrica para representação Json
 	 * @param tempoMetrica
 	 * @return {{metrica: string}}
-	 * Ex: { metrica: "1/4" }
+	 * Ex: { numerador: 1, denominador 4 }
 	 */
 	static toJson( tempoMetrica ) {
-		return {
-			metrica: tempoMetrica.toString()
-		}
+		return tempoMetricaOutputSchema.parse( tempoMetrica );
 	}
 	/**
 	 * USAGE: Helper para criação rápida de TempoMetrica a partir de um JSON.
@@ -36,28 +34,7 @@ export class TempoMetricaJson extends AdapterUtils {
 		}
 
 		// 3. Extração dos dados validados.
-		// Usamos 'let' para permitir a normalização caso 'metrica' esteja presente.
-		let { numerador, denominador, metrica } = resultado.data;
-
-		// 4. Se o formato for via string ABC ({ metrica: "1/4" }), traduzimos para números.
-		if ( metrica ) {
-			const extraido = this.extrairNumerosDuracaoAbc( metrica );
-			numerador = extraido.numerador;
-			denominador = extraido.denominador;
-		}
-
-		/**
-		 * Validação de Integridade (Defensive Programming).
-		 * Embora o Schema e o extrairNumerosMetricaAbc já validem, garantimos que
-		 * o numerador e denominador finais sejam compatíveis com o domínio.
-		 */
-		if ( ( Number.isInteger( numerador ) === false ) || ( numerador <= 0 ) ) {
-			throw new TypeError( "TempoMetrica.fromJson: Numerador inválido. Deve ser inteiro positivo." );
-		}
-
-		if ( ( Number.isInteger( denominador ) === false ) || ( denominador <= 0 ) ) {
-			throw new TypeError( "TempoMetrica.fromJson: Denominador inválido. Deve ser inteiro positivo." );
-		}
+		const { numerador, denominador} = resultado.data;
 
 		// 5. Instanciação da Classe de Domínio Pura.
 		return new TempoMetrica( numerador, denominador );

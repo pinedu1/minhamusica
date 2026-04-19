@@ -1,5 +1,5 @@
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
-import { tempoDuracaoSchema } from "@schemas/tempoDuracaoSchema.js";
+import { tempoDuracaoOutputSchema, tempoDuracaoSchema } from "@schemas/tempoDuracaoSchema.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
 
 export class TempoDuracaoJson extends AdapterUtils {
@@ -10,9 +10,7 @@ export class TempoDuracaoJson extends AdapterUtils {
 	 * Ex: { duracao: "1/4" }
 	 */
 	static toJson( tempoDuracao ) {
-		return {
-			duracao: tempoDuracao.toString()
-		}
+		return tempoDuracaoOutputSchema.parse(tempoDuracao);
 	}
 	/**
 	 * USAGE: Helper para criação rápida de TempoDuracao a partir de um JSON.
@@ -37,32 +35,9 @@ export class TempoDuracaoJson extends AdapterUtils {
 
 		// 3. Extração dos dados validados.
 		// Usamos 'let' para permitir a normalização caso 'duracao' esteja presente.
-		let { numerador, denominador, duracao } = resultado.data;
-		if ( typeof resultado.data === 'string' ) {
-			duracao = resultado.data;
-		}
+		const { numerador, denominador} = resultado.data;
 
-		// 4. Se o formato for via string ABC ({ duracao: "1/4" }), traduzimos para números.
-		if ( duracao ) {
-			const extraido = this.extrairNumerosDuracaoAbc( duracao );
-			numerador = extraido.numerador;
-			denominador = extraido.denominador;
-		}
-
-		/**
-		 * Validação de Integridade (Defensive Programming).
-		 * Embora o Schema e o extrairNumerosDuracaoAbc já validem, garantimos que
-		 * o numerador e denominador finais sejam compatíveis com o domínio.
-		 */
-		if ( ( Number.isInteger( numerador ) === false ) || ( numerador <= 0 ) ) {
-			throw new TypeError( "TempoDuracao.fromJson: Numerador inválido. Deve ser inteiro positivo." );
-		}
-
-		if ( ( Number.isInteger( denominador ) === false ) || ( denominador <= 0 ) ) {
-			throw new TypeError( "TempoDuracao.fromJson: Denominador inválido. Deve ser inteiro positivo." );
-		}
-
-		// 5. Instanciação da Classe de Domínio Pura.
+		// 4. Instanciação da Classe de Domínio Pura.
 		return new TempoDuracao( numerador, denominador );
 	}
 }

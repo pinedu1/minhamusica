@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TempoAndamentoJson } from '@adapters/json/TempoAndamentoJson.js';
+import { TempoAndamentoJson } from '@adapters/persistence/TempoAndamentoJson.js';
 import { TempoAndamentoAbc } from '@adapters/abcjs/TempoAndamentoAbc.js';
 
 describe( 'TempoAndamento Integration', () => {

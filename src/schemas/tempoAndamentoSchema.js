@@ -1,30 +1,15 @@
 import { z } from 'zod';
-
+import { tempoDuracaoOutputSchema } from './tempoDuracaoSchema.js';
 /**
  * Schema para validação e NORMALIZAÇÃO de métricas de tempo e andamento.
- * Independentemente da entrada, o retorno será sempre um objeto plano.
- * * @param {Object|string} val - Entrada para validação.
- * @returns {{ numerador: number, denominador: number, bpm: number }} Dados normalizados.
- * * @example
- * // Entradas aceitas:
- * 1. String Pura: "4/4=120"
- * 2. Objeto com String: { andamento: "1/4=90" }
- * 3. Objeto Misto: { andamento: "1/4", bpm: 90 }
- * 4. Objeto Aninhado: { andamento: { numerador: 3, denominador: 4 }, bpm: 120 }
- * 5. Objeto Plano: { numerador: 4, denominador: 4, bpm: 120 }
+ * O retorno será SEMPRE o objeto plano: { numerador: number, denominador: number, bpm: number }
  */
 
-/**
- * Normaliza strings "n/d" para objeto numérico.
- */
 const extrairFracao = ( str ) => {
 	const [ n , d ] = str.split( '/' ).map( ( v ) => parseInt( v , 10 ) );
 	return { numerador: n , denominador: d };
 };
 
-/**
- * Validador de limites reutilizável.
- */
 const validarLimites = ( n , d , ctx ) => {
 	if ( n < 1 || n > 9 ) {
 		ctx.addIssue( { code: z.ZodIssueCode.custom , message: "Numerador deve estar entre 1 e 9" } );
@@ -34,14 +19,14 @@ const validarLimites = ( n , d , ctx ) => {
 	}
 };
 
-// 1. Formato: { numerador, denominador, bpm }
+// 1. Formato Plano: { numerador, denominador, bpm }
 const formatoObjetoNumerico = z.object( {
 	numerador: z.number().int().min( 1 ).max( 9 )
 	, denominador: z.number().int().min( 1 ).max( 64 )
 	, bpm: z.number().int().min( 1 ).max( 65535 )
 } ).strict();
 
-// 2. Formato: "1/4=90"
+// 2. Formato String: "4/4=120"
 const formatoStringPura = z.string()
 	.regex( /^\d+\/\d+=\d+$/ )
 	.transform( ( val , ctx ) => {
@@ -51,18 +36,18 @@ const formatoStringPura = z.string()
 
 		validarLimites( numerador , denominador , ctx );
 		if ( bpm < 1 || bpm > 65535 ) {
-			ctx.addIssue( { code: z.ZodIssueCode.custom , message: "BPM inválido" } );
+			ctx.addIssue( { code: z.ZodIssueCode.custom , message: "BPM inválido (1-65535)" } );
 		}
 
 		return { numerador , denominador , bpm };
 	} );
 
-// 3. Formato: { andamento: "1/4=90" }
+// 3. Formato Objeto com String: { andamento: "1/4=90" }
 const formatoStringObjeto = z.object( {
-	andamento: formatoStringPura
+	andamento: formatoStringPura // O transform de formatoStringPura já resolve para o objeto plano
 } ).strict().transform( ( val ) => val.andamento );
 
-// 4. Formato: { andamento: '1/4', bpm: 90 }
+// 4. Formato Misto: { andamento: '1/4', bpm: 90 }
 const formatoMisto = z.object( {
 	andamento: z.string().regex( /^\d+\/\d+$/ )
 	, bpm: z.number().int().min( 1 ).max( 65535 )
@@ -72,7 +57,7 @@ const formatoMisto = z.object( {
 	return { numerador , denominador , bpm: val.bpm };
 } );
 
-// 5. Formato: { andamento: { numerador, denominador }, bpm: 120 }
+// 5. Formato Aninhado: { andamento: { numerador, denominador }, bpm: 120 }
 const formatoObjetoAninhado = z.object( {
 	andamento: z.object( {
 		numerador: z.number().int().min( 1 ).max( 9 )
@@ -85,10 +70,32 @@ const formatoObjetoAninhado = z.object( {
 	, bpm: val.bpm
 } ) );
 
+/**
+ * Motor de União: Tenta validar do mais específico/comum para o mais genérico.
+ */
 export const tempoAndamentoSchema = z.union( [
-	formatoObjetoNumerico
-	, formatoStringObjeto
-	, formatoStringPura
-	, formatoMisto
-	, formatoObjetoAninhado
+	formatoObjetoNumerico      // { numerador, denominador, bpm }
+	, formatoStringPura        // "4/4=120"
+	, formatoStringObjeto      // { andamento: "4/4=120" }
+	, formatoMisto             // { andamento: "4/4", bpm: 120 }
+	, formatoObjetoAninhado    // { andamento: {n, d}, bpm: 120 }
 ] );
+
+/**
+ * Schema focado em transformar a Classe/Objeto de domínio em String para JSON.
+ * Reutiliza o tempoDuracaoOutputSchema para processar o objeto aninhado.
+ */
+export const tempoAndamentoOutputSchema = z.object({
+	// Invocamos o schema de duração para a propriedade aninhada
+	andamento: tempoDuracaoOutputSchema,
+	bpm: z.number()
+}).transform((val) => {
+	/**
+	 * val.andamento agora é o resultado do parse de tempoDuracaoOutputSchema,
+	 * ou seja: { duracao: "n/d" }.
+	 * * Agora concatenamos com o BPM para gerar a string final: "n/d=bpm"
+	 */
+	return {
+		andamento: `${val.andamento.duracao}=${val.bpm}`
+	};
+});

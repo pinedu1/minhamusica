@@ -13,6 +13,16 @@ describe( 'TempoDuracao Integration', () => {
 		// 3. Validar a saída ABC (Domínio -> ABC)
 		expect( TempoDuracaoAbc.toNota( tempoDominio ) ).toBe( '/' );
 	} );
+	it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC para: { numerador: 1, denominador: 2 }', () => {
+		// 1. Receber JSON
+		const jsonData = { numerador: 1, denominador: 2 };
+
+		// 2. Instanciar via TempoDuracaoJson (JSON -> Domínio)
+		const tempoDominio = TempoDuracaoJson.fromJson( jsonData );
+
+		// 3. Validar a saída ABC (Domínio -> ABC)
+		expect( TempoDuracaoAbc.toNota( tempoDominio ) ).toBe( '/' );
+	} );
 	it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC para: { duracao: "/" }', () => {
 		// 1. Receber JSON
 		const jsonData = { duracao: '1/2' };

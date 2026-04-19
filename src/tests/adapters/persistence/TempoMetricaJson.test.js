@@ -25,11 +25,11 @@ describe( 'TempoMetricaJson', () => {
   } );
 
   describe( 'toJson', () => {
-    it( 'deve exportar para o formato { metrica: "n/d" }', () => {
+    it( 'deve exportar para o formato { numerador: 5, denominador: 16 }', () => {
       const tempo = new TempoMetrica( 5, 16 );
       const json = TempoMetricaJson.toJson( tempo );
       const parsed = tempoMetricaSchema.parse( json );
-      expect( parsed.metrica ).toBe( '5/16' );
+      expect( parsed ).toStrictEqual( { numerador: 5, denominador: 16 } );
     } );
   } );
 } );

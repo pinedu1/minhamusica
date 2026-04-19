@@ -4,8 +4,7 @@
  */
 
 import { Pausa } from '@domain/nota/Pausa.js';
-import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
-import { pausaSchema } from "@schemas/pausaSchema.js";
+import { pausaSchema, pausaOutputSchema } from "@schemas/pausaSchema.js";
 import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
 
 /**
@@ -20,16 +19,7 @@ export class PausaJson {
      * const json = adaptador.toJson();
      */
     static toJson(pausa) {
-        return {
-            tipo: 'pausa'
-            , duracao: `${pausa.duracao.toString()}`
-            , invisivel: pausa.invisivel
-            , fermata: pausa.fermata
-	        , fermataInvertida: pausa.fermataInvertida
-            , breath: pausa.breath
-            , acordes: pausa.acordes
-	        , pausaDeCompasso: pausa.pausaDeCompasso
-        };
+	    return pausaOutputSchema.parse(pausa);
     }
 
     /**

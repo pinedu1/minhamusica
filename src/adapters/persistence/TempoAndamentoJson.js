@@ -1,5 +1,5 @@
 import { TempoAndamento } from "@domain/tempo/TempoAndamento.js";
-import { tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
+import { tempoAndamentoOutputSchema, tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 
@@ -12,13 +12,7 @@ export class TempoAndamentoJson extends AdapterUtils {
 	 * Ex: { andamento: "1/4=90" }
 	 */
 	static toJson( tempoAndamento ) {
-		// 1. Se já for uma instância de domínio, não há o que processar.
-		if ( !tempoAndamento instanceof TempoAndamento ) {
-			throw new TypeError( "TempoAndamento.toJson: deve ser uma instancia de TempoAndamento." );
-		}
-		return {
-			andamento: `${ tempoAndamento.andamento.numerador }/${ tempoAndamento.andamento.denominador }=${ tempoAndamento.bpm }`
-		};
+		return tempoAndamentoOutputSchema.parse( tempoAndamento );
 	}
 	/**
 	 * USAGE: Helper para criação rápida de TempoAndamento a partir de um JSON.

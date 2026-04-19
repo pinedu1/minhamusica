@@ -1,30 +1,38 @@
 import { z } from 'zod';
 
 /**
- * Schema para validação de métricas de tempo (Time Signatures).
- * Limites: Numerador (1-9) e Denominador (1-64).
- * * @param {Object|string} val - A entrada a ser validada.
- * @returns {Object|string} O valor validado conforme um dos formatos da união.
- * * @example
- * tempoMetricaSchema.parse( "1/4" );
- * * @example
- * tempoMetricaSchema.parse( { metrica: "1/4" } );
- * * @example
- * tempoMetricaSchema.parse( { numerador: 3, denominador: 4 } );
+ * Schema para validação de Duração de tempo (Time Signatures).
+ * Regras: Numerador (1-9) e Denominador (1-64).
+ * @param {Object|string} val - Entrada para validação.
+ * @returns {Object} Valor validado e normalizado para { numerador, denominador }.
+ * @example
+ * tempoMetricaSchema.parse( "1/4" ); // retorna { numerador: 1, denominador: 4 }
+ * @example
+ * tempoMetricaSchema.parse( { numerador: 3, denominador: 4 } ); // retorna { numerador: 3, denominador: 4 }
  */
 
-// 1. Regex simplificado para captura inicial
+// 1. Regex simples apenas para capturar o formato
 const regexFracao = /^\d+\/\d+$/;
 
 /**
- * Validador de limites numéricos para strings de métrica.
+ * Função auxiliar para extrair números de uma string "n/d"
+ * @param {string} str
+ */
+const extrairFracao = ( str ) => {
+	const [ numStr , denStr ] = str.split( '/' );
+	return {
+		numerador: parseInt( numStr , 10 ),
+		denominador: parseInt( denStr , 10 )
+	};
+};
+
+/**
+ * Função auxiliar para validar limites em strings "n/d"
  * @param {string} str
  * @param {import('zod').RefinementCtx} ctx
  */
 const validarLimitesMetrica = ( str , ctx ) => {
-	const [ nStr , dStr ] = str.split( '/' );
-	const n = parseInt( nStr , 10 );
-	const d = parseInt( dStr , 10 );
+	const { numerador: n, denominador: d } = extrairFracao( str );
 
 	if ( n < 1 || n > 9 ) {
 		ctx.addIssue( {
@@ -40,26 +48,44 @@ const validarLimitesMetrica = ( str , ctx ) => {
 	}
 };
 
-// 2. Definição dos formatos de dados
-const formatoObjetoEstruturado = z.object( {
+// 2. Formato: { numerador: 1-9, denominador: 1-64 }
+const formatoObjetoNumerico = z.object( {
 	numerador: z.number().int().min( 1 ).max( 9 )
 	, denominador: z.number().int().min( 1 ).max( 64 )
 } ).strict();
 
+// 3. Formato: String "1/4" com superRefine e transformação para objeto
 const formatoStringPura = z.string()
 	.regex( regexFracao )
-	.superRefine( validarLimitesMetrica );
+	.superRefine( validarLimitesMetrica )
+	.transform( ( val ) => extrairFracao( val ) );
 
-const formatoStringObjeto = z.object( {
-	metrica: formatoStringPura
-} ).strict();
+// 4. Formato: { metrica: "1/4" } com transformação para objeto plano
+const formatoObjetoString = z.object( {
+	metrica: z.string().regex( regexFracao ).superRefine( validarLimitesMetrica )
+} )
+	.strict()
+	.transform( ( val ) => extrairFracao( val.metrica ) );
 
-// 3. A União (O "Motor" de validação)
-export const uniaoTempoMetrica = z.union( [
-	formatoObjetoEstruturado
-	, formatoStringObjeto
+/**
+ * 5. A União (O "Motor" de validação e normalização)
+ * Independente da entrada, o output será sempre { numerador, denominador }
+ */
+export const tempoMetricaSchema = z.union( [
+	formatoObjetoNumerico
+	, formatoObjetoString
 	, formatoStringPura
 ] );
 
-// 4. Exportação final do Schema
-export const tempoMetricaSchema = uniaoTempoMetrica;
+/**
+ * Schema focado em transformar a Classe/Objeto de domínio em String para JSON.
+ * Usado pelo adaptador static toJson().
+ */
+export const tempoMetricaOutputSchema = z.object({
+	numerador: z.number(),
+	denominador: z.number()
+}).transform((val) => {
+	return {
+		metrica: `${val.numerador}/${val.denominador}`
+	};
+});

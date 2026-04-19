@@ -3,16 +3,28 @@ import { z } from 'zod';
 /**
  * Schema para validação de Duração de tempo (Time Signatures).
  * Regras: Numerador (1-9) e Denominador (1-64).
- * * @param {Object|string} val - Entrada para validação.
- * @returns {Object|string} Valor validado.
- * * @example
- * tempoDuracaoSchema.parse( "1/4" );
+ * @param {Object|string} val - Entrada para validação.
+ * @returns {Object} Valor validado e normalizado para { numerador, denominador }.
  * @example
- * tempoDuracaoSchema.parse( { numerador: 3, denominador: 4 } );
+ * tempoDuracaoSchema.parse( "1/4" ); // retorna { numerador: 1, denominador: 4 }
+ * @example
+ * tempoDuracaoSchema.parse( { numerador: 3, denominador: 4 } ); // retorna { numerador: 3, denominador: 4 }
  */
 
 // 1. Regex simples apenas para capturar o formato
 const regexFracao = /^\d+\/\d+$/;
+
+/**
+ * Função auxiliar para extrair números de uma string "n/d"
+ * @param {string} str
+ */
+const extrairFracao = ( str ) => {
+	const [ numStr , denStr ] = str.split( '/' );
+	return {
+		numerador: parseInt( numStr , 10 ),
+		denominador: parseInt( denStr , 10 )
+	};
+};
 
 /**
  * Função auxiliar para validar limites em strings "n/d"
@@ -20,9 +32,7 @@ const regexFracao = /^\d+\/\d+$/;
  * @param {import('zod').RefinementCtx} ctx
  */
 const validarLimitesDuracao = ( str , ctx ) => {
-	const [ numStr , denStr ] = str.split( '/' );
-	const n = parseInt( numStr , 10 );
-	const d = parseInt( denStr , 10 );
+	const { numerador: n, denominador: d } = extrairFracao( str );
 
 	if ( n < 1 || n > 9 ) {
 		ctx.addIssue( {
@@ -44,28 +54,38 @@ const formatoObjetoNumerico = z.object( {
 	, denominador: z.number().int().min( 1 ).max( 64 )
 } ).strict();
 
-// 3. Formato: String "1/4" com superRefine
+// 3. Formato: String "1/4" com superRefine e transformação para objeto
 const formatoStringPura = z.string()
 	.regex( regexFracao )
-	.superRefine( validarLimitesDuracao );
-/*
-	.transform( ( val , ctx ) => {
-		const { numerador , denominador } = extrairFracao( val );
-		return { numerador , denominador };
-	} );
-*/
+	.superRefine( validarLimitesDuracao )
+	.transform( ( val ) => extrairFracao( val ) );
 
-
-// 4. Formato: { duracao: "1/4" }
+// 4. Formato: { duracao: "1/4" } com transformação para objeto plano
 const formatoObjetoString = z.object( {
-	duracao: formatoStringPura
-} ).strict();
+	duracao: z.string().regex( regexFracao ).superRefine( validarLimitesDuracao )
+} )
+	.strict()
+	.transform( ( val ) => extrairFracao( val.duracao ) );
 
-// 5. A União (O "Motor" de validação)
-export const uniaoTempoDuracao = z.union( [
+/**
+ * 5. A União (O "Motor" de validação e normalização)
+ * Independente da entrada, o output será sempre { numerador, denominador }
+ */
+export const tempoDuracaoSchema = z.union( [
 	formatoObjetoNumerico
 	, formatoObjetoString
 	, formatoStringPura
 ] );
 
-export const tempoDuracaoSchema = uniaoTempoDuracao;
+/**
+ * Schema focado em transformar a Classe/Objeto de domínio em String para JSON.
+ * Usado pelo adaptador static toJson().
+ */
+export const tempoDuracaoOutputSchema = z.object({
+	numerador: z.number(),
+	denominador: z.number()
+}).transform((val) => {
+	return {
+		duracao: `${val.numerador}/${val.denominador}`
+	};
+});

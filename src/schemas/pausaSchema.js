@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { tempoDuracaoSchema } from '@schemas/tempoDuracaoSchema.js';
+import { tempoDuracaoSchema, tempoDuracaoOutputSchema } from '@schemas/tempoDuracaoSchema.js';
 
 export const pausaSchema = z.object( {
 	tipo: z.literal( 'pausa' ).default( 'pausa' )
@@ -63,3 +63,53 @@ export const pausaSchema = z.object( {
 			}
 		}
 	} );
+export const pausaOutputSchema = z.object({
+	tipo: z.literal('pausa').default('pausa'),
+
+	// Aplica o schema de output que gera o objeto { duracao: "n/d" }
+	duracao: tempoDuracaoOutputSchema,
+
+	fermata: z.boolean().default(false),
+	fermataInvertida: z.boolean().default(false),
+	breath: z.boolean().default(false),
+	invisivel: z.boolean().default(false),
+	pausaDeCompasso: z.boolean().default(false),
+	acordes: z.union([z.string(), z.array(z.string())]).default([]),
+
+	// unidadeTempo também usa o schema de output
+	unidadeTempo: tempoDuracaoOutputSchema.nullable().default(null),
+
+	// Outras referências
+	obra: z.any().nullable().default(null),
+	voz: z.any().nullable().default(null),
+	compasso: z.any().nullable().default(null)
+}).transform((data) => {
+	// Montamos o objeto final extraindo os valores das durações transformadas
+	const result = {
+		tipo: data.tipo,
+		// .duracao aqui veio do tempoDuracaoOutputSchema, então é { duracao: "1/4" }
+		duracao: data.duracao.duracao,
+		fermata: data.fermata,
+		fermataInvertida: data.fermataInvertida,
+		breath: data.breath,
+		invisivel: data.invisivel,
+		pausaDeCompasso: data.pausaDeCompasso,
+		acordes: data.acordes,
+		// unidadeTempo pode ser null, se não for, pegamos a string dentro dele
+		unidadeTempo: data.unidadeTempo ? data.unidadeTempo.duracao : null,
+		obra: data.obra,
+		voz: data.voz,
+		compasso: data.compasso
+	};
+	// --- Lógica de Limpeza (Clean JSON) ---
+	// Remove o que é falso, nulo ou vazio para exportação otimizada
+	const clean = {};
+	Object.entries(result).forEach(([key, val]) => {
+		const isFalsy = (val === false) || (val === null) || (val === undefined);
+		const isEmptyArray = Array.isArray(val) && (val.length === 0);
+		if (!isFalsy && !isEmptyArray) {
+			clean[key] = val;
+		}
+	});
+	return clean;
+});

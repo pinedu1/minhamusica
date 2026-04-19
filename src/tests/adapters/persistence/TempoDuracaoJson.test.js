@@ -25,11 +25,11 @@ describe( 'TempoDuracaoJson', () => {
   } );
 
   describe( 'toJson', () => {
-    it( 'deve exportar para o formato { duracao: "n/d" }', () => {
+    it( 'deve exportar para o formato { numerador: 5, denominador: 16 }', () => {
       const tempo = new TempoDuracao( 5, 16 );
       const json = TempoDuracaoJson.toJson( tempo );
       const parsed = tempoDuracaoSchema.parse( json );
-      expect( parsed.duracao ).toBe( '5/16' );
+      expect( parsed ).toStrictEqual( { numerador: 5, denominador: 16 } );
     } );
   } );
 } );
