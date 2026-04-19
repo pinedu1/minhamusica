@@ -35,14 +35,10 @@ describe( 'Pausa Integration', () => {
     const jsonResult = PausaJson.toJson( pausaDominio );
     expect( jsonResult ).toEqual(
 	    {
-		    tipo: 'pausa',
-		    duracao: '4/1',
-		    acordes: [ 'D' ],
-		    invisivel: false,
-		    fermata: false,
-		    breath: false,
-		    pausaDeCompasso: true,
-		    fermataInvertida: false,
+		    tipo: 'pausa'
+		    , duracao: '4/1'
+		    , acordes: [ 'D' ]
+		    , pausaDeCompasso: true
 	    }
     );
   } );

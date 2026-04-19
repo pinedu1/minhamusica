@@ -6,19 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/PausaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/PausaJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/TempoAndamentoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoAndamentoJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/TempoDuracaoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoDuracaoJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/TempoMetricaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoMetricaJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/pausaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/pausaSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoAndamentoSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/tempoDuracaoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoDuracaoSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/tempoMetricaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tempoMetricaSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoAndamentoJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoAndamentoJson.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoDuracaoJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoDuracaoJson.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoMetricaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoMetricaJson.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/integration/TempoAndamentoIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/TempoAndamentoIntegration.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/integration/TempoDuracaoIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/TempoDuracaoIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/PausaIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/PausaIntegration.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +102,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="TempoAndamentoJson.test" />
+      <arguments value="PausaIntegration.test" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -178,7 +167,7 @@
       <workItem from="1776435889120" duration="1595000" />
       <workItem from="1776437493556" duration="30912000" />
       <workItem from="1776514921200" duration="35414000" />
-      <workItem from="1776595096477" duration="6613000" />
+      <workItem from="1776595096477" duration="7277000" />
     </task>
     <servers />
   </component>

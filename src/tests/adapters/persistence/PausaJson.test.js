@@ -46,7 +46,7 @@ describe( 'PausaJson', () => {
 
   describe( 'toJson', () => {
     it( 'deve exportar para um JSON completo', () => {
-      const duracao = new TempoDuracao( 1, 4 );
+	    const duracao = new TempoDuracao( 1, 4 );
 	    const pausa = new Pausa( duracao, {
 		    invisivel: true,
 		    fermata: true,
@@ -57,11 +57,14 @@ describe( 'PausaJson', () => {
 	    } );
       const json = PausaJson.toJson( pausa );
       const parsed = pausaSchema.parse( json );
-      expect( parsed ).toEqual(
+      expect( parsed ).toStrictEqual(
 	      {
-		      tipo: 'pausa',
-		      duracao: '1/4',
-		      options: {
+		      tipo: 'pausa'
+		      , duracao: {
+			      numerador: 1
+			      , denominador: 4
+		      }
+		      , options: {
 			      invisivel: true,
 			      fermata: true,
 			      breath: true,
@@ -84,9 +87,12 @@ describe( 'PausaJson', () => {
       const parsed = pausaSchema.parse( json );
       expect( parsed ).toEqual(
 	      {
-		      tipo: 'pausa',
-		      duracao: '1/2',
-		      options: {
+		      tipo: 'pausa'
+		      , duracao: {
+			      numerador: 1
+			      , denominador: 2
+		      }
+		      , options: {
 			      invisivel: false,
 			      fermata: false,
 			      breath: false,
