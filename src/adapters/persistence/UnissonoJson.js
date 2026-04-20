@@ -1,5 +1,4 @@
 import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
-import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { Unissono } from "@domain/nota/Unissono.js";
 import { unissonoOutputSchema, unissonoSchema } from "@schemas/unissonoSchema.js";
 import { NotaJson } from "@persistence/NotaJson.js";
@@ -36,9 +35,9 @@ export class UnissonoJson {
 
 		// 3. Instanciação recursiva das Notas
 		const instanciasNotas = notas.map(n => {
+			if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
 			if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
 			if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
-			if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
 			if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
 			return NotaJson.fromJson(n);
 		});
@@ -55,9 +54,9 @@ export class UnissonoJson {
 		if (Array.isArray(options.graceNote)) {
 			// Usando o .map() para construir o novo array!
 			optionsProcessado.graceNote = options.graceNote.map(n => {
+				if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
 				if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
 				if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
-				if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
 				if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
 				return null;
 			});
@@ -65,5 +64,4 @@ export class UnissonoJson {
 		// 5. Retorna a nova instância de Unissono
 		return new Unissono(instanciasNotas, instanciaDuracao, optionsProcessado);
 	}
-
 }

@@ -1,4 +1,7 @@
-export class ElementoMusicalAbc {
+import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
+import { AdapterUtils } from "@adapters/AdapterUtils.js";
+
+export class ElementoMusicalAbc extends AdapterUtils {
 	/**
 	 * Formata a duração rítmica para o padrão textual do ABCJS.
 	 * Sobrescreve o método base para garantir a compatibilidade.
@@ -72,22 +75,6 @@ export class ElementoMusicalAbc {
 		const notasGraceAbc = gn.map(nota => NotaAbc.toGraceNote(nota)).join('');
 		return `{${notasGraceAbc}}`;
 	}
-	static _toAcorde(nota) {
-		return this._toAbcOutput( nota )
-	}
-	static _toQuialtera(nota) {
-		return this._toAbcOutput( nota )
-	}
-	static _toAbcOutput( nota ) {
-		let abc = "";
-		const opt = nota.options;
-		// Acidentes locais
-		//if (opt.sustenido) abc += "^";
-		//else if (opt.bemol) abc += "_";
-		if (opt.beQuad) abc += "=";
-		abc += nota.altura.abc;
-		return abc;
-	}
 	static _toDedilhado( nota ) {
 		const opt = nota.options;
 		const dedilhado = opt.dedilhado;
@@ -95,8 +82,179 @@ export class ElementoMusicalAbc {
 			return dedilhado.map(d => `"^${d}"`).join('');
 		}
 	}
-	static _toElementoAbc( elemento, isAcorde = false, isQuialtera = false ) {
-		if ( isAcorde === true ) return this._toAcorde( elemento );
+	static _toAbcOutput( nota ) {
+		let abc = "";
+		const opt = nota.options;
+		if (opt.beQuad) abc += "=";
+		abc += nota.altura.abc;
+		return abc;
+	}
+
+	/**
+	 * Converte um elemento interno de um uníssono (acorde) para ABCJS.
+	 * @param {Unissono} unissonoElement - O objeto uníssono contendo o array de notas.
+	 * @returns {string} Fragmento ABCJS formatado como [abc...].
+	 */
+	static _toUnissono( unissonoElement ) {
+		let abc = "";
+		const opt = unissonoElement.options;
+
+		// 1. DECORADORES DO BLOCO (Prefixos que afetam o acorde inteiro)
+		if ( opt ) {
+			// Acordes de Cifra (Texto sobre o bloco)
+			if ( opt.acordes && opt.acordes.length > 0 ) {
+				abc += opt.acordes.map( acorde => `"${ acorde }"` ).join( " " );
+			}
+
+			// Estilos e Símbolos de Bloco
+			if ( opt.ghostNote ) abc += "!style=x!";
+			if ( opt.fermata ) abc += "!fermata!";
+			if ( opt.arpeggio ) abc += "!arpeggio!";
+			if ( opt.breath ) abc += "!breath!";
+
+			// Articulação do Bloco
+			if ( opt.marcato ) abc += "!marcato!";
+			else if ( opt.acento ) abc += "!accent!";
+
+			if ( opt.staccatissimo ) abc += "!staccatissimo!";
+			else if ( opt.staccato ) abc += ".";
+
+			// Dinâmicas (Afetam o volume do uníssono como um todo)
+			if ( opt.dinamicaSuave ) {
+				const p = "!".repeat(opt.dinamicaSuave); // p, pp, ppp
+				abc += `!${p}!`;
+			}
+			if ( opt.dinamicaForte ) {
+				const f = "!".repeat(opt.dinamicaForte); // f, ff, fff
+				abc += `!${f}!`;
+			}
+			if ( opt.dinamicaMeioForte ) abc += "!mf!";
+
+			// Expressão
+			if ( opt.crescendo === "inicio" ) abc += "!crescendo(!";
+			if ( opt.diminuendo === "inicio" ) abc += "!diminuendo(!";
+		}
+
+		// 2. ABERTURA DO UNISSONO
+		abc += "[";
+
+		// 3. RENDERIZAÇÃO DAS NOTAS INTERNAS
+		// Cada nota dentro do uníssono pode ter seu próprio dedilhado ou acidente.
+		abc += unissonoElement.notas.map( nota => {
+			let notaInternaAbc = "";
+
+			// Dedilhado individual (Ex: Polegar na corda 6, indicador na 3)
+			if ( nota.options?.dedilhado && nota.options.dedilhado.length > 0 ) {
+				notaInternaAbc += this._toDedilhado( nota );
+			}
+
+			// Altura da nota (com acidentes calculados pelo toAbcOutput)
+			notaInternaAbc += this._toAbcOutput( nota );
+
+			return notaInternaAbc;
+		} ).join( "" );
+
+		// 4. FECHAMENTO E DURAÇÃO DO BLOCO
+		abc += "]";
+
+		// A duração do uníssono é aplicada uma única vez após o fechamento dos colchetes.
+		if ( typeof this.formatarDuracaoAbc === "function" ) {
+			abc += this.formatarDuracaoAbc( unissonoElement );
+		}
+
+		// 5. FINALIZADORES DE EXPRESSÃO E LIGADURAS
+		if ( opt ) {
+			if ( opt.crescendo === "fim" ) abc += "!crescendo)!";
+			if ( opt.diminuendo === "fim" ) abc += "!diminuendo)!";
+			if ( opt.ligada || opt.hammerOn || opt.pullOff ) abc += "-";
+		}
+
+		return abc;
+	}
+	/**
+	 * Converte um elemento interno de uma quiáltera para ABCJS.
+	 * Aplica ornamentos, articulações e dedilhados antes da nota.
+	 * @param {ElementoMusical} quialteraElement - Nota, Pausa ou Unissono.
+	 * @returns {string} Fragmento ABCJS formatado.
+	 */
+	static _toQuialtera(quialteraElement) {
+		let abc = "";
+		const opt = quialteraElement.options;
+
+		// 0. ACORDES E DECORADORES INICIAIS
+		if ( opt ) {
+			// Acordes (letras de cifra sobre a nota)
+			if ( opt.acordes && opt.acordes.length > 0 ) {
+				abc += opt.acordes.map( acorde => `"${ acorde }"` ).join( " " );
+			}
+
+			// Estilos e Prefixos de Ornamentação
+			if ( opt.ghostNote ) abc += "!style=x!";
+			if ( opt.fermata ) abc += "!fermata!";
+			if ( opt.fermataInvertida ) abc += "!invertedfermata!";
+			if ( opt.arpeggio ) abc += "!arpeggio!";
+			if ( opt.breath ) abc += "!breath!";
+
+			// Acentuação e Articulação
+			if ( opt.marcato ) abc += "!marcato!";
+			else if ( opt.acento ) abc += "!accent!";
+
+			if ( opt.staccatissimo ) abc += "!staccatissimo!";
+			else if ( opt.staccato ) abc += ".";
+			else if ( opt.tenuto ) abc += "!tenuto!";
+
+			// Ornamentos Clássicos
+			if ( opt.trinado ) abc += "!trill!";
+			else if ( opt.mordente ) abc += "!lowermordent!";
+			else if ( opt.upperMordent ) abc += "!uppermordent!";
+			if ( opt.turn ) abc += "!turn!";
+			if ( opt.roll ) abc += "~";
+
+			// Técnicas e Dinâmicas Individuais
+			if ( opt.pizzicato ) abc += "!+!";
+			if ( opt.snapPizzicato ) abc += "!snap!";
+			if ( opt.downBow ) abc += "!downbow!";
+			if ( opt.upBow ) abc += "!upbow!";
+
+			if ( opt.dinamicaSuave ) {
+				if ( opt.dinamicaSuave === 3 ) abc += "!ppp!";
+				else if ( opt.dinamicaSuave === 2 ) abc += "!pp!";
+				else if ( opt.dinamicaSuave === 1 ) abc += "!p!";
+			}
+			if ( opt.dinamicaForte ) {
+				if ( opt.dinamicaForte === 3 ) abc += "!fff!";
+				else if ( opt.dinamicaForte === 2 ) abc += "!ff!";
+				else if ( opt.dinamicaForte === 1 ) abc += "!f!";
+			}
+
+			// Grace Notes (Notas de adorno antes da nota da quiáltera)
+			if ( opt.graceNote && typeof this._toGraceNotes === "function" ) {
+				abc += this._toGraceNotes( quialteraElement );
+			}
+
+			// Dedilhado (Essencial para sua ferramenta de música raiz)
+			if ( opt.dedilhado && ( opt.dedilhado.length > 0 ) ) {
+				abc += this._toDedilhado( quialteraElement );
+			}
+		}
+
+		// 1. ALTURA (A nota em si, ex: ^C)
+		abc += this._toAbcOutput( quialteraElement );
+
+		// 2. SUFIXO DE DURAÇÃO (Visualização rítmica interna da quiáltera)
+		if (typeof this.formatarDuracaoAbc === "function") {
+			abc += this.formatarDuracaoAbc( quialteraElement );
+		}
+
+		// 3. LIGADURAS (Tie/Slur interno)
+		if (opt && (opt.ligada || opt.hammerOn || opt.pullOff)) {
+			abc += "-";
+		}
+
+		return abc;
+	}
+	static _toElementoAbc( elemento, isUnissono = false, isQuialtera = false ) {
+		if ( isUnissono === true ) return this._toUnissono( elemento );
 		if ( isQuialtera === true ) return this._toQuialtera( elemento );
 		let abc = "";
 		const opt = elemento.options;

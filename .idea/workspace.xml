@@ -5,29 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/QuialteraJson.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/UnissonoAbc.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/UnissonoJson.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/integration/UnissonoIntegration.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/QuialteraAbc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/QuialteraAbc.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/QuialteraJson.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/domain/Quialtera.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/integration/QuialteraIntegration.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/AdapterUtils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/AdapterUtils.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/NotaFrequenciaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaFrequenciaJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/QuialteraJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/QuialteraJson.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/adapters/persistence/UnissonoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/UnissonoJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Nota.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/nota/Unissono.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Unissono.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/notaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/notaSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/pausaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/pausaSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaAbc.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaJson.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/domain/Unissono.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Unissono.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/integration/NotaIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/NotaIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Quialtera.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Quialtera.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/quialteraSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/quialteraSchema.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,43 +48,43 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;JavaScript Debug.localhost:5173.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;criando-parser&quot;,
-    &quot;js.linters.configure.manually.selectedeslint&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/eduardo/vendas/minhamusica/src/tests&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;/home/eduardo/vendas/minhamusica/node_modules/eslint&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.npm dev.executor&quot;: &quot;Run&quot;,
-    &quot;npm.npm test.executor&quot;: &quot;Debug&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.linters.eslint&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/home/eduardo/.local/share/JetBrains/IntelliJIdea2025.2/javascript-plugin/jsLanguageServicesImpl/external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JavaScript Debug.localhost:5173.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "criando-parser",
+    "js.linters.configure.manually.selectedeslint": "true",
+    "last_opened_file_path": "/home/eduardo/vendas/minhamusica/src/adapters/abcjs",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "/home/eduardo/vendas/minhamusica/node_modules/eslint",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "node",
+    "nodejs_package_manager_path": "npm",
+    "npm.npm dev.executor": "Run",
+    "npm.npm test.executor": "Debug",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
+    "ts.external.directory.path": "/home/eduardo/.local/share/JetBrains/IntelliJIdea2025.2/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/adapters/abcjs" />
       <recent name="$PROJECT_DIR$/src/tests" />
       <recent name="$PROJECT_DIR$/src/model/voz" />
       <recent name="$PROJECT_DIR$/src/schemas" />
       <recent name="$PROJECT_DIR$/_legacy/src/model/voz" />
-      <recent name="$PROJECT_DIR$/src/model/obra" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/tests/domain" />
@@ -122,7 +111,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="/NotaFrequenciaIntegration.test.js" />
+      <arguments value="QuialteraJson.test.js" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -188,7 +177,7 @@
       <workItem from="1776437493556" duration="30912000" />
       <workItem from="1776514921200" duration="35414000" />
       <workItem from="1776595096477" duration="24465000" />
-      <workItem from="1776685094475" duration="19140000" />
+      <workItem from="1776685094475" duration="30981000" />
     </task>
     <servers />
   </component>
@@ -221,9 +210,15 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js</url>
-          <line>177</line>
+          <line>335</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="110" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/tests/adapters/persistence/QuialteraJson.test.js</url>
+          <line>26</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="124" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

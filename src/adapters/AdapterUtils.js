@@ -63,4 +63,32 @@ export class AdapterUtils {
 
 		return { numerador: num, denominador: den };
 	}
+	static _razaoParaFracao(razao) {
+		// 1. Validação inicial: se já for inteiro, retorna sobre 1
+		if (Number.isInteger(razao)) {
+			return `${razao}/1`;
+		}
+
+		const strDecimal = String(razao);
+
+		// Proteção caso o número seja inteiro mas não tenha passado no isInteger (ex: "1.0")
+		if (!strDecimal.includes('.')) {
+			return `${razao}/1`;
+		}
+
+		// 2. Conta as casas decimais
+		const casasDecimais = strDecimal.split('.')[1].length;
+
+		// 3. Usa o operador de exponenciação (**) do ES6+ ao invés de Math.pow
+		const denominadorInicial = 10 ** casasDecimais;
+		const numeradorInicial = Math.round(razao * denominadorInicial);
+
+		// 4. Arrow Function recursiva (ES6) para calcular o Máximo Divisor Comum (MDC)
+		const calcularMDC = (a, b) => b === 0 ? a : calcularMDC(b, a % b);
+
+		const mdc = calcularMDC(numeradorInicial, denominadorInicial);
+
+		// 5. Template Literals (ES6) para retornar a string formatada
+		return `${numeradorInicial / mdc}/${denominadorInicial / mdc}`;
+	}
 }
