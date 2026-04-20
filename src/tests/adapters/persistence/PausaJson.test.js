@@ -60,10 +60,7 @@ describe( 'PausaJson', () => {
       expect( parsed ).toStrictEqual(
 	      {
 		      tipo: 'pausa'
-		      , duracao: {
-			      numerador: 1
-			      , denominador: 4
-		      }
+		      , duracao: '1/4'
 		      , options: {
 			      invisivel: true,
 			      fermata: true,
@@ -88,10 +85,7 @@ describe( 'PausaJson', () => {
       expect( parsed ).toEqual(
 	      {
 		      tipo: 'pausa'
-		      , duracao: {
-			      numerador: 1
-			      , denominador: 2
-		      }
+		      , duracao: '1/2'
 		      , options: {
 			      invisivel: false,
 			      fermata: false,

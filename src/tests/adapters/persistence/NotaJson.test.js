@@ -10,7 +10,7 @@ describe( 'NotaJson', () => {
     it( 'deve criar uma nota a partir de um JSON completo', () => {
       const json = {
         altura: { key: 'C4' },
-        duracao: { duracao: '1/4' },
+        duracao: '1/4',
         options: {
           acordes: [ 'C', 'G' ],
           fermata: true,
@@ -56,13 +56,14 @@ describe( 'NotaJson', () => {
       } );
       const json = NotaJson.toJson( nota );
       expect( json ).toEqual( {
-        altura: 'A4',
-        duracao: { duracao: '1/4' },
-        options: {
-          acordes: [ 'Am' ],
-          fermata: true,
-          ligada: true,
-        }
+	      tipo: 'nota',
+	      altura: 'A4',
+	      duracao: '1/4',
+	      options: {
+		      acordes: [ 'Am' ],
+		      fermata: true,
+		      ligada: true,
+	      }
       } );
     } );
 
@@ -72,9 +73,10 @@ describe( 'NotaJson', () => {
       const nota = new Nota( altura, duracao );
       const json = NotaJson.toJson( nota );
       expect( json ).toStrictEqual( {
-        altura: 'B5',
-        duracao: { duracao: '1/2' },
-        options: {}
+	      tipo: 'nota',
+	      altura: 'B5',
+	      duracao: '1/2',
+	      options: {}
       } );
     } );
   } );

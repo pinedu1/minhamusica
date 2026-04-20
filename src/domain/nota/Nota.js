@@ -35,8 +35,9 @@ export class Nota extends ElementoMusical {
 	 * @property {boolean} [options.upBow=false] - Arco para cima !upbow!.
 	 * @property {boolean} [options.openString=false] - Corda solta !open!.
 	 * @property {boolean} [options.thumb=false] - Símbolo de polegar !thumb!.
-	 * @property {number|null} [options.dedilhado=null] - Digitação !0! a !5!.
+	 * @property {[]|null} [options.dedilhado=[]] - Digitação !0! a !5!.
 	 * @property {number} [options.dinamicaSuave=0] - Nível de p (1:p, 2:pp, 3:ppp).
+	 * @property {Nota[]|null} [options.graceNote=[]] - Digitação !0! a !5!.
 	 * @property {number} [options.dinamicaForte=0] - Nível de f (1:f, 2:ff, 3:fff).
 	 * @property {boolean} [options.dinamicaMeioForte=false] - Símbolo !mf!.
 	 * @property {string|null} [options.crescendo=null] - 'inicio' para !crescendo(! ou 'fim' para !crescendo)!.
@@ -87,8 +88,8 @@ export class Nota extends ElementoMusical {
 			// OUTROS
 			ghostNote: false,
 			arpeggio: false,
-			graceNote: null,
-			dedilhado: null,
+			graceNote: [],
+			dedilhado: [],
 
 			// DINÂMICAS (Nível: 1, 2 ou 3)
 			dinamicaSuave: 0,
@@ -114,9 +115,6 @@ export class Nota extends ElementoMusical {
 		if (this._options.dinamicaSuave < 0 || this._options.dinamicaSuave > 3) {
 			throw new RangeError("Nota: dinamicaSuave deve ser entre 0 e 3.");
 		}
-		if (this._options.dedilhado !== null && (this._options.dedilhado < 0 || this._options.dedilhado > 5)) {
-			throw new RangeError("Nota: dedilhado deve ser entre 0 e 5.");
-		}
 
 		// Validação semântica para crescendo e diminuendo
 		const validosHairpin = [null, 'inicio', 'fim'];
@@ -130,6 +128,10 @@ export class Nota extends ElementoMusical {
 		const gn = this._options.graceNote;
 		if (gn !== null && gn !== false && !Array.isArray(gn)) {
 			throw new TypeError("Nota: graceNote deve ser Array, null ou false.");
+		}
+		const ded = this._options.dedilhado;
+		if (ded !== null && ded !== false && !Array.isArray(ded)) {
+			throw new TypeError("Nota: dedilhado deve ser Array, null ou false.");
 		}
 	}
 

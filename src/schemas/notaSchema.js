@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { tempoDuracaoSchema, tempoDuracaoOutputSchema } from '@schemas/tempoDuracaoSchema.js';
 import { notaFrequenciaSchema, notaFrequenciaOutputSchema } from '@schemas/notaFrequenciaSchema.js';
+import { unissonoSchema } from "@schemas/unissonoSchema.js";
+import { quialteraSchema } from "@schemas/quialteraSchema.js";
 
 /**
  * Schema de validação para a Nota.
@@ -9,7 +11,7 @@ import { notaFrequenciaSchema, notaFrequenciaOutputSchema } from '@schemas/notaF
 export const notaSchema = z.object({
 	tipo: z.literal( 'nota' ).default( 'nota' ),
 	altura: notaFrequenciaSchema,
-	duracao: tempoDuracaoSchema,
+	duracao: tempoDuracaoSchema.transform((val) => { return `${val.numerador}/${val.denominador}` }),
 	options: z.object({
 		// INFRAESTRUTURA
 		obra: z.any().nullable().default(null),
@@ -49,8 +51,14 @@ export const notaSchema = z.object({
 		// OUTROS
 		ghostNote: z.boolean().default(false),
 		arpeggio: z.boolean().default(false),
-		graceNote: z.any().nullable().default(null),
-		dedilhado: z.number().int().min(0).max(5).nullable().default(null),
+		graceNote: z.array(
+			z.union([
+				z.lazy(() => notaSchema),
+				z.lazy(() => unissonoSchema),
+				z.lazy(() => quialteraSchema)
+			])
+		).nullable().default(null),
+		dedilhado: z.array(z.string()).nullable().default([]),
 
 		// DINÂMICAS (Sua regra: 1, 2 ou 3)
 		dinamicaSuave: z.number().int().min(0).max(3).default(0),
@@ -65,7 +73,22 @@ export const notaSchema = z.object({
 		bemol: z.boolean().default(false),
 		beQuad: z.boolean().default(false)
 	}).default({})
-}).strict();
+})
+	.strict()
+	.transform((val) => {
+		const cleanOptions = Object.fromEntries(
+			Object.entries(val.options).filter(([key, value]) => {
+				if (value === false) return false;
+				if (value === null || value === undefined) return false;
+				if (value === "") return false;
+				if (value === 0) return false; // Limpa dinâmicas zeradas
+				if (Array.isArray(value) && value.length === 0) return false; // Limpa dedilhados/acordes/graceNotes vazios
+				return true;
+			})
+		);
+		return { ...val, options: cleanOptions };
+	});
+
 /**
  * Schema de validação estrita para garantir que as opções internas
  * da classe estão íntegras antes de exportar.
@@ -107,7 +130,7 @@ const notaOptionsOutputSchema = z.object({
 	ghostNote: z.boolean(),
 	arpeggio: z.boolean(),
 	graceNote: z.any().nullable(),
-	dedilhado: z.number().int().nullable(),
+	dedilhado: z.array(z.string()).nullable(),
 
 	// DINÂMICAS
 	dinamicaSuave: z.number().int(),
@@ -130,7 +153,7 @@ export const notaOutputSchema = z.object({
 	tipo: z.literal( 'nota' ).default( 'nota' ),
 	// 1. Invocamos os especialistas de saída para as classes aninhadas
 	altura: notaFrequenciaOutputSchema,
-	duracao: tempoDuracaoOutputSchema,
+	duracao: tempoDuracaoOutputSchema.transform((val) => { return val.duracao }),
 
 	// 2. Lemos a propriedade com "_" que é a convenção da sua classe
 	_options: notaOptionsOutputSchema
@@ -154,7 +177,7 @@ export const notaOutputSchema = z.object({
 
 	// 3. Montamos o objeto de saída final com a chave "options" limpa
 	return {
-		tipo: z.literal( 'nota' ).default( 'nota' ),
+		tipo: val.tipo,
 		altura: val.altura,
 		duracao: val.duracao,
 		options: cleanOptions

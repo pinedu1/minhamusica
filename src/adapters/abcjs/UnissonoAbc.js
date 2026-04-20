@@ -1,6 +1,8 @@
 import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { Nota } from "@domain/nota/Nota.js";
+import { Unissono } from "@domain/nota/Unissono.js";
+import { NotaAbc } from "@abcjs/NotaAbc.js";
 
 export class UnissonoAbc extends ElementoMusicalAbc {
 	/**
@@ -12,38 +14,85 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 		let abc = "";
 		const opt = unissono.options;
 
-		// 1. PREFIXOS GLOBAIS
+		// Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
+		// 0. ACORDES
+		if (opt.acordes && opt.acordes.length > 0) {
+			abc = opt.acordes.map( acorde => `"${acorde}"` ).join ( " " );
+		}
+		// 1. PREFIXOS (Decoradores e Ornamentos)
 		if (opt.ghostNote) abc += "!style=x!";
+		// Na exportação, usamos sempre a notação canônica primária
 		if (opt.fermata) abc += "!fermata!";
+		if (opt.fermataInvertida) abc += "!invertedfermata!";
 		if (opt.arpeggio) abc += "!arpeggio!";
+		if (opt.breath) abc += "!breath!";
 
+		// Acentuação (Exclusiva)
 		if (opt.marcato) abc += "!marcato!";
 		else if (opt.acento) abc += "!accent!";
 
+		// Articulações (Exclusiva)
 		if (opt.staccatissimo) abc += "!staccatissimo!";
 		else if (opt.staccato) abc += ".";
 		else if (opt.tenuto) abc += "!tenuto!";
 
+		// Ornamentos
 		if (opt.trinado) abc += "!trill!";
-		else if (opt.mordente) abc += "!mordent!";
+		else if (opt.mordente) abc += "!lowermordent!"; // Padronizado para lowermordent
 		else if (opt.upperMordent) abc += "!uppermordent!";
 
+		if (opt.turn) abc += "!turn!";
 		if (opt.roll) abc += "~";
 
-		// Grace Notes (Adornos) aplicados ao unissono
-		abc += UnissonoAbc.toGraceNotes(unissono);
+		// Técnicas e Arcos
+		if (opt.pizzicato) abc += "!+!";
+		if (opt.snapPizzicato) abc += "!snap!";
+		if (opt.downBow) abc += "!downbow!";
+		if (opt.upBow) abc += "!upbow!";
+		if (opt.openString) abc += "!open!";
+		if (opt.thumb) abc += "!thumb!";
 
-		// 2. CORPO DO UNISSONO
-		const notasAbc = unissono.notas.map(nota => nota.toAbc(true)).join('');
-		abc += `[${notasAbc}]`;
+		// Dinâmicas
+		if (opt.dinamicaSuave) {
+			if ( opt.dinamicaSuave === 3 ) abc += "!ppp!";
+			else if ( opt.dinamicaSuave === 2 ) abc += "!pp!";
+			else if ( opt.dinamicaSuave === 1 ) abc += "!p!";
+		}
+		if (opt.dinamicaForte) {
+			if ( opt.dinamicaForte === 3 ) abc += "!fff!";
+			else if ( opt.dinamicaForte === 2 ) abc += "!ff!";
+			else if ( opt.dinamicaForte === 1 ) abc += "!f!";
+		}
+
+		if (opt.dinamicaMeioForte) abc += "!mf!";
+
+		// Expressão (Crescendo e Diminuendo)
+		if (opt.crescendo) {
+			if ( opt.crescendo === "inicio" ) abc += "!crescendo(!";
+			else if ( opt.crescendo === "fim" ) abc += "!crescendo)!";
+		}
+		if (opt.diminuendo) {
+			if ( opt.diminuendo === "inicio" ) abc += "!diminuendo(!";
+			else if ( opt.diminuendo === "fim" ) abc += "!diminuendo)!";
+		}
+
+		// Grace Notes (Adornos)
+		if (typeof this._toGraceNotes === "function") {
+			abc += this._toGraceNotes( unissono );
+		}
+
+		abc += `[${unissono.notas.map(elemento => this._toElementoAbc( elemento, true, false )).join('')}]`;
+
 
 		// 3. SUFIXO DE DURAÇÃO
-		abc += UnissonoAbc.formatarDuracaoAbc(unissono);
+		if (typeof this.formatarDuracaoAbc === "function") {
+			abc += this.formatarDuracaoAbc( unissono );
+		}
 
-		// 4. SUFIXOS FINAIS
-		if (opt.dedilhado) abc += `$"${opt.dedilhado}"`;
-		if (opt.ligada) abc += "-";
-
+		// Ligaduras (Prolongamento/Tie)
+		if (opt.ligada || opt.hammerOn || opt.pullOff) {
+			abc += "-";
+		}
 		return abc;
 	}
 
@@ -61,24 +110,24 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 			throw new Error(`Unissono.parseAbc: String de unissono inválida: "${unissonoString}"`);
 		}
 
-		const [, notasStr, duracaoStr, ligadura] = match;
+		const [notasArray, notasStr, duracaoStr, ligadura] = match;
 		const unissonoOptions = { ...contextOptions };
 
 		// 1. Duração do Unissono
 		const unidadeTempo = (function() {
-			if (contextOptions.voz) {
+			if (contextOptions?.voz) {
 				const voz = contextOptions.voz;
 				if ( voz.getUnidadeTempo() && voz.getUnidadeTempo() instanceof TempoDuracao ) {
 					return voz.getUnidadeTempo();
 				}
 			}
-			if (contextOptions.obra) {
+			if (contextOptions?.obra) {
 				const obra = contextOptions.obra;
 				if ( obra.getUnidadeTempo() && obra.getUnidadeTempo() instanceof TempoDuracao ) {
 					return obra.getUnidadeTempo();
 				}
 			}
-			return new TempoDuracao(1, 8);
+			return null;
 		})();
 		let duracao;
 
@@ -94,7 +143,7 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 				duracao = new TempoDuracao(unidadeTempo.numerador * Number(duracaoStr), unidadeTempo.denominador);
 			}
 		} else {
-			duracao = unidadeTempo;
+			duracao = new TempoDuracao(1,1);
 		}
 
 		if (ligadura) {
@@ -108,7 +157,7 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 		while ((notaMatch = notaInternaRegex.exec(notasStr)) !== null) {
 			// A duração de cada nota interna é a mesma do unissono.
 			// Passamos a string da nota e o contexto, mas a duração será a do unissono.
-			const nota = Nota.parseAbc(notaMatch[0], contextOptions);
+			const nota = NotaAbc.fromAbc(notaMatch[0], contextOptions);
 			notas.push(nota);
 		}
 

@@ -126,7 +126,7 @@ export class ElementoMusical {
         }
 
         // 2. Define a ordem de subida na árvore de hierarquia
-        const hierarquia = ['compasso', 'voz', 'obra'];
+        const hierarquia = ['unissono', 'compasso', 'voz', 'obra'];
 
         // 3. Percorre os pais dinamicamente
         for (const nivel of hierarquia) {
@@ -250,4 +250,54 @@ export class ElementoMusical {
         }
         this._options = val;
     }
+
+	_addDedilhado(dedo) {
+		this._options.dedilhado.push(dedo);
+	}
+	get dedilhado() {
+		if (this._options.dedilhado === undefined || this._options.dedilhado === null) {
+			return [];
+		}
+		return this._options.dedilhado;
+	}
+
+	set dedilhado(val) {
+		this._options.dedilhado = [];
+		// 1. Testa se é um Array
+		// 2. Testa se todos os itens dentro do Array são do tipo string
+		if (!Array.isArray(val) || !val.every(item => typeof item === 'string')) {
+			throw new TypeError("Dedilhado: O valor deve ser um array de strings (Array<String>).");
+		}
+		val.forEach(item => {
+			this._addDedilhado(item);
+		})
+	}
+	_addGraceNote(gn) {
+		if (!(gn instanceof ElementoMusical)) {
+			throw new TypeError('O elemento para graceNote deve ser uma instância de ElementoMusical (Nota, Pausa, Unissono ou Quialtera).');
+		}
+		this._options.graceNote.push(gn);
+	}
+	get graceNote() {
+		if (this._options.graceNote === undefined || this._options.graceNote === null) {
+			return [];
+		}
+		return this._options.graceNote;
+	}
+	set graceNote(val) {
+		if (val === null || val === undefined) {
+			this._options.graceNote = [];
+			return;
+		}
+		if (!Array.isArray(val)) {
+			throw new TypeError('GraceNote: deve ser um array de instâncias de Nota | Pausa | Unissono | Quialtera.');
+		}
+		if (val.some(e => !(e instanceof ElementoMusical))) {
+			throw new TypeError('Todos os elementos do array de notas devem ser instâncias de Nota | Pausa | Unissono | Quialtera.');
+		}
+		this._options.graceNote = [];
+		val.forEach(item => {
+			this._addGraceNote(item);
+		})
+	}
 }

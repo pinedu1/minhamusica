@@ -1,5 +1,4 @@
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
-import { Nota } from "@domain/nota/Nota.js";
 import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 /**
  * Representa um unissono musical, um conjunto de notas tocadas simultaneamente.
@@ -50,6 +49,7 @@ export class Unissono extends ElementoMusical {
             obra: null,
             compasso: null,
             unidadeTempo: null,
+	        acordes: [],
 
 	        // ACENTUAÇÃO E ARTICULAÇÃO
 	        acento: false,
@@ -102,30 +102,85 @@ export class Unissono extends ElementoMusical {
 
         // Validação da propriedade graceNote (Idêntica à classe Nota)
         const gn = this._options.graceNote;
-        if (gn !== false && gn !== null && !Array.isArray(gn)) {
-            throw new TypeError("Falha ao criar Unissono: 'graceNote' deve ser false, null ou um Array de instâncias de Nota.");
-        }
-        if (Array.isArray(gn) && gn.some(n => !(n instanceof Nota))) {
-            throw new TypeError("Falha ao criar Unissono: Todos os elementos em 'graceNote' devem ser instâncias de Nota.");
-        }
+        this.graceNote = this._options.graceNote;
+	    const de = this._options.dedilhado;
+	    this.dedilhado = this._options.dedilhado;
     }
 
-    #addNota(nota) {
-        if (!(nota instanceof Nota)) {
-            throw new TypeError('A nota deve ser uma instância de Nota.');
-        }
-        this.#notas.push(nota);
-    }
-    get notas() { return this.#notas; }
+	#addNota(elemento) {
+		if (!(elemento instanceof ElementoMusical)) {
+			throw new TypeError('O elemento deve ser uma instância de ElementoMusical (Nota, Pausa, Unissono ou Quialtera).');
+		}
+		this.#notas.push(elemento);
+	}
+
+    get notas() {
+	    if (this.#notas === null || this.#notas === undefined || !Array.isArray(this.#notas) || this.#notas.length === 0 ) {
+		    return [];
+	    }
+		return this.#notas;
+	}
     
     set notas(arrayNotas) {
         if (!Array.isArray(arrayNotas)) {
             throw new TypeError('As notas de um unissono devem ser fornecidas como um array de instâncias de Nota.');
         }
-        if (arrayNotas.some(nota => !(nota instanceof Nota))) {
+        if (arrayNotas.some(nota => !(nota instanceof ElementoMusical))) {
             throw new TypeError('Todos os elementos do array de notas devem ser instâncias de Nota.');
         }
-        this.#notas = [];
+		this.#notas = [];
         arrayNotas.forEach(nota => this.#addNota(nota));
     }
+	get acordes() { return this._options.acordes; }
+
+	get acento() { return this._options.acento === true; }
+	set acento(val) { this._options.acento = !!val; }
+
+	get arpeggio() { return this._options.arpeggio === true; }
+	set arpeggio(val) { this._options.arpeggio = !!val; }
+
+	get beQuad() { return this._options.beQuad === true; }
+	set beQuad(val) { this._options.beQuad = !!val; }
+
+	get breath() { return this._options.breath === true; }
+	set breath(val) { this._options.breath = !!val; }
+
+	get fermata() { return this._options.fermata === true; }
+	set fermata(val) { this._options.fermata = !!val; }
+
+	get fermataInvertida() { return this._options.fermataInvertida === true; }
+	set fermataInvertida(val) { this._options.fermataInvertida = !!val; }
+
+	get ligada() { return this._options.ligada === true; }
+	set ligada(val) { this._options.ligada = !!val; }
+
+	get marcato() { return this._options.marcato === true; }
+	set marcato(val) { this._options.marcato = !!val; }
+
+	get mordente() { return this._options.mordente === true; }
+	set mordente(val) { this._options.mordente = !!val; }
+
+	get roll() { return this._options.roll === true; }
+	set roll(val) { this._options.roll = !!val; }
+
+	get staccatissimo() { return this._options.staccatissimo === true; }
+	set staccatissimo(val) { this._options.staccatissimo = !!val; }
+
+	get staccato() { return this._options.staccato === true; }
+	set staccato(val) { this._options.staccato = !!val; }
+
+	get sustenido() { return this._options.sustenido === true; }
+	set sustenido(val) { this._options.sustenido = !!val; }
+
+	get tenuto() { return this._options.tenuto === true; }
+	set tenuto(val) { this._options.tenuto = !!val; }
+
+	get trinado() { return this._options.trinado === true; }
+	set trinado(val) { this._options.trinado = !!val; }
+
+	get turn() { return this._options.turn === true; }
+	set turn(val) { this._options.turn = !!val; }
+
+	get upperMordent() { return this._options.upperMordent === true; }
+	set upperMordent(val) { this._options.upperMordent = !!val; }
 }

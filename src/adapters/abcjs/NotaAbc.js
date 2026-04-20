@@ -8,22 +8,6 @@ import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
  * @description Adaptador para manipular entrada e saída no formato ABCJS para Notas.
  */
 export class NotaAbc extends ElementoMusicalAbc {
-	static #toAcorde(nota) {
-		return this.#toAbcOutput( nota )
-	}
-	static #toQuialtera(nota) {
-		return this.#toAbcOutput( nota )
-	}
-	static #toAbcOutput( nota ) {
-		let abc = "";
-		const opt = nota.options;
-		// Acidentes locais
-		//if (opt.sustenido) abc += "^";
-		//else if (opt.bemol) abc += "_";
-		if (opt.beQuad) abc += "=";
-		abc += nota.altura.abc;
-		return abc;
-	}
 	/**
 	 * Converte a nota para sua representação completa no formato ABC.
 	 * Inclui notas de enfeite (grace notes) se houverem.
@@ -33,100 +17,7 @@ export class NotaAbc extends ElementoMusicalAbc {
 	 * const abc = NotaAbc.toAbc( notaInstance ); // Ex: "{C}D2"
 	 */
 	static toAbc( nota, isAcorde = false, isQuialtera = false ) {
-		if ( isAcorde === true ) return this.#toAcorde( nota );
-		if ( isQuialtera === true ) return this.#toQuialtera( nota );
-		let abc = "";
-		const opt = nota.options;
-
-		// Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
-		// 0. ACORDES
-		if (opt.acordes && opt.acordes.length > 0) {
-			abc = opt.acordes.map( acorde => `"${acorde}"` ).join ( " " );
-		}
-		// 1. PREFIXOS (Decoradores e Ornamentos)
-		if (opt.ghostNote) abc += "!style=x!";
-		// Na exportação, usamos sempre a notação canônica primária
-		if (opt.fermata) abc += "!fermata!";
-		if (opt.fermataInvertida) abc += "!invertedfermata!";
-		if (opt.arpeggio) abc += "!arpeggio!";
-		if (opt.breath) abc += "!breath!";
-
-		// Acentuação (Exclusiva)
-		if (opt.marcato) abc += "!marcato!";
-		else if (opt.acento) abc += "!accent!";
-
-		// Articulações (Exclusiva)
-		if (opt.staccatissimo) abc += "!staccatissimo!";
-		else if (opt.staccato) abc += ".";
-		else if (opt.tenuto) abc += "!tenuto!";
-
-		// Acidentes locais
-		abc += this.#toAbcOutput( nota )
-
-		// Ornamentos
-		if (opt.trinado) abc += "!trill!";
-		else if (opt.mordente) abc += "!lowermordent!"; // Padronizado para lowermordent
-		else if (opt.upperMordent) abc += "!uppermordent!";
-
-		if (opt.turn) abc += "!turn!";
-		if (opt.roll) abc += "~";
-
-		// Técnicas e Arcos
-		if (opt.pizzicato) abc += "!+!";
-		if (opt.snapPizzicato) abc += "!snap!";
-		if (opt.downBow) abc += "!downbow!";
-		if (opt.upBow) abc += "!upbow!";
-		if (opt.openString) abc += "!open!";
-		if (opt.thumb) abc += "!thumb!";
-
-		// Dinâmicas
-		if (opt.dinamicaSuave) {
-			if ( opt.dinamicaSuave === 3 ) abc += "!ppp!";
-			else if ( opt.dinamicaSuave === 2 ) abc += "!pp!";
-			else if ( opt.dinamicaSuave === 1 ) abc += "!p!";
-		}
-		if (opt.dinamicaForte) {
-			if ( opt.dinamicaForte === 3 ) abc += "!fff!";
-			else if ( opt.dinamicaForte === 2 ) abc += "!ff!";
-			else if ( opt.dinamicaForte === 1 ) abc += "!f!";
-		}
-
-		if (opt.dinamicaMeioForte) abc += "!mf!";
-
-		// Expressão (Crescendo e Diminuendo)
-		if (opt.crescendo) {
-			if ( opt.crescendo === "inicio" ) abc += "!crescendo(!";
-			else if ( opt.crescendo === "fim" ) abc += "!crescendo)!";
-		}
-		if (opt.diminuendo) {
-			if ( opt.diminuendo === "inicio" ) abc += "!diminuendo(!";
-			else if ( opt.diminuendo === "fim" ) abc += "!diminuendo)!";
-		}
-
-		// Grace Notes (Adornos)
-		if (typeof NotaAbc.toGraceNotes === "function") {
-			abc += NotaAbc.toGraceNotes( nota );
-		}
-
-		// 2. ALTURA DA NOTA
-		abc += nota.altura.abc;
-
-		// 3. SUFIXO DE DURAÇÃO
-		if (typeof NotaAbc.formatarDuracaoAbc === "function") {
-			abc += NotaAbc.formatarDuracaoAbc( nota );
-		}
-
-		// 4. SUFIXOS (Dedilhado e Ligaduras)
-		if (opt.dedilhado !== null && opt.dedilhado !== undefined) {
-			abc += `$"${opt.dedilhado}"`;
-		}
-
-		// Ligaduras (Prolongamento/Tie)
-		if (opt.ligada || opt.hammerOn || opt.pullOff) {
-			abc += "-";
-		}
-
-		return abc;
+		return this._toElementoAbc( nota, isAcorde, isQuialtera );
 	}
 	/**
 	 * Factory: Converte uma string ABC complexa em uma instância de Nota.

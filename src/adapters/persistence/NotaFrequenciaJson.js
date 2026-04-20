@@ -18,7 +18,7 @@ export class NotaFrequenciaJson {
 	 */
 	static fromJson( json ) {
 		if (json instanceof NotaFrequencia) return json;
-		const frequencia = notaFrequenciaOutputSchema.parse(json);
-		return NotaFrequencia.getByKey( frequencia );
+		const frequencia = notaFrequenciaSchema.parse(json);
+		return frequencia;
 	}
 }

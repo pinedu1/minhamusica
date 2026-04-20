@@ -5,12 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/schemas/quialteraSchema.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/QuialteraJson.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/UnissonoAbc.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/UnissonoJson.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/integration/UnissonoIntegration.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/NotaFrequenciaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaFrequenciaJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/UnissonoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/UnissonoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Nota.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/domain/nota/Unissono.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Unissono.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/notaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/notaSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/pausaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/pausaSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Unissono.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Unissono.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/NotaIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/NotaIntegration.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,15 +122,15 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="NotaIntegration.test" />
+      <arguments value="/NotaFrequenciaIntegration.test.js" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="JavaScript Debug.localhost:5173" />
-      <item itemvalue="npm.npm test" />
       <item itemvalue="npm.npm dev" />
+      <item itemvalue="npm.npm test" />
     </list>
     <recent_temporary>
       <list>
@@ -170,7 +187,8 @@
       <workItem from="1776435889120" duration="1595000" />
       <workItem from="1776437493556" duration="30912000" />
       <workItem from="1776514921200" duration="35414000" />
-      <workItem from="1776595096477" duration="24358000" />
+      <workItem from="1776595096477" duration="24465000" />
+      <workItem from="1776685094475" duration="19140000" />
     </task>
     <servers />
   </component>
@@ -200,6 +218,12 @@
           <url>file://$PROJECT_DIR$/src/domain/nota/Pausa.js</url>
           <line>125</line>
           <option name="timeStamp" value="66" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js</url>
+          <line>177</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="110" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

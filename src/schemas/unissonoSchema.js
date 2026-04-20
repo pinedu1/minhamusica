@@ -91,10 +91,16 @@ const unissonoOptionsSchema = z.object({
 	// --- OUTROS ---
 	ghostNote: z.boolean().default(false),
 	arpeggio: z.boolean().default(false),
-	graceNote: z.any().nullable().default(null),
+	graceNote: z.array(
+		z.union([
+			z.lazy(() => notaSchema),
+			z.lazy(() => unissonoSchema),
+			z.lazy(() => quialteraSchema)
+		])
+	).nullable().default(null),
 
 	// CORREÇÃO APLICADA: dedilhado passa a ser um Array para suportar a digitação de acordes!
-	dedilhado: z.array(z.number().int().min(0).max(5)).nullable().default([]),
+	dedilhado: z.array(z.string()).nullable().default([]),
 
 	// --- DINÂMICAS ---
 	dinamicaSuave: z.number().int().min(0).max(3).default(0),
@@ -118,16 +124,17 @@ const unissonoOptionsSchema = z.object({
 export const unissonoSchema = z.object({
 	tipo: z.literal( 'unissono' ).default( 'unissono' ),
 	notas: arrayNotasSchema,
-	duracao: tempoDuracaoSchema,
+	duracao: tempoDuracaoSchema.transform((val) => { return `${val.numerador}/${val.denominador}` }),
 	options: unissonoOptionsSchema.default({})
 }).strict()
 	.transform((val) => {
-		// Limpeza de propriedades vazias/nulas para o construtor da classe
 		const cleanOptions = Object.fromEntries(
 			Object.entries(val.options).filter(([key, value]) => {
+				if (value === false) return false;
 				if (value === null || value === undefined) return false;
 				if (value === "") return false;
-				if (Array.isArray(value) && value.length === 0) return false;
+				if (value === 0) return false; // Limpa dinâmicas zeradas
+				if (Array.isArray(value) && value.length === 0) return false; // Limpa dedilhados/acordes/graceNotes vazios
 				return true;
 			})
 		);
@@ -143,7 +150,7 @@ export const unissonoSchema = z.object({
 export const unissonoOutputSchema = z.object({
 	tipo: z.literal( 'unissono' ).default( 'unissono' ),
 	notas: arrayNotasOutputSchema,
-	duracao: tempoDuracaoOutputSchema,
+	duracao: tempoDuracaoOutputSchema.transform((val) => { return val.duracao }),
 	// Lê as propriedades internas (geralmente mapeadas como _options na classe)
 	_options: unissonoOptionsSchema
 }).transform((val) => {

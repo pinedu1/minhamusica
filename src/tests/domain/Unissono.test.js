@@ -30,8 +30,8 @@ describe( 'Unissono', () => {
         expect( opts.trinado ).toBe( false );
         expect( opts.mordente ).toBe( false );
         expect( opts.upperMordent ).toBe( false );
-        expect( opts.graceNote ).toBe( null );
-        expect( opts.dedilhado ).toBe( null );
+        expect( opts.graceNote ).toEqual( [] );
+        expect( opts.dedilhado ).toEqual( [] );
     } );
 
     it( 'deve lançar exceção se notas não for um array ou contiver elementos que não são Nota', () => {
@@ -54,7 +54,7 @@ describe( 'Unissono', () => {
             , fermata: true
             , staccato: true
             , arpeggio: true
-            , dedilhado: '1-2-3'
+            , dedilhado: ['1','2', '3']
         };
         
         const unissono = new Unissono( [ notaMock ], duracaoMock, options );
@@ -64,7 +64,7 @@ describe( 'Unissono', () => {
         expect( unissono._options.fermata ).toBe( true );
         expect( unissono._options.staccato ).toBe( true );
         expect( unissono._options.arpeggio ).toBe( true );
-        expect( unissono._options.dedilhado ).toBe( '1-2-3' );
+        expect( unissono._options.dedilhado ).toEqual( ['1','2', '3'] );
     } );
 
     it( 'deve permitir leitura e atualização da propriedade notas através de getter e setter com validação', () => {
@@ -92,8 +92,8 @@ describe( 'Unissono', () => {
         const notaMock = Object.create( Nota.prototype );
         const duracaoMock = Object.create( TempoDuracao.prototype );
         
-        const msgErroTipo = "Falha ao criar Unissono: 'graceNote' deve ser false, null ou um Array de instâncias de Nota.";
-        const msgErroElementos = "Falha ao criar Unissono: Todos os elementos em 'graceNote' devem ser instâncias de Nota.";
+        const msgErroTipo = "GraceNote: deve ser um array de instâncias de Nota | Pausa | Unissono | Quialtera.";
+        const msgErroElementos = "Todos os elementos do array de notas devem ser instâncias de Nota | Pausa | Unissono | Quialtera.";
         
         expect( () => new Unissono( [ notaMock ], duracaoMock, { graceNote: true } ) ).toThrowError( msgErroTipo );
         expect( () => new Unissono( [ notaMock ], duracaoMock, { graceNote: {} } ) ).toThrowError( msgErroTipo );
@@ -108,7 +108,5 @@ describe( 'Unissono', () => {
         const unissonoVazio = new Unissono( [ notaMock ], duracaoMock, { graceNote: [] } );
         expect( unissonoVazio._options.graceNote ).toEqual( [] );
         
-        const unissonoFalse = new Unissono( [ notaMock ], duracaoMock, { graceNote: false } );
-        expect( unissonoFalse._options.graceNote ).toBe( false );
     } );
 } );

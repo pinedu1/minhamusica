@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { NotaJson } from '@adapters/persistence/NotaJson.js';
 import { NotaAbc } from '@adapters/abcjs/NotaAbc.js';
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 
 describe( 'Nota Integration', () => {
   it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC', () => {
@@ -29,15 +30,18 @@ describe( 'Nota Integration', () => {
 
     // 2. Instanciar via NotaAbc (ABC -> Domínio)
     const notaDominio = NotaAbc.fromAbc( abcData );
-
+	  //notaDominio.unidadeTempo = new TempoDuracao( 2, 1 );
     // 3. Validar a saída JSON (Domínio -> JSON)
     const jsonResult = NotaJson.toJson( notaDominio );
-    expect( jsonResult ).toEqual( {
-      altura: 'G5',
-      duracao: { duracao: '2/1' },
-      options: {
-        acordes: [ 'G' ],
-      }
-    } );
+    expect( jsonResult ).toEqual(
+	    {
+		    tipo: 'nota',
+		    altura: 'G5',
+		    duracao: '2/1',
+		    options: {
+			    acordes: [ 'G' ],
+		    }
+	    }
+    );
   } );
 } );

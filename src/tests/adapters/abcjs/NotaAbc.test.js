@@ -50,6 +50,20 @@ describe( 'NotaAbc', () => {
       expect( abcString ).toBe( '"G"g2' );
     } );
 
+	  it( 'deve exportar para ""G"^g2"', () => {
+		  const altura = NotaFrequencia.getByKey( 'Gs5' );
+		  const duracao = new TempoDuracao( 2, 1 );
+		  const nota = new Nota( altura, duracao, { acordes: [ 'G' ], unidadeTempo: new TempoDuracao( 1, 1 ) } );
+		  const abcString = NotaAbc.toAbc( nota );
+		  expect( abcString ).toBe( '"G"^g2' );
+	  } );
+	  it( 'deve exportar para "_e2"', () => {
+		  const altura = NotaFrequencia.getByKey( 'Eb5' );
+		  const duracao = new TempoDuracao( 2, 1 );
+		  const nota = new Nota( altura, duracao, { unidadeTempo: new TempoDuracao( 1, 1 ) } );
+		  const abcString = NotaAbc.toAbc( nota );
+		  expect( abcString ).toBe( '_e2' );
+	  } );
     it( 'deve exportar para ""D7"B"', () => {
       const altura = NotaFrequencia.getByKey( 'B4' );
       const duracao = new TempoDuracao( 1, 1 );

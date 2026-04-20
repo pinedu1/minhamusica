@@ -7,6 +7,9 @@ import { Nota } from '@domain/nota/Nota.js';
 import { notaSchema, notaOutputSchema } from "@schemas/notaSchema.js";
 import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
 import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
+import { PausaJson } from "@persistence/PausaJson.js";
+import { UnissonoJson } from "@persistence/UnissonoJson.js";
+import { QuialteraJson } from "@persistence/QuialteraJson.js";
 
 /**
  * Classe responsável por serializar e desserializar Notas em JSON.
@@ -42,9 +45,21 @@ export class NotaJson {
 	    }
 
 		let { altura, duracao, options} = resultado.data;
+	    const optionsProcessado = { ...options };
 		if ( options.unidadeTempo ) {
-			options.unidadeTempo = TempoDuracaoJson.fromJson(options.unidadeTempo);
+			optionsProcessado.unidadeTempo = TempoDuracaoJson.fromJson(options.unidadeTempo);
 		}
-        return new Nota( NotaFrequencia.getByKey( altura.key ), TempoDuracaoJson.fromJson( duracao ), options );
+	    // Tratamento de GraceNotes se forem um array
+	    if (Array.isArray(options.graceNote)) {
+		    // Usando o .map() para construir o novo array!
+		    optionsProcessado.graceNote = options.graceNote.map(n => {
+			    if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
+			    if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
+			    if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
+			    if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
+			    return null;
+		    });
+	    }
+        return new Nota( NotaFrequencia.getByKey( altura.key ), TempoDuracaoJson.fromJson( duracao ), optionsProcessado );
     }
 }

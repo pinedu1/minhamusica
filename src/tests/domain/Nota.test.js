@@ -58,4 +58,24 @@ describe( 'Nota', () => {
         expect( () => new Nota( alturaMock, duracaoMock, { graceNote: true } ) ).toThrowError( "Nota: graceNote deve ser Array, null ou false." );
         expect( () => new Nota( alturaMock, duracaoMock, { graceNote: {} } ) ).toThrowError( "Nota: graceNote deve ser Array, null ou false." );
     } );
+	it( 'deve falhar se dedilhado for inválido', () => {
+		const alturaMock = Object.create( NotaFrequencia.prototype );
+		const duracaoMock = new TempoDuracao(1,4);
+		expect( () => new Nota( alturaMock, duracaoMock, { dedilhado: true } ) ).toThrowError( "Nota: dedilhado deve ser Array, null ou false." );
+		expect( () => new Nota( alturaMock, duracaoMock, { dedilhado: {} } ) ).toThrowError( "Nota: dedilhado deve ser Array, null ou false." );
+		expect( () => new Nota( alturaMock, duracaoMock, { dedilhado: [] } ) ).not.toThrowError();
+	} );
+	it( 'deve falhar ao adicionar dedilhado posteriormente', () => {
+		const alturaMock = Object.create( NotaFrequencia.prototype );
+		const duracaoMock = new TempoDuracao(1,4);
+		const nota = new Nota( alturaMock, duracaoMock );
+		expect( () => nota.dedilhado = '1-2-3' ).toThrowError("Dedilhado: O valor deve ser um array de strings (Array<String>).");
+	} );
+	it( 'deve adicionar dedilhado posteriormente', () => {
+		const alturaMock = Object.create( NotaFrequencia.prototype );
+		const duracaoMock = new TempoDuracao(1,4);
+		const nota = new Nota( alturaMock, duracaoMock );
+		expect( () => nota.dedilhado = ['p', '1'] ).not.toThrowError();
+		expect( nota.dedilhado ).toEqual(['p', '1']);
+	} );
 } );

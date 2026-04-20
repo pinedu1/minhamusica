@@ -3,7 +3,7 @@ import { tempoDuracaoSchema, tempoDuracaoOutputSchema } from '@schemas/tempoDura
 
 export const pausaSchema = z.object( {
 	tipo: z.literal( 'pausa' ).default( 'pausa' )
-	, duracao: tempoDuracaoSchema
+	, duracao: tempoDuracaoSchema.transform((val) => { return `${val.numerador}/${val.denominador}` })
 
 	// Propriedades na raiz
 	, fermata: z.boolean().optional().default( false )
@@ -40,7 +40,7 @@ export const pausaSchema = z.object( {
 		const pick = ( optVal, rootVal ) => ( optVal !== undefined ? optVal : ( rootVal ?? null ) );
 
 		return {
-			tipo: z.literal( 'pausa' ).default( 'pausa' )
+			tipo: data.tipo
 			, duracao: data.duracao
 			, options: {
 				// Primeiro pegamos os valores que estão dentro de data.options
