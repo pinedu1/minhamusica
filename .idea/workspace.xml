@@ -5,21 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaFrequenciaAbc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaFrequenciaJson.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaAbc.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaFrequenciaAbc.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaFrequenciaJson.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaJson.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/integration/NotaFrequenciaIntegration.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/integration/NotaIntegration.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Nota.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/notaFrequenciaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/notaFrequenciaSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/notaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/notaSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +166,7 @@
       <workItem from="1776435889120" duration="1595000" />
       <workItem from="1776437493556" duration="30912000" />
       <workItem from="1776514921200" duration="35414000" />
-      <workItem from="1776595096477" duration="19624000" />
+      <workItem from="1776595096477" duration="20770000" />
     </task>
     <servers />
   </component>

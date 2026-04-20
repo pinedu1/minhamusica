@@ -1,7 +1,6 @@
 import { Nota } from '@domain/nota/Nota.js';
 import { ElementoMusicalAbc } from "@adapters/abcjs/ElementoMusicalAbc.js";
 import { TempoDuracaoAbc } from "@adapters/abcjs/TempoDuracaoAbc.js";
-import { NotaFrequenciaAbc } from "@adapters/abcjs/NotaFrequenciaAbc.js";
 import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
 
 /**
@@ -9,6 +8,22 @@ import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
  * @description Adaptador para manipular entrada e saída no formato ABCJS para Notas.
  */
 export class NotaAbc extends ElementoMusicalAbc {
+	static #toAcorde(nota) {
+		return this.#toAbcOutput( nota )
+	}
+	static #toQuialtera(nota) {
+		return this.#toAbcOutput( nota )
+	}
+	static #toAbcOutput( nota ) {
+		let abc = "";
+		const opt = nota.options;
+		// Acidentes locais
+		//if (opt.sustenido) abc += "^";
+		//else if (opt.bemol) abc += "_";
+		if (opt.beQuad) abc += "=";
+		abc += nota.altura.abc;
+		return abc;
+	}
 	/**
 	 * Converte a nota para sua representação completa no formato ABC.
 	 * Inclui notas de enfeite (grace notes) se houverem.
@@ -17,17 +32,13 @@ export class NotaAbc extends ElementoMusicalAbc {
 	 * @example
 	 * const abc = NotaAbc.toAbc( notaInstance ); // Ex: "{C}D2"
 	 */
-	static toAbc( nota, isAcorde = false ) {
+	static toAbc( nota, isAcorde = false, isQuialtera = false ) {
+		if ( isAcorde === true ) return this.#toAcorde( nota );
+		if ( isQuialtera === true ) return this.#toQuialtera( nota );
 		let abc = "";
 		const opt = nota.options;
 
 		// Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
-		if ( isAcorde === true ) {
-			if (opt.sustenido) abc += "^";
-			if (opt.beQuad) abc += "=";
-			abc += nota.altura.abc;
-			return abc;
-		}
 		// 0. ACORDES
 		if (opt.acordes && opt.acordes.length > 0) {
 			abc = opt.acordes.map( acorde => `"${acorde}"` ).join ( " " );
@@ -50,8 +61,7 @@ export class NotaAbc extends ElementoMusicalAbc {
 		else if (opt.tenuto) abc += "!tenuto!";
 
 		// Acidentes locais
-		if (opt.sustenido) abc += "^";
-		if (opt.beQuad) abc += "=";
+		abc += this.#toAbcOutput( nota )
 
 		// Ornamentos
 		if (opt.trinado) abc += "!trill!";
