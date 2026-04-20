@@ -1,67 +1,169 @@
+/**
+ * @file unissonoSchema.js
+ * @description Schema de validação e serialização para a entidade Unissono.
+ * Gerencia a composição de múltiplas notas/pausas com uma duração global e opções compartilhadas.
+ */
+
 import { z } from 'zod';
-import { notaSchema } from '@schemas/notaSchema.js';
-import { tempoDuracaoSchema } from '@schemas/tempoDuracaoSchema.js';
+import { notaSchema, notaOutputSchema } from '@schemas/notaSchema.js';
+import { pausaSchema, pausaOutputSchema } from "@schemas/pausaSchema.js";
+import { quialteraSchema, quialteraOutputSchema } from "@schemas/quialteraSchema.js";
+import { tempoDuracaoSchema, tempoDuracaoOutputSchema } from '@schemas/tempoDuracaoSchema.js';
 
 /**
- * Schema para validação de dados de um Unissono Musical.
- * Reflete as propriedades da classe Unissono e garante a integridade dos dados antes da instanciação.
+ * Validação de instâncias de classe (Domain) - Usado APENAS na entrada
+ */
+const instanciaMusical = z.any().refine(val => {
+	// CORREÇÃO 1: Adicionado o 'return'
+	return val && ['nota', 'pausa', 'unissono', 'quialtera'].includes(val.tipo);
+}, {
+	message: "Cada item deve ser um objeto JSON válido ou uma instância de Nota, Pausa, Unissono ou Quialtera."
+});
+
+/**
+ * Validação do array de notas/pausas para entrada.
+ */
+const arrayNotasSchema = z.array(
+	z.union([
+		z.lazy(() => notaSchema),
+		z.lazy(() => pausaSchema),
+		z.lazy(() => unissonoSchema),
+		z.lazy(() => quialteraSchema),
+		instanciaMusical // Permitimos instâncias entrarem
+	])
+).min(1, {
+	message: "Um unissono deve conter pelo menos um item."
+});
+
+/**
+ * Validação do array de notas/pausas para saída.
+ */
+const arrayNotasOutputSchema = z.array(
+	z.union([
+		z.lazy(() => notaOutputSchema),
+		z.lazy(() => pausaOutputSchema),
+		z.lazy(() => unissonoOutputSchema),
+		z.lazy(() => quialteraOutputSchema)
+		// CORREÇÃO 3: instanciaMusical removida. A saída DEVE forçar a serialização.
+	])
+).min(1, { message: "Um unissono deve conter pelo menos uma nota." });
+
+/**
+ * Schema de entrada para as opções do Unissono.
+ * (Nota: Acidentes mantidos conforme a sua instrução)
+ */
+const unissonoOptionsSchema = z.object({
+	// --- INFRAESTRUTURA ---
+	obra: z.any().nullable().default(null),
+	voz: z.any().nullable().default(null),
+	compasso: z.any().nullable().default(null),
+	unidadeTempo: tempoDuracaoSchema.nullable().default(null),
+	acordes: z.union([z.string(), z.array(z.string())]).default([]),
+
+	// --- ACENTUAÇÃO E ARTICULAÇÃO ---
+	acento: z.boolean().default(false),
+	marcato: z.boolean().default(false),
+	staccato: z.boolean().default(false),
+	staccatissimo: z.boolean().default(false),
+	tenuto: z.boolean().default(false),
+	fermata: z.boolean().default(false),
+	fermataInvertida: z.boolean().default(false),
+	breath: z.boolean().default(false),
+
+	// --- ORNAMENTOS ---
+	mordente: z.boolean().default(false),
+	upperMordent: z.boolean().default(false),
+	trinado: z.boolean().default(false),
+	turn: z.boolean().default(false),
+	roll: z.boolean().default(false),
+
+	// --- TÉCNICAS ---
+	hammerOn: z.boolean().default(false),
+	pullOff: z.boolean().default(false),
+	ligada: z.boolean().default(false),
+	pizzicato: z.boolean().default(false),
+	snapPizzicato: z.boolean().default(false),
+	downBow: z.boolean().default(false),
+	upBow: z.boolean().default(false),
+	openString: z.boolean().default(false),
+	thumb: z.boolean().default(false),
+
+	// --- OUTROS ---
+	ghostNote: z.boolean().default(false),
+	arpeggio: z.boolean().default(false),
+	graceNote: z.any().nullable().default(null),
+
+	// CORREÇÃO APLICADA: dedilhado passa a ser um Array para suportar a digitação de acordes!
+	dedilhado: z.array(z.number().int().min(0).max(5)).nullable().default([]),
+
+	// --- DINÂMICAS ---
+	dinamicaSuave: z.number().int().min(0).max(3).default(0),
+	dinamicaForte: z.number().int().min(0).max(3).default(0),
+	dinamicaMeioForte: z.boolean().default(false),
+
+	// --- EXPRESSÃO ---
+	crescendo: z.enum(['inicio', 'fim']).nullable().default(null),
+	diminuendo: z.enum(['inicio', 'fim']).nullable().default(null),
+
+	// --- ACIDENTES ---
+	sustenido: z.boolean().default(false),
+	bemol: z.boolean().default(false),
+	beQuad: z.boolean().default(false)
+});
+
+/**
+ * SCHEMA DE ENTRADA (Input)
+ * Valida a estrutura JSON e aplica os defaults antes da instanciação.
  */
 export const unissonoSchema = z.object({
-    // O unissono é composto por um array de notas (conforme definido no notaSchema)
-    notas: z.array(
-        z.union([
-            notaSchema,
-            z.any().refine(val => val && val.constructor.name === 'Nota', {
-                message: "Cada nota deve ser um objeto válido ou uma instância de Nota."
-            })
-        ])
-    ).min(1, {
-        message: "Um unissono deve conter pelo menos uma nota."
-    }),
-    // Duração global do unissono (ex: "1/4", "1/2")
-    duracao: tempoDuracaoSchema,
+	tipo: z.literal( 'unissono' ).default( 'unissono' ),
+	notas: arrayNotasSchema,
+	duracao: tempoDuracaoSchema,
+	options: unissonoOptionsSchema.default({})
+}).strict()
+	.transform((val) => {
+		// Limpeza de propriedades vazias/nulas para o construtor da classe
+		const cleanOptions = Object.fromEntries(
+			Object.entries(val.options).filter(([key, value]) => {
+				if (value === null || value === undefined) return false;
+				if (value === "") return false;
+				if (Array.isArray(value) && value.length === 0) return false;
+				return true;
+			})
+		);
+		return { ...val, options: cleanOptions };
+	});
 
-    // Opções de execução e contexto hierárquico
-    options: z.object({
-        // Contexto (aceita objetos ou null)
-        obra: z.any().optional().nullable(),
-        voz: z.any().optional().nullable(),
-        compasso: z.any().optional().nullable(),
-        unidadeTempo: tempoDuracaoSchema.optional().nullable(),
+// ============================================================================
 
-        // Acentuação e Articulações
-        acento: z.boolean().default(false),
-        marcato: z.boolean().default(false),
-        staccato: z.boolean().default(false),
-        staccatissimo: z.boolean().default(false),
-        tenuto: z.boolean().default(false),
+/**
+ * SCHEMA DE SAÍDA (Output)
+ * Serializa a instância da classe Unissono para um JSON plano e otimizado.
+ */
+export const unissonoOutputSchema = z.object({
+	tipo: z.literal( 'unissono' ).default( 'unissono' ),
+	notas: arrayNotasOutputSchema,
+	duracao: tempoDuracaoOutputSchema,
+	// Lê as propriedades internas (geralmente mapeadas como _options na classe)
+	_options: unissonoOptionsSchema
+}).transform((val) => {
+	// OTIMIZAÇÃO: Remove propriedades que possuem o valor padrão (false, 0, null, [])
+	const cleanOptions = Object.fromEntries(
+		Object.entries(val._options).filter(([key, value]) => {
+			if (value === false) return false;
+			if (value === null || value === undefined) return false;
+			if (value === 0) return false;
+			if (value === "") return false;
+			if (Array.isArray(value) && value.length === 0) return false;
+			return true;
+		})
+	);
 
-        // Técnicas e Ornamentos
-        ligada: z.boolean().default(false),
-        arpeggio: z.boolean().default(false),
-        fermata: z.boolean().default(false),
-        ghostNote: z.boolean().default(false),
-        roll: z.boolean().default(false),
-        trinado: z.boolean().default(false),
-        mordente: z.boolean().default(false),
-        upperMordent: z.boolean().default(false),
-
-        // Notas de adorno (pode ser null ou um array de notas)
-        graceNote: z.union([
-            z.literal(false),
-            z.null(),
-            z.array(
-                z.union([
-                    notaSchema,
-                    // Aceita instâncias da classe Nota sem precisar importar a classe Nota aqui
-                    z.any().refine(val => val && val.constructor.name === 'Nota', {
-                        message: "Deve ser uma instância de Nota ou um objeto válido de Nota"
-                    })
-                ])
-            )
-        ]).default(null),
-
-        // Texto de dedilhado (ex: "1", "p", "m")
-        dedilhado: z.union([z.string(), z.number()]).nullable().default(null),
-    }).default({})
+	return {
+		// CORREÇÃO 2: Apenas repassa o valor da string, sem recriar o schema Zod
+		tipo: val.tipo,
+		notas: val.notas,
+		duracao: val.duracao,
+		options: cleanOptions
+	};
 });

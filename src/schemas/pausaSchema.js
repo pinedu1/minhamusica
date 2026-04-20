@@ -40,7 +40,7 @@ export const pausaSchema = z.object( {
 		const pick = ( optVal, rootVal ) => ( optVal !== undefined ? optVal : ( rootVal ?? null ) );
 
 		return {
-			tipo: data.tipo
+			tipo: z.literal( 'pausa' ).default( 'pausa' )
 			, duracao: data.duracao
 			, options: {
 				// Primeiro pegamos os valores que estão dentro de data.options

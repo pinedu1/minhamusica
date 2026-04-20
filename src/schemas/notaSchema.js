@@ -7,6 +7,7 @@ import { notaFrequenciaSchema, notaFrequenciaOutputSchema } from '@schemas/notaF
  * Alinhado com as propriedades da classe de domínio Nota.
  */
 export const notaSchema = z.object({
+	tipo: z.literal( 'nota' ).default( 'nota' ),
 	altura: notaFrequenciaSchema,
 	duracao: tempoDuracaoSchema,
 	options: z.object({
@@ -126,6 +127,7 @@ const notaOptionsOutputSchema = z.object({
  * Serializador Principal: Converte a Instância de 'Nota' para JSON plano.
  */
 export const notaOutputSchema = z.object({
+	tipo: z.literal( 'nota' ).default( 'nota' ),
 	// 1. Invocamos os especialistas de saída para as classes aninhadas
 	altura: notaFrequenciaOutputSchema,
 	duracao: tempoDuracaoOutputSchema,
@@ -152,6 +154,7 @@ export const notaOutputSchema = z.object({
 
 	// 3. Montamos o objeto de saída final com a chave "options" limpa
 	return {
+		tipo: z.literal( 'nota' ).default( 'nota' ),
 		altura: val.altura,
 		duracao: val.duracao,
 		options: cleanOptions
