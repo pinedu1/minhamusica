@@ -55,7 +55,7 @@ describe( 'Nota', () => {
     it( 'deve falhar se graceNote for inválido', () => {
         const alturaMock = Object.create( NotaFrequencia.prototype );
         const duracaoMock = new TempoDuracao(1,4);
-        expect( () => new Nota( alturaMock, duracaoMock, { graceNote: true } ) ).toThrowError( "Falha ao criar Nota: 'graceNote' deve ser false, null ou Array<Nota>." );
-        expect( () => new Nota( alturaMock, duracaoMock, { graceNote: {} } ) ).toThrowError( "Falha ao criar Nota: 'graceNote' deve ser false, null ou Array<Nota>." );
+        expect( () => new Nota( alturaMock, duracaoMock, { graceNote: true } ) ).toThrowError( "Nota: graceNote deve ser Array, null ou false." );
+        expect( () => new Nota( alturaMock, duracaoMock, { graceNote: {} } ) ).toThrowError( "Nota: graceNote deve ser Array, null ou false." );
     } );
 } );
