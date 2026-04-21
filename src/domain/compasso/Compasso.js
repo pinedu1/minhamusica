@@ -8,6 +8,7 @@ import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { Tonalidade } from "@domain/compasso/Tonalidade.js";
 import { compassoSchema } from "@schemas/compassoSchema.js";
+import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 
 
 /**
@@ -116,7 +117,13 @@ export class Compasso {
         if (!(val instanceof Voz)) throw new TypeError('Compasso: O objeto deve ser uma instância de Voz.');
         this.#options.voz = val;
     }
-
+	#addElemento(elemento) {
+		if ( !( elemento instanceof ElementoMusical ) ) {
+			throw new TypeError('Compasso.elemnts: Deve ser intância de Nota, Pausa, Unissono ou Quialtera.');
+		}
+		elemento.options.compasso = this;
+		this.#elements.push(elemento);
+	}
     /**
      * USAGE: Elementos musicais (Nota, Pausa, Unissono).
      */
@@ -125,52 +132,8 @@ export class Compasso {
         if (!Array.isArray(val)) {
             throw new TypeError('Compasso: Elementos devem ser um Array.');
         }
-
-        this.#elements = val.map(el => {
-            // 1. Prepara o objeto options caso ele não exista (importante para JSONs crus)
-            el.options = el.options || {};
-
-            // 2. Injeta o compasso como pai.
-            // Isso dispensa a necessidade de copiar a unidadeTempo manualmente,
-            // pois a Nota/Pausa/Unissono agora sabe subir a árvore para procurar!
-            el.options.compasso = this;
-
-            // 3. A SUA LÓGICA DE ROTEAMENTO:
-            // Verifica se já é uma instância de Nota ou se o JSON tem a propriedade 'altura'
-            if (el.constructor.name === 'Nota' || el.altura !== undefined) {
-                const notaOpc = Object.fromEntries(
-                    Object.entries(
-                        (({ obra, voz, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, hammerOn, pullOff, ligada, mordente, upperMordent, trinado, roll, fermata, ghostNote, graceNote, arpeggio, dedilhado, sustenido, beQuad }) => ({
-                            obra, voz, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, hammerOn, pullOff, ligada, mordente, upperMordent, trinado, roll, fermata, ghostNote, graceNote, arpeggio, dedilhado, sustenido, beQuad
-                        }))(el.options || {})
-                    ).filter(([chave, valor]) => valor != null) // Filtra fora null e undefined
-                );
-
-                el.options = notaOpc;
-                return Nota.create(el);
-            }
-
-            // Verifica se já é uma instância de Unissono ou se o JSON tem um array 'notas'
-            if (el.constructor.name === 'Unissono' || el.notas !== undefined) {
-                const unissonoOpc = Object.fromEntries(
-                    Object.entries(
-                        (({ obra, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, ligada, arpeggio, fermata, ghostNote, roll, trinado, mordente, upperMordent, graceNote, dedilhado }) => ({
-                            obra, compasso, unidadeTempo, acento, marcato, staccato, staccatissimo, tenuto, ligada, arpeggio, fermata, ghostNote, roll, trinado, mordente, upperMordent, graceNote, dedilhado }))(el.options || {})
-                    ).filter(([chave, valor]) => valor != null) // Filtra fora null e undefined
-                );
-
-                el.options = unissonoOpc;
-                return Unissono.create(el);
-            }
-
-            const pausaOpc = Object.fromEntries(
-                Object.entries(
-                    (({ obra, voz, compasso, unidadeTempo, fermata, breath, invisivel }) => ({ obra, voz, compasso, unidadeTempo, fermata, breath, invisivel }))(el.options || {})
-                ).filter(([chave, valor]) => valor != null) // Filtra fora null e undefined
-            );
-            el.options = pausaOpc;
-            return Pausa.create(el);
-        });
+		this.#elements = [];
+		val.forEach(e => this.#addElemento(e));
     }
     /**
      * USAGE: Barra inicial.

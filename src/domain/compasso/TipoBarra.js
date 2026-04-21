@@ -20,4 +20,7 @@ export const TipoBarra = Object.freeze({
         // Itera pelos valores do próprio objeto ignorando o método 'get'
         return Object.values(this).find(tipo => tipo.abc === abcStr);
     }
+	, get( key ) {
+		return this[ key ];
+	}
 });

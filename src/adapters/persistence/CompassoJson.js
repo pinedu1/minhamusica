@@ -1,6 +1,11 @@
 import { TipoBarra } from "@domain/compasso/TipoBarra.js";
 import { Compasso } from "@domain/compasso/Compasso.js";
-import { compassoSchema } from "@schemas/compassoSchema.js";
+import { compassoOutputSchema, compassoSchema } from "@schemas/compassoSchema.js";
+import { TempoMetricaJson } from "@persistence/TempoMetricaJson.js";
+import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
+import { PausaJson } from "@persistence/PausaJson.js";
+import { NotaJson } from "@persistence/NotaJson.js";
+import { UnissonoJson } from "@persistence/UnissonoJson.js";
 
 export class CompassoJson {
 	/**
@@ -8,41 +13,8 @@ export class CompassoJson {
 	 * @param {Compasso} compasso
 	 * @returns {Object}
 	 */
-	static toJSON(compasso) {
-		const json = {
-			elementos: this.#elements.map(el => el.toJSON())
-		};
-
-		const options = {};
-
-		// Serializa apenas as opções que não são nulas, vazias ou padrão
-		if (this.#options.unidadeTempo) {
-			options.unidadeTempo = this.#options.unidadeTempo.toString();
-		}
-		if (this.#options.metrica) {
-			options.metrica = this.#options.metrica.toString();
-		}
-		if (this.#options.mudancaDeTom) {
-			options.mudancaDeTom = this.#options.mudancaDeTom.valor;
-		}
-		if (this.#options.anotacoes && this.#options.anotacoes.length > 0) {
-			options.anotacoes = this.#options.anotacoes;
-		}
-		if (this.#options.cifras && this.#options.cifras.length > 0) {
-			options.cifras = this.#options.cifras;
-		}
-		if (this.#options.letra && this.#options.letra.length > 0) {
-			options.letra = this.#options.letra;
-		}
-		// barraInicial e barraFinal são omitidos intencionalmente, pois o método `create`
-		// não possui a lógica para desserializá-los de uma string para uma instância de `TipoBarra`.
-		// Adicionar isso ao JSON quebraria a reconstrução.
-
-		if (Object.keys(options).length > 0) {
-			json.options = options;
-		}
-
-		return json;
+	static toJson(compasso) {
+		return compassoOutputSchema.parse(compasso);
 	}
 	/**
 	 * USAGE: Helper estático para criação rápida de Compasso a partir de um JSON.
@@ -54,54 +26,51 @@ export class CompassoJson {
 		const resultado = compassoSchema.safeParse(json);
 
 		if (!resultado.success) {
-			throw new TypeError("Compasso.create: Erro na estrutura dos dados: " +
-				JSON.stringify(resultado.error.format(), null, 2));
+			throw new TypeError("Compasso.create: Erro na estrutura dos dados: " +	JSON.stringify(resultado.error.format(), null, 2));
 		}
 
 		const { elementos, options } = resultado.data;
 
 		// 1. Processamento de Options (Tempo e Métrica) PRIMEIRO
-		const optionsProcessado = { ...options };
+		const optionsProcessado = { };
 
 		if (options.barraInicial) {
-			optionsProcessado.barraInicial = TipoBarra.getByAbc(options.barraInicial);
+			optionsProcessado.barraInicial = new TipoBarra(options.barraInicial);
 		}
 		if (options.barraFinal) {
-			optionsProcessado.barraFinal = TipoBarra.getByAbc(options.barraFinal);
+			optionsProcessado.barraFinal = new TipoBarra(options.barraFinal);
 		}
 		if (options.mudancaDeTom) {
 			optionsProcessado.mudancaDeTom = Tonalidade.create(options.mudancaDeTom);
 		}
 		if (options.unidadeTempo) {
-			optionsProcessado.unidadeTempo = TempoDuracao.create(options.unidadeTempo);
+			optionsProcessado.unidadeTempo = TempoDuracaoJson.fromJson(options.unidadeTempo);
 		}
 		if (options.metrica) {
-			optionsProcessado.metrica = TempoMetrica.create(options.metrica);
+			optionsProcessado.metrica = TempoMetricaJson.fromJson(options.metrica);
+		}
+		if (options.anotacoes && Array.isArray(options.anotacoes) && options.anotacoes.length > 0) {
+			optionsProcessado.anotacoes = anotacoes;
+		}
+		if (options.cifras && Array.isArray(options.cifras) && options.cifras.length > 0) {
+			optionsProcessado.cifras = cifras;
 		}
 
 		// 2. CRIAÇÃO DA INSTÂNCIA PRIMEIRO (Ainda sem elementos para não engatilhar validação)
 		const compasso = new Compasso([], optionsProcessado);
 
-		// 3. Roteamento e Instanciação dos Elementos (Nota, Pausa ou Unissono)
-		const instanciasElementos = elementos.map(el => {
-
-			// Garante que o objeto options exista no JSON cru
-			el.options = el.options || {};
-
-			// A MÁGICA: Injeta o compasso no JSON ANTES de chamar o .create()
-			el.options.compasso = compasso;
-
-			// Agora, quando o Nota.create validar a unidadeTempo, ele achará o compasso pai!
-			if (el.constructor.name === 'Nota' || el.altura) return Nota.create(el);
-			if (el.constructor.name === 'Unissono' || el.notas) return Unissono.create(el);
-			return Pausa.create(el);
+		// 3. Roteamento e Instanciação dos Elementos (Nota, Pausa, Unissono ou Quialtera)
+		const instanciasElementos = elementos.map(n => {
+			if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
+			if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
+			if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
+			if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
+			return NotaJson.fromJson(n);
 		});
 
 		// 4. Atribuir os elementos já hidratados
-		// O seu setter 'elements' vai assumir daqui e fazer as verificações finais
 		compasso.elements = instanciasElementos;
 
 		return compasso;
 	}
-
 }

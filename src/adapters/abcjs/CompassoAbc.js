@@ -1,5 +1,16 @@
 import { TipoBarra } from "@domain/compasso/TipoBarra.js";
 import { Compasso } from "@domain/compasso/Compasso.js";
+import { PausaAbc } from "@abcjs/PausaAbc.js";
+import { NotaAbc } from "@abcjs/NotaAbc.js";
+import { QuialteraAbc } from "@abcjs/QuialteraAbc.js";
+import { TonalidadeAbc } from "@abcjs/TonalidadeAbc.js";
+import { TempoMetricaAbc } from "@abcjs/TempoMetricaAbc.js";
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { UnissonoAbc } from "@adapters/abcjs/UnissonoAbc.js";
+import { Pausa } from "@domain/nota/Pausa.js";
+import { TempoDuracaoAbc } from "@abcjs/TempoDuracaoAbc.js";
+import { Unissono } from "@domain/nota/Unissono.js";
+
 
 export class CompassoAbc {
 	/**
@@ -19,11 +30,11 @@ export class CompassoAbc {
 		}
 
 		if (compasso.options.metrica) {
-			abc += compasso.options.metrica.toCompasso();
+			abc += TempoMetricaAbc.toCompasso( compasso.options.metrica );
 		}
 
-		if (compasso.mudancaDeTom) {
-			abc += `[K:${compasso.options.mudancaDeTom.valor}]`;
+		if (compasso.options.mudancaDeTom) {
+			abc += `[K:${TonalidadeAbc.toAbc(compasso.options.mudancaDeTom)}]`;
 		}
 
 
@@ -42,8 +53,21 @@ export class CompassoAbc {
 				const local = a.local || "_";
 				abc += `"${local}${a.texto}"`;
 			});
-			abc += elemento.toAbc();
-
+			abc += `${((el) => {
+				if (el.constructor.name === "Pausa") {
+					return PausaAbc.toAbc( el );
+				}
+				if (el.constructor.name === "Nota") {
+					return NotaAbc.toAbc( el );
+				}
+				if (el.constructor.name === "Unissono") {
+					return UnissonoAbc.toAbc( el );
+				}
+				if (el.constructor.name === "Quialtera") {
+					return QuialteraAbc.toAbc( el );
+				}
+				return ''; // Fallback de segurança
+			})(elemento)}`;
 			const pulsosElemento = elemento.duracao.razao / ut.razao;
 			pulsosAcumulados += pulsosElemento;
 
@@ -73,59 +97,181 @@ export class CompassoAbc {
 				}
 			}
 
-			// Agora ele cria TempoDuracao(3, 4) em vez de (1, 1)!
 			const duracaoFaltante = new TempoDuracao(num, den);
-
 			const pausaPreenchimento = new Pausa(duracaoFaltante, {
 				unidadeTempo: ut,
 			});
-
-			abc += " " + pausaPreenchimento.toAbc();
+			abc += " " + PausaAbc.toAbc( pausaPreenchimento );
 		}
 		// --- FIM DO BLOCO NOVO ---
-		if (compasso.options.barraFinal && (compasso.options.barraFinal !== TipoBarra.NONE)) {
-			abc += compasso.options.barraFinal.abc;
+		if (compasso.barraFinal && (compasso.barraFinal !== TipoBarra.NONE)) {
+			abc += compasso.barraFinal.abc;
 		}
 
 		return abc;
 	}
 	/**
+	 * Consome metadados ([M:..], [K:..], etc) do início da string e retorna o que sobrou.
+	 * @private
+	 */
+	static #extrairHeadersIniciais(str, inlineHeaders) {
+		//Metrica: [M:4/4]
+		str = str.trimStart(); // Limpa espaços antes de testar o próximo header
+		let match = str.match(/^\[M:\s*([^\]]+)\]/i);
+		if (match) {
+			const [token, valor] = match; // token = "[M:4/4]", valor = "4/4"
+
+			// Se tiver classe (ex: TonalidadeAbc), converte. Se não, guarda a string.
+			inlineHeaders['metrica'] = TempoMetricaAbc.fromAbc(valor);
+			// CORTA: Remove o token encontrado do início da string
+			str = str.substring(token.length).trimStart();
+		}
+		//Tom: [K:C]
+		match = str.match(/^\[K:\s*([^\]]+)\]/i);
+		if (match) {
+			const [token, valor] = match;
+
+			// Se tiver classe (ex: TonalidadeAbc), converte. Se não, guarda a string.
+			inlineHeaders['unidadeTempo'] = TempoDuracaoAbc.fromAbc(valor);
+			// CORTA: Remove o token encontrado do início da string
+			str = str.substring(token.length).trimStart();
+		}
+		//Tempo: [L:1/4]
+		match = str.match(/^\[L:\s*([^\]]+)\]/i);
+		if (match) {
+			const [token, valor] = match;
+
+			// Se tiver classe (ex: TonalidadeAbc), converte. Se não, guarda a string.
+			inlineHeaders['mudancaDeTom'] = TonalidadeAbc.fromAbc(valor);
+			// CORTA: Remove o token encontrado do início da string
+			str = str.substring(token.length).trimStart();
+		}
+		//Andamento: [Q:1/4=90]
+		match = str.match(/^\[Q:\s*([^\]]+)\]/i);
+		if (match) {
+			const [token, valor] = match;
+
+			// Se tiver classe (ex: TonalidadeAbc), converte. Se não, guarda a string.
+			inlineHeaders['andamento'] = TempoDuracaoAbc.fromAbc(valor);
+			// CORTA: Remove o token encontrado do início da string
+			str = str.substring(token.length).trimStart();
+		}
+		//Parte: [P:1]
+		match = str.match(/^\[P:\s*([^\]]+)\]/i);
+		if (match) {
+			const [token, valor] = match;
+
+			// Se tiver classe (ex: TonalidadeAbc), converte. Se não, guarda a string.
+			inlineHeaders['parte'] = valor;
+			// CORTA: Remove o token encontrado do início da string
+			str = str.substring(token.length).trimStart();
+		}
+		return str; // Retorna a string "podada"
+	}
+	/**
 	 * USAGE: Cria uma nova instância de Compasso a partir de uma string de notação ABC.
-	 * @param {string} compassoString - A string contendo os elementos do compasso.
-	 * @param {Object} contextOptions - Opções de contexto (L, M, K) herdadas da Voz/Obra.
-	 * @returns {Compasso} Uma nova instância da classe Compasso.
+	 * Segue a lógica de: Cabeçalhos Iniciais -> Loop de Elementos -> Metadados Finais.
 	 */
 	static fromAbc(compassoString, contextOptions) {
-		// Regex para capturar notas, unissonos, pausas e cifras
-		const elementRegex = /"([^"]+)"|(\[([^\]]+)\])|([zxyZXY])|([=^_]?[a-gA-G][,']*)([0-9]*\/*[0-9]*-?)/g;
+		let str = compassoString.trim();
 		const elements = [];
-		let match;
+		let inlineHeaders = {};
+		let barraInicial = null;
+		let barraFinal = null;
 
-		// Remove espaços extras para simplificar a regex
-		const cleanString = compassoString.replace(/\s+/g, ' ');
+		// --- 1. CABEÇALHOS E BARRA INICIAL ---
+		const regexBarra = /^(:\|:|\|:|:\||\|\]|\|\||\|)/;
+		const matchBarraIni = str.match(regexBarra);
+		if (matchBarraIni) {
+			barraInicial = TipoBarra.getByAbc(matchBarraIni[0]);
+			str = str.substring(matchBarraIni[0].length).trimStart(); // CORTA barra inicial
+		}
 
-		// Itera sobre todos os elementos musicais na string do compasso
-		while ((match = elementRegex.exec(cleanString)) !== null) {
-			const token = match[0];
+		str = this.#extrairHeadersIniciais(str, inlineHeaders);
 
-			if (token.startsWith('"')) {
-				// TODO: Implementar parsing de cifras e anotações
-				continue;
+		// --- 2. DEFINIÇÃO DOS REGEX DE BUSCA (Individuais) ---
+		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (cifra)
+		const reUnissono  = /^\[[^\]]+\][\d/]*/;
+		const reQuialtera = /^\([0-9]+(?::[0-9]+:[0-9]+)?/;
+		const rePausa     = /^[zxyZXY][\d/]*/;
+		const reNota      = /^[=^_]?[a-gA-G][,']*[\d/]*/; // A nota pura
+
+		// Regex para identificar se o início da string é um Payload
+		const rePayload   = /^("[^"]+"|![^!]+!)+/;
+
+		// --- 3. LOOP DE ELEMENTOS ---
+		while (str.length > 0) {
+			str = str.trimStart();
+			let payloadAcumulado = "";
+
+			// Sub-loop para extrair todos os payloads que precedem o elemento
+			let matchPayload;
+			while ((matchPayload = str.match(rePayload))) {
+				payloadAcumulado += matchPayload[0];
+				str = str.substring(matchPayload[0].length).trimStart(); // CORTA payload
 			}
 
-			if (token.startsWith('[')) {
-				// É um unissono
-				elements.push(Unissono.parseAbc(token, contextOptions));
-			} else if (/[zxyZXY]/.test(token[0])) {
-				// É uma pausa
-				elements.push(Pausa.parseAbc(token, contextOptions));
+			// Agora testamos os elementos musicais na ordem de prioridade
+			let matchElemento = null;
+			let tipoEncontrado = null;
+
+			if ((matchElemento = str.match(reUnissono))) {
+				tipoEncontrado = 'unissono';
+			} else if ((matchElemento = str.match(reQuialtera))) {
+				tipoEncontrado = 'quialtera';
+			} else if ((matchElemento = str.match(rePausa))) {
+				tipoEncontrado = 'pausa';
+			} else if ((matchElemento = str.match(reNota))) {
+				tipoEncontrado = 'nota';
+			}
+
+			if (matchElemento) {
+				const textoCorpo = matchElemento[0];
+				const fullToken = payloadAcumulado + textoCorpo;
+
+				// Instancia de acordo com o tipo
+				switch (tipoEncontrado) {
+					case 'unissono':
+						elements.push(UnissonoAbc.fromAbc(fullToken, contextOptions));
+						break;
+					case 'quialtera':
+						elements.push(QuialteraAbc.fromAbc(fullToken, contextOptions));
+						break;
+					case 'pausa':
+						elements.push(PausaAbc.fromAbc(fullToken, contextOptions));
+						break;
+					case 'nota':
+						elements.push(NotaAbc.fromAbc(fullToken, contextOptions));
+						break;
+				}
+
+				str = str.substring(textoCorpo.length).trimStart(); // CORTA o elemento processado
 			} else {
-				// É uma nota
-				elements.push(Nota.parseAbc(token, contextOptions));
+				// Se restou algo que não é header, barra ou nota (ex: lixo ou erro de sintaxe)
+				if (str.startsWith('-') || str.match(regexBarra)) break;
+
+				console.warn("Caractere ignorado pelo Lexer:", str[0]);
+				str = str.substring(1).trimStart();
 			}
 		}
 
-		return new Compasso(elements, contextOptions);
-	}
+		// --- 4. LIGADURAS E BARRA FINAL ---
+		if (str.startsWith('-')) {
+			inlineHeaders.ligadoAoProximo = true;
+			str = str.substring(1).trimStart(); // CORTA traço
+		}
 
+		const matchBarraFim = str.match(regexBarra);
+		if (matchBarraFim) {
+			barraFinal = TipoBarra.getByAbc(matchBarraFim[0]);
+			str = str.substring(matchBarraFim[0].length).trim(); // CORTA barra final
+		}
+
+		return new Compasso(elements, {
+			...contextOptions,
+			...inlineHeaders,
+			barraInicial: barraInicial || contextOptions.barraInicial || TipoBarra.NONE,
+			barraFinal: barraFinal || contextOptions.barraFinal || TipoBarra.NONE
+		});
+	}
 }

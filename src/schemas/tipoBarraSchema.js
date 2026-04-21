@@ -1,32 +1,40 @@
 import { z } from 'zod';
-import { TipoBarra } from "@domain/compasso/TipoBarra.js";
+import { TipoBarra } from '@domain/compasso/TipoBarra.js';
 
-// 1. Extraímos as chaves e os valores válidos
-const nomesValidos = Object.keys(TipoBarra).filter(k => k !== 'getByAbc');
-const abcValidos = Object.values(TipoBarra)
-    .filter(v => typeof v === 'object' && v !== null)
-    .map(v => v.abc);
+// Extrai as chaves (ex: 'NONE', 'STANDARD', 'REPEAT_OPEN')
+const chavesTipoBarra = Object.keys(TipoBarra).filter(key => typeof TipoBarra[key] !== 'function');
 
-// 2. Criamos um Schema só para aceitar as Strings válidas (ex: "|")
-const TipoBarraStringSchema = z.enum([abcValidos[0], ...abcValidos.slice(1)]);
-
-// 3. Mantemos o seu Schema do Objeto intacto
-const TipoBarraObjectSchema = z.object({
-    nome: z.enum([nomesValidos[0], ...nomesValidos.slice(1)]),
-    abc: z.enum([abcValidos[0], ...abcValidos.slice(1)])
-}).refine(
-    (dados) => {
-        const tipoOriginal = TipoBarra[dados.nome];
-        return tipoOriginal !== undefined && tipoOriginal.abc === dados.abc;
-    },
-    { message: "Combinação inválida de TipoBarra. O 'abc' não corresponde ao 'nome'." }
-);
-
-// 4. Juntamos tudo em uma Union Nullable!
 export const tipoBarraSchema = z.union([
-    TipoBarraStringSchema,
-    TipoBarraObjectSchema
-]).nullable();
+	// 1. Permite o objeto literal do enum (ex: TipoBarra.DOUBLE)
+	z.object({
+		nome: z.string(),
+		abc: z.string()
+	}).refine(val => {
+		return Object.values(TipoBarra).some(t => t.nome === val.nome);
+	}),
 
-// DICA: Se a propriedade puder não ser enviada (undefined),
-// troque o .nullable() por .nullish()
+	// 2. Permite passar diretamente a chave como string (ex: 'FINAL')
+	z.enum([chavesTipoBarra[0], ...chavesTipoBarra.slice(1)])
+]);
+/**
+ * Schema para exportação simplificada do Tipo de Barra.
+ * Transforma a entrada no formato: { tipoBarra: 'REPEAT_OPEN' }
+ */
+export const tipoBarraOutputSchema = z.preprocess((val) => {
+	// Se recebermos a chave diretamente como string
+	if (typeof val === 'string' && TipoBarra[val]) {
+		return { tipoBarra: val };
+	}
+
+	// Se recebermos o objeto do enum {nome, abc}
+	if (val && typeof val === 'object' && val.nome) {
+		const chave = Object.keys(TipoBarra).find(
+			k => TipoBarra[k].nome === val.nome
+		);
+		return { tipoBarra: chave || 'NONE' };
+	}
+
+	return val;
+}, z.object({
+	tipoBarra: z.string()
+}));

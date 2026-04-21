@@ -13,67 +13,68 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 	static toAbc( quialtera ) {
 		let abc = "";
 		const opt = quialtera.options;
+		if ( opt ) {
+			// Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
+			// 0. ACORDES
+			if (opt.acordes && opt.acordes.length > 0) {
+				abc = opt.acordes.map( acorde => `"${acorde}"` ).join ( " " );
+			}
+			// 1. PREFIXOS (Decoradores e Ornamentos)
+			if (opt.ghostNote) abc += "!style=x!";
+			// Na exportação, usamos sempre a notação canônica primária
+			if (opt.fermata) abc += "!fermata!";
+			if (opt.fermataInvertida) abc += "!invertedfermata!";
+			if (opt.arpeggio) abc += "!arpeggio!";
+			if (opt.breath) abc += "!breath!";
 
-		// Em acordes, aplicamos apenas acidentes e altura individual (simplificação padrão ABC)
-		// 0. ACORDES
-		if (opt.acordes && opt.acordes.length > 0) {
-			abc = opt.acordes.map( acorde => `"${acorde}"` ).join ( " " );
-		}
-		// 1. PREFIXOS (Decoradores e Ornamentos)
-		if (opt.ghostNote) abc += "!style=x!";
-		// Na exportação, usamos sempre a notação canônica primária
-		if (opt.fermata) abc += "!fermata!";
-		if (opt.fermataInvertida) abc += "!invertedfermata!";
-		if (opt.arpeggio) abc += "!arpeggio!";
-		if (opt.breath) abc += "!breath!";
+			// Acentuação (Exclusiva)
+			if (opt.marcato) abc += "!marcato!";
+			else if (opt.acento) abc += "!accent!";
 
-		// Acentuação (Exclusiva)
-		if (opt.marcato) abc += "!marcato!";
-		else if (opt.acento) abc += "!accent!";
+			// Articulações (Exclusiva)
+			if (opt.staccatissimo) abc += "!staccatissimo!";
+			else if (opt.staccato) abc += ".";
+			else if (opt.tenuto) abc += "!tenuto!";
 
-		// Articulações (Exclusiva)
-		if (opt.staccatissimo) abc += "!staccatissimo!";
-		else if (opt.staccato) abc += ".";
-		else if (opt.tenuto) abc += "!tenuto!";
+			// Ornamentos
+			if (opt.trinado) abc += "!trill!";
+			else if (opt.mordente) abc += "!lowermordent!"; // Padronizado para lowermordent
+			else if (opt.upperMordent) abc += "!uppermordent!";
 
-		// Ornamentos
-		if (opt.trinado) abc += "!trill!";
-		else if (opt.mordente) abc += "!lowermordent!"; // Padronizado para lowermordent
-		else if (opt.upperMordent) abc += "!uppermordent!";
+			if (opt.turn) abc += "!turn!";
+			if (opt.roll) abc += "~";
 
-		if (opt.turn) abc += "!turn!";
-		if (opt.roll) abc += "~";
+			// Técnicas e Arcos
+			if (opt.pizzicato) abc += "!+!";
+			if (opt.snapPizzicato) abc += "!snap!";
+			if (opt.downBow) abc += "!downbow!";
+			if (opt.upBow) abc += "!upbow!";
+			if (opt.openString) abc += "!open!";
+			if (opt.thumb) abc += "!thumb!";
 
-		// Técnicas e Arcos
-		if (opt.pizzicato) abc += "!+!";
-		if (opt.snapPizzicato) abc += "!snap!";
-		if (opt.downBow) abc += "!downbow!";
-		if (opt.upBow) abc += "!upbow!";
-		if (opt.openString) abc += "!open!";
-		if (opt.thumb) abc += "!thumb!";
+			// Dinâmicas
+			if (opt.dinamicaSuave) {
+				if ( opt.dinamicaSuave === 3 ) abc += "!ppp!";
+				else if ( opt.dinamicaSuave === 2 ) abc += "!pp!";
+				else if ( opt.dinamicaSuave === 1 ) abc += "!p!";
+			}
+			if (opt.dinamicaForte) {
+				if ( opt.dinamicaForte === 3 ) abc += "!fff!";
+				else if ( opt.dinamicaForte === 2 ) abc += "!ff!";
+				else if ( opt.dinamicaForte === 1 ) abc += "!f!";
+			}
 
-		// Dinâmicas
-		if (opt.dinamicaSuave) {
-			if ( opt.dinamicaSuave === 3 ) abc += "!ppp!";
-			else if ( opt.dinamicaSuave === 2 ) abc += "!pp!";
-			else if ( opt.dinamicaSuave === 1 ) abc += "!p!";
-		}
-		if (opt.dinamicaForte) {
-			if ( opt.dinamicaForte === 3 ) abc += "!fff!";
-			else if ( opt.dinamicaForte === 2 ) abc += "!ff!";
-			else if ( opt.dinamicaForte === 1 ) abc += "!f!";
-		}
+			if (opt.dinamicaMeioForte) abc += "!mf!";
 
-		if (opt.dinamicaMeioForte) abc += "!mf!";
-
-		// Expressão (Crescendo e Diminuendo)
-		if (opt.crescendo) {
-			if ( opt.crescendo === "inicio" ) abc += "!crescendo(!";
-			else if ( opt.crescendo === "fim" ) abc += "!crescendo)!";
-		}
-		if (opt.diminuendo) {
-			if ( opt.diminuendo === "inicio" ) abc += "!diminuendo(!";
-			else if ( opt.diminuendo === "fim" ) abc += "!diminuendo)!";
+			// Expressão (Crescendo e Diminuendo)
+			if (opt.crescendo) {
+				if ( opt.crescendo === "inicio" ) abc += "!crescendo(!";
+				else if ( opt.crescendo === "fim" ) abc += "!crescendo)!";
+			}
+			if (opt.diminuendo) {
+				if ( opt.diminuendo === "inicio" ) abc += "!diminuendo(!";
+				else if ( opt.diminuendo === "fim" ) abc += "!diminuendo)!";
+			}
 		}
 
 		// Grace Notes (Adornos)
