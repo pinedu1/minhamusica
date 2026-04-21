@@ -453,4 +453,206 @@ export class ElementoMusicalAbc extends AdapterUtils {
 		}
 		return abc;
 	}
+	static _trataPayLoad(payloadString) {
+		let options = {  };
+		if ( payloadString.includes ( "!style=x!" ) ) {
+			options.ghostNote = true;
+			payloadString = payloadString.replaceAll("!style=x!", '');
+		}
+		if ( payloadString.includes ( "!fermata!" ) || payloadString.includes( "H" ) ) {
+			options.fermata = true;
+			payloadString = payloadString.replaceAll("!fermata!", '');
+			payloadString = payloadString.replaceAll("H", '');
+		}
+		if ( payloadString.includes ( "!invertedfermata!" ) ) {
+			options.fermataInvertida = true;
+			payloadString = payloadString.replaceAll("!invertedfermata!", '');
+		}
+		if ( payloadString.includes ( "!arpeggio!" ) ) {
+			options.arpeggio = true;
+			payloadString = payloadString.replaceAll("!arpeggio!", '');
+		}
+		if ( payloadString.includes ( "!marcato!" ) ) {
+			options.marcato = true;
+			payloadString = payloadString.replaceAll("!marcato!", '');
+		}
+		if ( payloadString.includes ( "!accent!" ) || payloadString.includes( "!emphasis!" ) ) {
+			options.acento = true;
+			payloadString = payloadString.replaceAll("!accent!", '');
+			payloadString = payloadString.replaceAll("!emphasis!", '');
+		}
+		if ( payloadString.includes ( "!staccatissimo!" ) ) {
+			options.staccatissimo = true;
+			payloadString = payloadString.replaceAll("!staccatissimo!", '');
+		}
+		if ( payloadString.includes ( "!tenuto!" ) ) {
+			options.tenuto = true;
+			payloadString = payloadString.replaceAll("!tenuto!", '');
+		}
+		if ( payloadString.includes ( "!breath!" ) ) {
+			options.breath = true;
+			payloadString = payloadString.replaceAll("!breath!",'');
+		}
+		if ( payloadString.includes ( "!trill!" ) ) {
+			options.trinado = true;
+			payloadString = payloadString.replaceAll("!trill!", '');
+		}
+		if ( payloadString.includes ( "!mordent!" ) || payloadString.includes( "!lowermordent!" ) ) {
+			options.mordente = true;
+			payloadString = payloadString.replaceAll("!mordent!", '');
+			payloadString = payloadString.replaceAll("!lowermordent!", '');
+		}
+		if ( payloadString.includes ( "!uppermordent!" ) || payloadString.includes( "!pralltriller!" ) ) {
+			options.upperMordent = true;
+			payloadString = payloadString.replaceAll("!uppermordent!", '');
+			payloadString = payloadString.replaceAll("!pralltriller!", '');
+		}
+		if ( payloadString.includes ( "!turn!" ) ) {
+			options.turn = true;
+			payloadString = payloadString.replaceAll("!turn!", '');
+		}
+
+		// Técnicas e Arcos
+		if ( payloadString.includes ( "!+!" ) ) {
+			options.pizzicato = true;
+			payloadString = payloadString.replaceAll("!+!", '');
+		}
+		if ( payloadString.includes ( "!snap!" ) ) {
+			options.snapPizzicato = true;
+			payloadString = payloadString.replaceAll("!snap!", '');
+		}
+		if ( payloadString.includes ( "!downbow!" ) ) {
+			options.downBow = true;
+			payloadString = payloadString.replaceAll("!downbow!", '');
+		}
+		if ( payloadString.includes ( "!upbow!" ) ) {
+			options.upBow = true;
+			payloadString = payloadString.replaceAll("!upbow!", '');
+		}
+		if ( payloadString.includes ( "!open!" ) ) {
+			options.openString = true;
+			payloadString = payloadString.replaceAll("!open!", '');
+		}
+		if ( payloadString.includes ( "!thumb!" ) ) {
+			options.thumb = true;
+			payloadString = payloadString.replaceAll("!thumb!", '');
+		}
+
+		// Dinâmicas
+		if ( payloadString.includes ( "!ppp!" ) ) {
+			options.dinamicaSuave = 3;
+			payloadString = payloadString.replaceAll("!ppp!", '');
+		}
+		else if ( payloadString.includes ( "!pp!" ) ) {
+			options.dinamicaSuave = 2;
+			payloadString = payloadString.replaceAll("!pp!", '');
+		}
+		else if ( payloadString.includes ( "!p!" ) ) {
+			options.dinamicaSuave = 1;
+			payloadString = payloadString.replaceAll("!p!", '');
+		}
+
+		if ( payloadString.includes ( "!fff!" ) ) {
+			options.dinamicaForte = 3;
+			payloadString = payloadString.replaceAll("!fff!", '');
+		}
+		else if ( payloadString.includes ( "!ff!" ) ) {
+			options.dinamicaForte = 2;
+			payloadString = payloadString.replaceAll("!ff!", '');
+		}
+		else if ( payloadString.includes ( "!f!" ) ) {
+			options.dinamicaForte = 1;
+			payloadString = payloadString.replaceAll("!f!", '');
+		}
+
+		if ( payloadString.includes ( "!mf!" ) ) {
+			options.dinamicaMeioForte = true;
+			payloadString = payloadString.replaceAll("!mf!", '');
+		}
+
+		// Expressão (Crescendo / Diminuendo)
+		if ( payloadString.includes ( "!crescendo(!" ) ) {
+			options.crescendo = "inicio";
+			payloadString = payloadString.replaceAll("!crescendo(!", '');
+		}
+		else if ( payloadString.includes ( "!crescendo)!" ) ) {
+			options.crescendo = "fim";
+			payloadString = payloadString.replaceAll("!crescendo)!", '');
+		}
+
+		if ( payloadString.includes ( "!diminuendo(!" ) ) {
+			options.diminuendo = "inicio";
+			payloadString = payloadString.replaceAll("!diminuendo(!", '');
+		}
+		else if ( payloadString.includes ( "!diminuendo)!" ) ) {
+			options.diminuendo = "fim";
+			payloadString = payloadString.replaceAll("!diminuendo)!", '');
+		}
+
+		if ( payloadString.includes ( "." ) ) {
+			options.staccato = true;
+			payloadString = payloadString.replaceAll(".", '');
+		}
+		if ( payloadString.includes ( "~" ) ) {
+			options.roll = true;
+			payloadString = payloadString.replaceAll("~", '');
+		}
+
+		// 3. ACIDENTES, DEDILHADO E LIGADURAS
+		if ( payloadString.includes ( "^" ) ) {
+			options.sustenido = true;
+			payloadString = payloadString.replaceAll("^", '');
+		}
+		if ( payloadString.includes ( "_" ) ) {
+			options.bemol = true;
+			payloadString = payloadString.replaceAll("_", '');
+		}
+		if ( payloadString.includes ( "=" ) ) {
+			options.beQuad = true;
+			payloadString = payloadString.replaceAll("=", '');
+		}
+
+		// 1. DEDILHADO (Letras p, i, m, a, c OU números)
+		if (payloadString.includes("$")) {
+			// Regex explica: Começa com $, aspas, captura (letras p imac ou dígitos), fecha aspas
+			const regexDedilhadoGlobal = /\$"(p|i|m|a|c|\d+)"/gi;
+			const matchesDedilhado = payloadString.match(regexDedilhadoGlobal);
+
+			if (matchesDedilhado) {
+				// Extraímos os valores internos para análise
+				const valores = matchesDedilhado.map(m => {
+					const v = m.match(/\$"(.*?)"/i)[1];
+					return v;
+				});
+
+				// Se houver um número, priorizamos para o 'options.dedilhado' (inteiro)
+				const apenasNumero = valores.find(v => !isNaN(v));
+				if (apenasNumero) {
+					options.dedilhado = parseInt(apenasNumero, 10);
+				}
+
+				// Se houver uma letra (p, i, m, a), guardamos em outra propriedade de técnica
+				const tecnicaMaoDireita = valores.find(v => /[pamac]/i.test(v));
+				if (tecnicaMaoDireita) {
+					options.maoDireita = tecnicaMaoDireita.toLowerCase();
+				}
+
+				// EXCLUSÃO TOTAL: Remove todos os $"..." da string para não confundir o próximo passo
+				payloadString = payloadString.replace(regexDedilhadoGlobal, '');
+			}
+		}
+
+		// 2. ACORDES (O que sobrar entre aspas)
+		const regexAcordes = /"(.*?)"/g;
+		const matchesAcordes = payloadString.match(regexAcordes);
+
+		if (matchesAcordes) {
+			options.acordes = matchesAcordes.map(a => a.replace(/"/g, ''));
+			// Remove os acordes reais da string
+			payloadString = payloadString.replace(regexAcordes, '');
+		}
+
+		return {payloadString: payloadString.trim(), optionsGerado: options};
+	}
+
 }

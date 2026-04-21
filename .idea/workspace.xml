@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/TonalidadeAbc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests/domain/Compasso.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/QuialteraAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/QuialteraAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/CompassoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/CompassoJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/compasso/TipoBarra.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/TipoBarra.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/compasso/Tonalidade.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Tonalidade.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/compassoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/compassoSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/tipoBarraSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tipoBarraSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/tonalidadeSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/tonalidadeSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +170,7 @@
       <workItem from="1776514921200" duration="35414000" />
       <workItem from="1776595096477" duration="24465000" />
       <workItem from="1776685094475" duration="33307000" />
-      <workItem from="1776771838663" duration="30764000" />
+      <workItem from="1776771838663" duration="37269000" />
     </task>
     <servers />
   </component>
@@ -220,12 +211,6 @@
           <line>206</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="160" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js</url>
-          <line>247</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="234" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

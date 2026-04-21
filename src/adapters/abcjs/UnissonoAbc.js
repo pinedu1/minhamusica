@@ -5,6 +5,8 @@ import { Unissono } from "@domain/nota/Unissono.js";
 import { NotaAbc } from "@abcjs/NotaAbc.js";
 import { PausaAbc } from "@abcjs/PausaAbc.js";
 import { QuialteraAbc } from "@abcjs/QuialteraAbc.js";
+import { TipoBarra } from "@domain/compasso/TipoBarra.js";
+import { Compasso } from "@domain/compasso/Compasso.js";
 
 export class UnissonoAbc extends ElementoMusicalAbc {
 	/**
@@ -117,8 +119,9 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
 	 * @returns {Unissono} Uma nova instância da classe Unissono.
 	 */
+/*
 	static fromAbc(unissonoString, contextOptions) {
-		const unissonoRegex = /\[([^\]]+)\]([0-9]*\/*[0-9]*)?(-)?/;
+		const unissonoRegex = /\[([^\]]+)\]([0-9]*\/!*[0-9]*)?(-)?/;
 		const match = unissonoString.match(unissonoRegex);
 
 		if (!match) {
@@ -150,6 +153,125 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 
 		// Garante que a duração de cada nota individual seja a mesma do unissono
 		unissono.notas.forEach(n => n.duracao = unissono.duracao);
+
+		return unissono;
+	}
+*/
+
+	/**
+	 * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
+	 * @param {string} unissonoString - A string do unissono (ex: "Gm"![a' !ppp!A,]2-).
+	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
+	 * @returns {Unissono} Uma nova instância da classe Unissono.
+	 */
+	/**
+	 * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
+	 * @param {string} unissonoString - A string do unissono (ex: "Gm"![a' !ppp!A,]2-).
+	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
+	 * @returns {Unissono} Uma nova instância da classe Unissono.
+	 */
+	/**
+	 * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
+	 * @param {string} unissonoString - A string do unissono (ex: "Gm"![a' !ppp!A,]2-).
+	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
+	 * @returns {Unissono} Uma nova instância da classe Unissono.
+	 */
+	static fromAbc(unissonoString, contextOptions) {
+		let str = unissonoString.trim();
+
+		// 1. SEPARAÇÃO DO PAYLOAD GLOBAL (O que vem antes do '[')
+		const matchInicioColchete = str.match(/\[/);
+		if (!matchInicioColchete) return null;
+
+		const indiceCorte = matchInicioColchete.index;
+		const payloadGlobalStr = str.substring(0, indiceCorte).trim();
+		let restoUnissono = str.substring(indiceCorte);
+
+		// Chamada para o novo formato do trataPayLoad (desestruturação)
+		const { payloadString, optionsGerado } = this._trataPayLoad(payloadGlobalStr);
+
+		let finalOptions = {
+			...contextOptions,
+			...optionsGerado
+		};
+
+		// 2. EXTRAÇÃO DO CORPO E DURAÇÃO EXTERNA
+		const regexEstrutura = /^\[([\s\S]+)\]([\d/]*)?(-)?$/;
+		const matchEstrutura = restoUnissono.match(regexEstrutura);
+
+		if (!matchEstrutura) return null;
+
+		let conteudoInterno = matchEstrutura[1];
+		const duracaoStr = matchEstrutura[2] || "";
+		if (matchEstrutura[3]) finalOptions.ligada = true;
+
+		const duracaoComum = this._calcularDuracaoAbcString(finalOptions, duracaoStr);
+		const elements = [];
+
+		// --- 3. LOOP DE ELEMENTOS (NOTAS INTERNAS) ---
+		let strLoop = conteudoInterno;
+		let payloadAcumulado = "";
+
+		// Regexes de busca
+		const reUnissono  = /^\[[^\]]+\][\d/]*/;
+		// 1. Quialtera com proporção (p:q:r)
+		const reQuialteraComplexa = /^\([0-9]+:[0-9]+:[0-9]+[a-gA-GzxyZXY[=^_]/;
+		// 2. Quialtera simples (n ou apenas ()
+		const reQuialteraSimples  = /^\([0-9]*[a-gA-GzxyZXY[=^_]/;
+
+		const rePausa     = /^[zxyZXY][\d/]*/;
+		const reNota      = /^[=^_]?[a-gA-G][,']*/;
+
+		while (strLoop.length > 0) {
+			let matchElemento = null;
+			let tipoEncontrado = null;
+
+			if ((matchElemento = strLoop.match(reUnissono))) {
+				tipoEncontrado = 'unissono';
+			}
+			// Testamos a quialtera complexa antes da simples
+			else if ((matchElemento = strLoop.match(reQuialteraComplexa))) {
+				tipoEncontrado = 'quialtera';
+			}
+			else if ((matchElemento = strLoop.match(reQuialteraSimples))) {
+				tipoEncontrado = 'quialtera';
+			}
+			else if ((matchElemento = strLoop.match(rePausa))) {
+				tipoEncontrado = 'pausa';
+			} else if ((matchElemento = strLoop.match(reNota))) {
+				tipoEncontrado = 'nota';
+			}
+
+			if (matchElemento) {
+				const textoCorpo = matchElemento[0];
+				const fullToken = payloadAcumulado + textoCorpo;
+
+				switch (tipoEncontrado) {
+					case 'unissono':
+						elements.push(UnissonoAbc.fromAbc(fullToken, finalOptions));
+						break;
+					case 'quialtera':
+						elements.push(QuialteraAbc.fromAbc(fullToken, finalOptions));
+						break;
+					case 'pausa':
+						elements.push(PausaAbc.fromAbc(fullToken, finalOptions));
+						break;
+					case 'nota':
+						elements.push(NotaAbc.fromAbc(fullToken, finalOptions));
+						break;
+				}
+
+				payloadAcumulado = "";
+				strLoop = strLoop.substring(textoCorpo.length);
+			} else {
+				payloadAcumulado += strLoop[0];
+				strLoop = strLoop.substring(1);
+			}
+		}
+
+		// 4. RETORNO DO OBJETO
+		const unissono = new Unissono(elements, duracaoComum, finalOptions);
+		unissono.notas.forEach(n => n.duracao = duracaoComum);
 
 		return unissono;
 	}

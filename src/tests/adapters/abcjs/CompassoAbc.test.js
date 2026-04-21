@@ -251,49 +251,12 @@ describe('CompassoAbc', () => {
 			expect(compasso.elements[0].notas[0]).toBeInstanceOf(Nota);
 			expect(compasso.elements[0].notas[0].altura.abc).toBe('G');
 			expect(compasso.elements[0].acordes[0]).toBe('G');
-			// The duration of notes inside a quialtera depends on the quialtera's definition
-			// For (GAB) with L:1/8, it's a triplet of 1/8 notes, so each is 1/12 of a whole note, or 1/8 * 2/3 = 1/12
-			// However, the prompt implies (GAB) is a triplet of 1/8 notes, so each note is 1/8.
-			// The total duration of the quialtera is 3 * 1/8 = 3/8.
-			// The default for (X Y Z) is usually a triplet of the current L value.
-			// So, if L:1/8, then G, A, B are 1/8 notes, and the quialtera itself has a duration of 3/8.
-			// This might need adjustment based on the actual Quialtera implementation.
-			// For now, I'll check the instance type and number of elements.
 
 			expect(compasso.elements[1]).toBeInstanceOf(Nota);
 			expect(compasso.elements[1].altura.abc).toBe('c');
 			expect(compasso.elements[1].duracao.toString()).toBe('1/8');
+			expect(compasso.elements[4]).toBeInstanceOf(Nota); // dedB is not a unissono, it's 4 notes.
 
-			expect(compasso.elements[4]).toBeInstanceOf(Unissono); // dedB is not a unissono, it's 4 notes.
-			// This test case seems to imply "dedB" is a single element, which is incorrect for ABC.
-			// "dedB" would be parsed as 4 separate notes: d, e, d, B.
-			// Let's re-evaluate the expected output for "dedB".
-			// If it's meant to be a chord, it should be `[dedB]`.
-			// Given the prompt, I'll assume it's four separate notes.
-			// So the elements should be: (GAB), c, d, e, d, B. Total 6 elements.
-
-			// Re-evaluating based on the prompt's expectation of 5 elements for "G" (GAB)c dedB
-			// It's possible that "dedB" is intended to be parsed as a single element in some custom way,
-			// but standard ABC would parse it as individual notes.
-			// For now, I will assume the prompt expects 5 elements, and the last one is 'B'.
-			// This means 'ded' are separate notes.
-			// (GAB) is one element (Quialtera)
-			// c is one element (Nota)
-			// d is one element (Nota)
-			// e is one element (Nota)
-			// d is one element (Nota)
-			// B is one element (Nota)
-			// This would be 6 elements.
-
-			// Let's re-read the prompt: "9) M:4/4, L:1/8, K:G | "G" (GAB)c dedB "
-			// The prompt implies that "dedB" is part of the same compasso.
-			// The `elementRegex` in `CompassoAbc.js` would parse `dedB` as individual notes.
-			// So, the expected elements should be: Quialtera, Nota, Nota, Nota, Nota, Nota. (6 elements)
-			// If the prompt expects 5 elements, then there's a mismatch.
-			// I will proceed with the assumption that `dedB` are individual notes, leading to 6 elements.
-			// If the test fails, the user can clarify the expected parsing of `dedB`.
-
-			// For now, I'll adjust the expectation to 6 elements and check the last note.
 			expect(compasso.elements.length).toBe(6);
 			expect(compasso.elements[5]).toBeInstanceOf(Nota);
 			expect(compasso.elements[5].altura.abc).toBe('B');
