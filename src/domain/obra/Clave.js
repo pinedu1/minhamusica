@@ -21,6 +21,9 @@ export class Clave {
         this.#middle = obj.middle;
         this.#key = obj.key;
     }
+	toString() {
+		return this.#tipo.valor;
+	}
     toVoz() {
         let sufixo = ''; //this.#oitava != 0 ? `+${this.#oitava * 8}` : `-${this.#oitava * 8}`;
         if (this.#oitava > 0) {
@@ -29,7 +32,7 @@ export class Clave {
             sufixo = `-8`;
         }
         let meio = '' // this.#middle? ` middle=${this.#middle}` : '';  /* TODO: implementar futuramewnte */
-        return `${this.#toString}${sufixo}${meio}`;
+        return `${this.toString()}${sufixo}${meio}`;
     }
     /**
      * Gera a string para mudança de clave no meio da pauta (dentro do Compasso).
@@ -37,7 +40,7 @@ export class Clave {
      * @returns {string} Ex: "[clef=treble-8]"
      */
     toCompasso() {
-        return `[${this.#toString}]`;
+        return `[${this.toString()}]`;
     }
     get tipo() {
         return this.#tipo;

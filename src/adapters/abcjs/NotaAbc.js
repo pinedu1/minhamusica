@@ -25,9 +25,10 @@ export class NotaAbc extends ElementoMusicalAbc {
 	 * @param {string} abcString - A string completa vinda do parser ABC.
 	 * @returns {Nota}
 	 */
-	static fromAbc ( abcString ) {
+	static fromAbc ( abcString, contextOptions = {} ) {
 		// Inicializa o options completo para cobrir todos os atributos da classe
 		const options = {
+			...contextOptions,
 			ghostNote: false,
 			fermata: false,
 			fermataInvertida: false,
@@ -155,7 +156,7 @@ export class NotaAbc extends ElementoMusicalAbc {
 			: ""
 		;
 
-		const duracao = TempoDuracaoAbc.fromAbc( (duracaoString !== '') ? duracaoString: '1' );
+		const duracao = this._calcularDuracaoAbcString( options, duracaoString ?? '' );
 		const frequencia = NotaFrequencia.getByAbc( alturaString );
 
 		return new Nota ( frequencia, duracao, options );

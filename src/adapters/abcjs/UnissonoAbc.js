@@ -3,6 +3,8 @@ import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { Nota } from "@domain/nota/Nota.js";
 import { Unissono } from "@domain/nota/Unissono.js";
 import { NotaAbc } from "@abcjs/NotaAbc.js";
+import { PausaAbc } from "@abcjs/PausaAbc.js";
+import { QuialteraAbc } from "@abcjs/QuialteraAbc.js";
 
 export class UnissonoAbc extends ElementoMusicalAbc {
 	/**
@@ -81,7 +83,20 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 			abc += this._toGraceNotes( unissono );
 		}
 
-		abc += `[${unissono.notas.map(elemento => this._toElementoAbc( elemento, true, false )).join('')}]`;
+		abc += `[${unissono.notas.map(elemento => {
+			if (elemento.constructor.name === "Pausa") { 
+				return PausaAbc.toAbc( elemento );
+			}
+			if (elemento.constructor.name === "Nota") {
+				return NotaAbc.toAbc( elemento );
+			}
+			if (elemento.constructor.name === "Unissono") {
+				return UnissonoAbc.toAbc( elemento );
+			}
+			if (elemento.constructor.name === "Quialtera") {
+				return QuialteraAbc.toAbc( elemento );
+			}
+		}).join('')}]`;
 
 
 		// 3. SUFIXO DE DURAÇÃO
@@ -113,38 +128,7 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 		const [notasArray, notasStr, duracaoStr, ligadura] = match;
 		const unissonoOptions = { ...contextOptions };
 
-		// 1. Duração do Unissono
-		const unidadeTempo = (function() {
-			if (contextOptions?.voz) {
-				const voz = contextOptions.voz;
-				if ( voz.getUnidadeTempo() && voz.getUnidadeTempo() instanceof TempoDuracao ) {
-					return voz.getUnidadeTempo();
-				}
-			}
-			if (contextOptions?.obra) {
-				const obra = contextOptions.obra;
-				if ( obra.getUnidadeTempo() && obra.getUnidadeTempo() instanceof TempoDuracao ) {
-					return obra.getUnidadeTempo();
-				}
-			}
-			return null;
-		})();
-		let duracao;
-
-		if (duracaoStr) {
-			if (duracaoStr.includes('/')) {
-				if (duracaoStr.startsWith('/')) { // ex: /2
-					duracao = new TempoDuracao(unidadeTempo.numerador, unidadeTempo.denominador * 2);
-				} else { // ex: 3/2
-					const [numerador, denominador] = duracaoStr.split('/').map(Number);
-					duracao = new TempoDuracao(unidadeTempo.numerador * numerador, unidadeTempo.denominador * denominador);
-				}
-			} else { // ex: 2
-				duracao = new TempoDuracao(unidadeTempo.numerador * Number(duracaoStr), unidadeTempo.denominador);
-			}
-		} else {
-			duracao = new TempoDuracao(1,1);
-		}
+		const duracao = this._calcularDuracaoAbcString( unissonoOptions, duracaoStr ?? '');
 
 		if (ligadura) {
 			unissonoOptions.ligada = true;

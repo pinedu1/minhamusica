@@ -117,6 +117,7 @@ export class Quialtera extends ElementoMusical {
 		if ( !( elemento instanceof ElementoMusical ) ) {
 			throw new TypeError( 'Os itens da quiáltera devem ser instâncias de Nota, Pausa ou Unissono.' );
 		}
+		elemento.options.quialtera = this;
 		this.#notas.push( elemento );
 	}
 

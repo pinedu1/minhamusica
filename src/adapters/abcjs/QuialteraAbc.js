@@ -145,7 +145,7 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 	 * @param {Object} contextOptions - Opções de contexto (L, M, K, voz, obra).
 	 * @returns {Quialtera} Uma nova instância da classe Quialtera.
 	 */
-	static fromAbc(quialteraString, contextOptions) {
+	static fromAbc(quialteraString, contextOptions = {} ) {
 		/**
 		 * REGEX DE QUIÁLTERA
 		 * Captura:
@@ -172,17 +172,7 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 			forceQ: forceQ,
 			forceR: forceR
 		};
-
-		// 1. Recuperação da Unidade de Tempo (L)
-		const unidadeTempo = (function() {
-			const ref = contextOptions?.voz || contextOptions?.obra;
-			if (ref && typeof ref.getUnidadeTempo === 'function') {
-				const ut = ref.getUnidadeTempo();
-				if (ut instanceof TempoDuracao) return ut;
-			}
-			return new TempoDuracao(1, 4); // Fallback padrão L:1/4
-		})();
-
+		const unidadeTempo = this._calcularDuracaoAbcString( quialteraOptions, '' );
 		/**
 		 * 2. CÁLCULO DA DURACAO OCUPADA (Ocupação no Compasso)
 		 * No ABCJS, se 'q' não é fornecido, a regra é:
@@ -206,7 +196,8 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 		// O corpoNotas contém algo como "abcde" ou "c/8d/8e/8"
 		// Aqui você deve usar o seu parser de notas/unissonos para extrair os objetos
 		const notas = [];
-
+		const quialteraInstance = new Quialtera(notas, duracaoOcupada, quialteraOptions);
+		contextOptions.quialtera = quialteraInstance;
 		/**
 		 * NOTA: Como a quiáltera termina após 'p' notas, precisamos de um parser
 		 * que consuma a string e retorne exatamente 'p' ElementosMusicais.
@@ -231,7 +222,7 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 			notas.push(elemento);
 			contador++;
 		}
-
-		return new Quialtera(notas, duracaoOcupada, quialteraOptions);
+		quialteraInstance.notas = notas;
+		return quialteraInstance;
 	}
 }

@@ -111,6 +111,7 @@ export class Unissono extends ElementoMusical {
 		if (!(elemento instanceof ElementoMusical)) {
 			throw new TypeError('O elemento deve ser uma instância de ElementoMusical (Nota, Pausa, Unissono ou Quialtera).');
 		}
+		elemento.options.unissono = this;
 		this.#notas.push(elemento);
 	}
 

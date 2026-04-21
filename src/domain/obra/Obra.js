@@ -7,7 +7,6 @@ import { Tonalidade } from '@domain/compasso/Tonalidade.js';
 import { Ritmo } from '@domain/obra/Ritmo.js';
 import { GrupoInstrumento } from './GrupoInstrumento.js';
 import { Clave } from '@domain/obra/Clave.js';
-import { obraSchema } from '@schemas/obraSchema.js';
 
 /*
 A:	(Geographical) Area : eg A:Brittany or A:Sussex
@@ -69,22 +68,22 @@ export class Obra {
      */
     constructor(index, vozes = [], options = {}) {
         this.#options = {
-            unidadeTempo: options.unidadeTempo || TempoDuracao.create( '1/4' )  // L: Default note length -see part one of this tutorial for further details
-            , metrica: options.metrica || TempoMetrica.create('4/4')  // M: Meter :see part one of this tutorial for further details
+            unidadeTempo: options.unidadeTempo || new TempoDuracao( 1, 4 )  // L: Default note length -see part one of this tutorial for further details
+            , metrica: options.metrica || new TempoMetrica(4,4)  // M: Meter :see part one of this tutorial for further details
             , areaGeografica: options.areaGeografica || null  // A: (Geographical) Area : eg A:Brittany or A:Sussex
             , origemGeografica: options.origemGeografica || null  // O: (Geographical) Origin : eg O:Irish or O:Swedish
             , livro: options.livro || []  // B: Book, eg B:Encyclopeadia Blowzabellica or B:O'Neill's
             , compositor: options.compositor || []  // C: Composer eg C:Andy Cutting or C:Trad
             , discografia: options.discografia || []  // D: Discography eg D:New Victory Band, One More Dance And Then
             , nomeArquivo: options.nomeArquivo || null  // F: File Name eg http://www.lesession.co.uk/woodenflute.abc
-            , grupoInstrumento: options.grupoInstrumento || GrupoInstrumento.create('OUTROS')  // G: Group eg G:Flute - this is used for the purpose of indexing tunes in software, NOT for naming the group / band you acquired the tune from (which should be recorded in the S: source field).
+            , grupoInstrumento: options.grupoInstrumento || new GrupoInstrumento('OUTROS')  // G: Group eg G:Flute - this is used for the purpose of indexing tunes in software, NOT for naming the group / band you acquired the tune from (which should be recorded in the S: source field).
             , historia: options.historia || []  // H: History - Multiple H: fields may be used as needed to record text about the history of the tune.
             , informacoes: options.informacoes || []  // I: Information - used by certain software packages, NOT for historical information or notes (which should be recorded in the H: or N: fields).
-            , tonalidade: options.tonalidade || Tonalidade.create('C')  // K: Key -see part one of this tutorial for further details
-            , clave: options.clave || Clave.create('TREBLE')
+            , tonalidade: options.tonalidade || new Tonalidade('C')  // K: Key -see part one of this tutorial for further details
+            , clave: options.clave || new Clave('TREBLE')
             , notas: options.notas || []  // N: Notes : Multiple N: fields can be used as needed to record detailed text notes about, well, just about anything you want to say about the tune that won't go in any of the other fields really ...
             , partes: options.partes || null  // P: Parts -see below for further details
-            , tempoAndamento: options.tempoAndamento || TempoAndamento.create({ tempo: '1/4', duracao: 95 })  // Q: Tempo -see part one of this tutorial for further details
+            , tempoAndamento: options.tempoAndamento || new TempoAndamento( new TempoDuracao(1,4), 95)  // Q: Tempo -see part one of this tutorial for further details
             , ritmo: options.ritmo || Ritmo.create('REEL')  // R: Rhythm -see part one of this tutorial for further details
             , fonte: options.fonte || []  // S: Source - where you got the tune from eg S:Olio or S:Dave Praties
             , titulo: options.titulo || null  // T: Title -see part one of this tutorial for further details
@@ -122,13 +121,6 @@ export class Obra {
 
         this.#index = val;
     }
-    get options() {
-        return this.#options;
-    }
-    set options(options) {
-        this.#options = options;
-    }
-
     /**
      *
      * @param val {Numer}
@@ -161,16 +153,36 @@ export class Obra {
         voz.options.obra = this;
         this.#vozes.push(voz);
     }
+	get options() {
+		if ( this.#options === null || this.#options === undefined ) {
+			this.#options = {};
+		}
+		return this.#options;
+	}
+	set options(options) {
+		if ( this.#options === null || this.#options === undefined ) {
+			this.#options = {};
+		}
+		this.#options = options;
+	}
     getUnidadeTempo() {
-        return this.#options.unidadeTempo;
+        return this.unidadeTempo;
     }
+	get unidadeTempo() {
+		return this.options.unidadeTempo;
+	}
+	set unidadeTempo(val) {
+		if (val == null) { this.options.unidadeTempo = null; return; }
+		if (!(val instanceof TempoDuracao)) throw new TypeError('Obra: TempoDuracao inválido.');
+		this.options.unidadeTempo = val;
+	}
 	get metrica() { return this.#options.metrica; }
 	set metrica(val) {
-		if (val == null) { this.#options.metrica = null; return; }
-		if (!(val instanceof TempoMetrica)) throw new TypeError('Voz: TempoMetrica inválido.');
-		this.#options.metrica = val;
+		if (val == null) { this.options.metrica = null; return; }
+		if (!(val instanceof TempoMetrica)) throw new TypeError('Obra: TempoMetrica inválido.');
+		this.options.metrica = val;
 	}
     getMetrica() {
-        return this.#options.metrica;
+        return this.options.metrica;
     }
 }

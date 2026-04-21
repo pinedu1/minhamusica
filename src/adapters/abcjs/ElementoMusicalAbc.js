@@ -1,7 +1,115 @@
 import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
+import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 
 export class ElementoMusicalAbc extends AdapterUtils {
+	/**
+	 * Calcula a duração real de um elemento interpretando a string rítmica do ABC dentro do contexto musical.
+	 * * @description
+	 * Este método realiza o "Bubble Up" na hierarquia de domínio para localizar os parâmetros L (unidadeTempo)
+	 * e M (metrica). A lógica de cálculo segue a especificação ABC:
+	 * 1. Uma nota sem número (ex: "C") tem a duração exata de L.
+	 * 2. Um número após a nota (ex: "C2") multiplica L.
+	 * 3. Uma fração ou barra (ex: "C/2", "C1/4") divide L.
+	 * * Hierarquia de busca (options): Elemento -> Grupo -> Compasso -> Voz -> Obra.
+	 *
+	 *  A estrutura do elemento possui em options:
+	 *  Ex: {
+	 *  elemento: {
+	 *      options: {
+	 *         obra: {
+	 *            options: { metrica: { numerador: 4, denominador: 4 }, unidadeTempo: { numerador: 1, denominador: 4 }, andamento: { numerador: 1, denominador: 4, bpm: 90 } }
+	 *               , vozes: [
+	 *                  {
+	 *                      options: { unidadeTempo: { numerador: 1, denominador: 4 } }
+	 *                         , compassos: [
+	 *                            {
+	 *                               options: { unidadeTempo: { numerador: 1, denominador: 4 } }
+	 *                                  , elementos: [
+	 *                                     {
+	 *                                         options: { unidadeTempo: { numerador: 1, denominador: 4 } }
+	 *                                           , elements: [
+	 *                                              Pausa | Nota | Unissono | Quialtera
+	 *                                           ]
+	 *                                     }
+	 *                                   ]
+	 *                             }
+	 *                         ]
+	 *                  }
+	 *              ]
+	 *         }
+	 *      }
+	 * }
+	 * Cada Objeto base: [Nota | Pausa] desta hierarquia possui um metodo: getUnidadeTempo(), que sobe na hierarquia na seguinte ordem: [ unissono | quialtera ] -> compasso > vozes > obra, buscando a primeira incidencia do objeto unidadeTempo
+	 * Cada Objeto base: [Nota | Pausa] desta hierarquia possui um metodo: getMetrica(), que sobe na hierarquia na seguinte ordem: [ unissono | quialtera ] -> compasso > vozes > obra, buscando a primeira incidencia do objeto metrica
+	 * Obtendo os paramentros minimos para calcular o tempo da unidade base dentro do seu contexto.
+	 *
+	 * @param {ElementoMusical} contextOptions - O objeto (Nota, Pausa, etc.) que solicita o cálculo.
+	 * @param {string} duracaoString - O sufixo rítmico capturado no regex (ex: "2", "1/2", "/4", "").
+	 * @returns {TempoDuracao} Uma nova instância com a duração absoluta calculada.
+	 * @static
+	 */
+	static _calcularDuracaoAbcString( contextOptions, duracaoString ) {
+		// 1. OBTENÇÃO DO CONTEXTO (L e M)
+		// Utilizamos os métodos de escalonamento que você definiu nas classes de domínio.
+		// Se o elemento não estiver vinculado a uma árvore, o fallback padrão é L:1/4.
+		const unidadeTempo = (function() {
+			if (contextOptions?.unidadeTempo) {
+				return contextOptions.unidadeTempo;
+			}
+			if (contextOptions?.compasso) {
+				const compasso = contextOptions.voz;
+				if ( compasso.getUnidadeTempo() && compasso.getUnidadeTempo() instanceof TempoDuracao ) {
+					return compasso.getUnidadeTempo();
+				}
+			}
+			if (contextOptions?.voz) {
+				const voz = contextOptions.voz;
+				if ( voz.getUnidadeTempo() && voz.getUnidadeTempo() instanceof TempoDuracao ) {
+					return voz.getUnidadeTempo();
+				}
+			}
+			if (contextOptions?.obra) {
+				const obra = contextOptions.obra;
+				if ( obra.getUnidadeTempo() && obra.getUnidadeTempo() instanceof TempoDuracao ) {
+					return obra.getUnidadeTempo();
+				}
+			}
+			return new TempoDuracao(1,1);
+		})();
+
+
+		// 2. PARSING DA STRING ABC
+		// Regex para identificar [multiplicador][barra][divisor]
+		const regexRitmo = /^(\d*)(\/?)(\d*)$/;
+		const match = (duracaoString || "").match(regexRitmo);
+
+		let numMultiplicador = 1;
+		let numDivisor = 1;
+
+		if (match) {
+			const [ , multiplicador, temBarra, divisor ] = match;
+
+			// Se existe multiplicador antes da barra (ex: "3/2" -> 3) ou sem barra (ex: "2" -> 2)
+			if (multiplicador) numMultiplicador = parseInt(multiplicador, 10);
+
+			// Se existe uma barra "/"
+			if (temBarra) {
+				// Se tem número após a barra (ex: "/4" -> 4), senão o padrão ABC para "/" é 2
+				numDivisor = divisor ? parseInt(divisor, 10) : 2;
+			}
+		}
+
+		/**
+		 * 3. CÁLCULO MATEMÁTICO
+		 * A duração final é: (L.numerador * multiplicador) / (L.denominador * divisor)
+		 */
+		const novoNumerador = unidadeTempo.numerador * numMultiplicador;
+		const novoDenominador = unidadeTempo.denominador * numDivisor;
+
+		// Retornamos a nova instância de TempoDuracao que será atribuída ao elemento
+		return new TempoDuracao(novoNumerador, novoDenominador);
+	}
 	/**
 	 * Formata a duração rítmica para o padrão textual do ABCJS.
 	 * Sobrescreve o método base para garantir a compatibilidade.
@@ -149,7 +257,6 @@ export class ElementoMusicalAbc extends AdapterUtils {
 			}
 
 			// Altura da nota (com acidentes calculados pelo toAbcOutput)
-			notaInternaAbc += this._toAbcOutput( nota );
 
 			return notaInternaAbc;
 		} ).join( "" );

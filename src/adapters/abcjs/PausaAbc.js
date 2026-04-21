@@ -67,9 +67,10 @@ export class PausaAbc extends ElementoMusicalAbc {
 	 * "D#m"!invertedfermata!!breath!z
 	 * @returns {Pausa}
 	 */
-	static fromAbc( abcString ) {
+	static fromAbc( abcString, contextOptions = {} ) {
 		const options = {
-			fermata: false
+			...contextOptions
+			, fermata: false
 			, fermataInvertida: false
 			, breath: false
 			, invisivel: false
@@ -120,7 +121,7 @@ export class PausaAbc extends ElementoMusicalAbc {
 
 			// Para Z/X, o número que segue é a quantidade de compassos
 			// Para z/x, é a duração rítmica normal baseada em L:
-			const duracao = TempoDuracaoAbc.fromAbc( duracaoString );
+			const duracao = this._calcularDuracaoAbcString( options, duracaoString ?? '');
 
 			return new Pausa( duracao , options );
 		}

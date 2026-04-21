@@ -126,7 +126,7 @@ export class ElementoMusical {
         }
 
         // 2. Define a ordem de subida na árvore de hierarquia
-        const hierarquia = ['unissono', 'compasso', 'voz', 'obra'];
+        const hierarquia = ['quialtera','unissono', 'compasso', 'voz', 'obra'];
 
         // 3. Percorre os pais dinamicamente
         for (const nivel of hierarquia) {
@@ -159,7 +159,7 @@ export class ElementoMusical {
 		}
 
 		// 2. Define a ordem de subida na árvore de hierarquia
-		const hierarquia = ['compasso', 'voz', 'obra'];
+		const hierarquia = [ 'quialtera', 'unissono', 'compasso', 'voz', 'obra'];
 
 		// 3. Percorre os pais dinamicamente
 		for (const nivel of hierarquia) {
