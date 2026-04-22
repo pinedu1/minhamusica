@@ -147,82 +147,120 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 	 * @returns {Quialtera} Uma nova instância da classe Quialtera.
 	 */
 	static fromAbc(quialteraString, contextOptions = {} ) {
-		/**
-		 * REGEX DE QUIÁLTERA
-		 * Captura:
-		 * 1. p (quantidade de notas)
-		 * 2. q (opcional: orçamento de tempo)
-		 * 3. r (opcional: escopo visual)
-		 * 4. O restante da string (as notas em si)
-		 */
-		const quialteraRegex = /^\(([0-9]+)(?::([0-9]+):([0-9]+))?(.*)$/;
-		const match = quialteraString.match(quialteraRegex);
+		let str = quialteraString.trim();
+
+		// 1. SEPARAÇÃO DO PAYLOAD GLOBAL (O que vem antes do '(')
+		const matchInicioParenteses = str.match(/\(/);
+		if (!matchInicioParenteses) return null;
+
+		const indiceCorte = matchInicioParenteses.index;
+		const payloadGlobalStr = str.substring(0, indiceCorte).trim();
+		let restoQuialtera = str.substring(indiceCorte);
+
+		// Chamada para o formato do trataPayLoad (herdado de ElementoMusicalAbc)
+		const { payloadString, optionsGerado } = this._trataPayLoad(payloadGlobalStr);
+
+		// 2. EXTRAÇÃO DO CORPO DA QUIALTERA
+		// Captura (p, opcionalmente :q, opcionalmente :r, opcionalmente -, e o corpo de notas
+		const quialteraRegex = /^\(([0-9]+)(?::([0-9]+))?(?::([0-9]+))?(-)?(.*)$/;
+		const match = restoQuialtera.match(quialteraRegex);
 
 		if (!match) {
 			throw new Error(`QuialteraAbc.fromAbc: Sintaxe de quiáltera inválida: "${quialteraString}"`);
 		}
 
-		const [ , pStr, qStr, rStr, corpoNotas] = match;
+		const [ , pStr, qStr, rStr, tracoLigadura, corpoNotas] = match;
 
 		const p = parseInt(pStr, 10);
 		const forceQ = qStr ? parseInt(qStr, 10) : null;
 		const forceR = rStr ? parseInt(rStr, 10) : null;
 
-		const quialteraOptions = {
-			...contextOptions,
-			forceQ: forceQ,
-			forceR: forceR
+		const finalOptions = {
+			...optionsGerado,
 		};
-		const unidadeTempo = this._calcularDuracaoAbcString( quialteraOptions, '' );
-		/**
-		 * 2. CÁLCULO DA DURACAO OCUPADA (Ocupação no Compasso)
-		 * No ABCJS, se 'q' não é fornecido, a regra é:
-		 * p=3 -> q=2 | p=2 -> q=3 | p=4 -> q=3 | p=6 -> q=4, etc.
-		 */
+		if (forceQ) {
+			finalOptions.forceQ = forceQ;
+		}
+		if (forceR) {
+			finalOptions.forceR = forceR;
+		}
+
+		if (tracoLigadura === '-') finalOptions.ligada = true;
+
+		const unidadeTempo = this._calcularDuracaoAbcString( contextOptions, '' );
+
+		// 3. CÁLCULO DA DURACAO OCUPADA
 		let qMusical;
 		if (forceQ) {
 			qMusical = forceQ;
 		} else {
-			// Lógica padrão da teoria musical para quiálteras simples
-			if (p === 3 || p === 6 || p === 12) qMusical = (p * 2) / 3; // Tercinas, sextinas
-			else if (p === 2 || p === 4) qMusical = 3; // Duinas, quartinas
-			else qMusical = p; // Fallback: 1 por 1
+			if (p === 3 || p === 6 || p === 12) qMusical = (p * 2) / 3;
+			else if (p === 2 || p === 4) qMusical = 3;
+			else qMusical = p;
 		}
 
-		// A duração absoluta da quiáltera em relação à semibreve
-		// duracao = (q / denominadorL)
 		const duracaoOcupada = new TempoDuracao(qMusical * unidadeTempo.numerador, unidadeTempo.denominador);
 
-		// 3. PARSING DAS NOTAS INTERNAS
-		// O corpoNotas contém algo como "abcde" ou "c/8d/8e/8"
-		// Aqui você deve usar o seu parser de notas/unissonos para extrair os objetos
+		// 4. INSTÂNCIA ANTECIPADA (Para passar de contexto, se necessário)
 		const notas = [];
-		const quialteraInstance = new Quialtera(notas, duracaoOcupada, quialteraOptions);
-		contextOptions.quialtera = quialteraInstance;
-		/**
-		 * NOTA: Como a quiáltera termina após 'p' notas, precisamos de um parser
-		 * que consuma a string e retorne exatamente 'p' ElementosMusicais.
-		 * Aqui uso uma simplificação para extrair as notas:
-		 */
-		const notaInternaRegex = /([=^_]?[a-gA-G][,']*[\d/]*|\[[^\]]+\][\d/]*|z[\d/]*)/g;
-		let notaMatch;
-		let contador = 0;
+		const quialteraInstance = new Quialtera(notas, duracaoOcupada, finalOptions);
+		finalOptions.quialtera = quialteraInstance;
 
-		while ((notaMatch = notaInternaRegex.exec(corpoNotas)) !== null && contador < (forceR || p)) {
-			const elementoStr = notaMatch[0];
-			// Delegamos a criação do objeto para os respectivos Adapters
-			let elemento;
-			if (elementoStr.startsWith('z')) {
-				elemento = PausaAbc.fromAbc(elementoStr, contextOptions);
-			} else if (elementoStr.startsWith('[')) {
-				elemento = UnissonoAbc.fromAbc(elementoStr, contextOptions);
-			} else {
-				elemento = NotaAbc.fromAbc(elementoStr, contextOptions);
+		// --- 5. LOOP DE ELEMENTOS (NOTAS INTERNAS) ---
+		// MESMA LÓGICA DO UNÍSSONO PARA O CORPO DAS NOTAS
+		let strLoop = corpoNotas;
+		let payloadAcumulado = "";
+		let contador = 0; // Controle de quantas notas físicas foram extraídas
+		const limiteNotas = forceR || p;
+
+		const reUnissono  = /^\[[^\]]+\][\d/]*\-?/;
+		const rePausa     = /^[zxyZXY][\d/]*\-?/;
+		// Na quialtera, não processamos quialteras aninhadas por padrão ABC puro, mas mantemos o suporte à nota:
+		const reNota      = /^[=^_]?[a-gA-G][,']*[\d/]*\-?/;
+
+		while (strLoop.length > 0 && contador < limiteNotas) {
+			let matchElemento = null;
+			let tipoEncontrado = null;
+
+			if ((matchElemento = strLoop.match(reUnissono))) {
+				tipoEncontrado = 'unissono';
+			} else if ((matchElemento = strLoop.match(rePausa))) {
+				tipoEncontrado = 'pausa';
+			} else if ((matchElemento = strLoop.match(reNota))) {
+				tipoEncontrado = 'nota';
 			}
 
-			notas.push(elemento);
-			contador++;
+			if (matchElemento) {
+				const textoCorpo = matchElemento[0];
+				const fullToken = payloadAcumulado + textoCorpo;
+
+				switch (tipoEncontrado) {
+					case 'unissono':
+						notas.push(UnissonoAbc.fromAbc(fullToken, contextOptions));
+						break;
+					case 'pausa':
+						notas.push(PausaAbc.fromAbc(fullToken, contextOptions));
+						break;
+					case 'nota':
+						notas.push(NotaAbc.fromAbc(fullToken, contextOptions));
+						break;
+				}
+
+				payloadAcumulado = "";
+				strLoop = strLoop.substring(textoCorpo.length);
+				contador++;
+			} else {
+				payloadAcumulado += strLoop[0];
+				strLoop = strLoop.substring(1);
+			}
 		}
+
+		// Se sobrou string não processada (porque atingimos o limite do contador p/r)
+		if (strLoop.length > 0) {
+			// Aviso opcional de log para rastreio
+			console.warn(`QuialteraAbc: Texto excedente ignorado após capturar ${limiteNotas} elementos -> "${strLoop}"`);
+		}
+
 		quialteraInstance.notas = notas;
 		return quialteraInstance;
 	}

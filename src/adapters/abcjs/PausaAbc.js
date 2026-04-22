@@ -68,40 +68,14 @@ export class PausaAbc extends ElementoMusicalAbc {
 	 * @returns {Pausa}
 	 */
 	static fromAbc( abcString, contextOptions = {} ) {
-		const options = {
-			...contextOptions
-			, fermata: false
-			, fermataInvertida: false
-			, breath: false
-			, invisivel: false
-			, acordes: []
-		};
-
 		let tempAbc = abcString;
 
-		// 1. EXTRAÇÃO DE ACORDES
-		const matchesAcordes = tempAbc.match( /"(.*?)"/g );
-		if ( matchesAcordes ) {
-			options.acordes = matchesAcordes.map( a => a.replace( /"/g , "" ) );
-			tempAbc = tempAbc.replace( /"(.*?)"/g , "" );
-		}
+		let {payloadString, optionsGerado} = this._trataPayLoad(tempAbc)
+		const options = {
+			...optionsGerado
+		};
 
-		// 2. CAPTURA E LIMPEZA DE DECORADORES (Regex Power)
-		// Procuramos por !fermata! ou o atalho 'H'
-		if ( /(!fermata!|H)/.test( tempAbc ) ) {
-			options.fermata = true;
-			tempAbc = tempAbc.replace( /(!fermata!|H)/g , "" );
-		}
-
-		if ( /!invertedfermata!/.test( tempAbc ) ) {
-			options.fermataInvertida = true;
-			tempAbc = tempAbc.replace( /!invertedfermata!/g , "" );
-		}
-
-		if ( /!breath!/.test( tempAbc ) ) {
-			options.breath = true;
-			tempAbc = tempAbc.replace( /!breath!/g , "" );
-		}
+		tempAbc = payloadString;
 
 		// 3. IDENTIFICAÇÃO DE TIPO E INVISIBILIDADE
 		// O caractere 'x' ou 'X' define a pausa invisível
@@ -121,7 +95,7 @@ export class PausaAbc extends ElementoMusicalAbc {
 
 			// Para Z/X, o número que segue é a quantidade de compassos
 			// Para z/x, é a duração rítmica normal baseada em L:
-			const duracao = this._calcularDuracaoAbcString( options, duracaoString ?? '');
+			const duracao = this._calcularDuracaoAbcString( contextOptions, duracaoString ?? '');
 
 			return new Pausa( duracao , options );
 		}

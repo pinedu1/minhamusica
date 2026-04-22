@@ -141,27 +141,77 @@ export class Nota extends ElementoMusical {
         if (!(val instanceof NotaFrequencia)) throw new Error("A altura deve ser NotaFrequencia.");
         this.#altura = val;
     }
-	get acordes() { return this._options.acordes; }
-    get ligada() { return this._options.ligada; }
-    set ligada(val) { this._options.ligada = !!val; }
-	get arpeggio() { return this._options.arpeggio; }
-    set arpeggio(val) { this._options.arpeggio = !!val; }
-    get fermata() { return this._options.fermata; }
-    set fermata(val) { this._options.fermata = !!val; }
-    get fermataInvertida() { return this._options.fermataInvertida; }
-    set fermataInvertida(val) { this._options.fermataInvertida = !!val; }
-    get sustenido() { return this._options.sustenido; }
-    set sustenido(val) { this._options.sustenido = !!val; }
-    get beQuad() { return this._options.beQuad; }
-    set beQuad(val) { this._options.beQuad = !!val; }
-	get roll() { return this._options.roll; }
-    set roll(val) { this._options.roll = !!val; }
-	get turn() { return this._options.turn; }
-    set turn(val) { this._options.turn = !!val; }
-	get trinado() { return this._options.trinado; }
-    set trinado(val) { this._options.trinado = !!val; }
-	get mordente() { return this._options.mordente; }
-    set mordente(val) { this._options.mordente = !!val; }
-	get upperMordent() { return this._options.upperMordent; }
-    set upperMordent(val) { this._options.upperMordent = !!val; }
+// --- GETTERS ---
+	get acento() { return this._options.acento === true; }
+	get acordes() { return this._options.acordes; } // Corrigido: Retorna o Array
+	get arpeggio() { return this._options.arpeggio === true; }
+	get bemol() { return this._options.bemol === true; }
+	get beQuad() { return this._options.beQuad === true; }
+	get breath() { return this._options.breath === true; }
+	get crescendo() { return this._options.crescendo; } // Corrigido: Retorna String ou null
+	//get dedilhado() { return this._options.dedilhado; } // Corrigido e SOBREPOSTO // overwrite
+	get diminuendo() { return this._options.diminuendo; } // Corrigido: Retorna String ou null
+	get dinamicaForte() { return this._options.dinamicaForte; } // Corrigido: Retorna Number
+	get dinamicaMeioForte() { return this._options.dinamicaMeioForte === true; }
+	get dinamicaSuave() { return this._options.dinamicaSuave; } // Corrigido: Retorna Number
+	get downBow() { return this._options.downBow === true; }
+	get fermataInvertida() { return this._options.fermataInvertida === true; }
+	get fermata() { return this._options.fermata === true; }
+	get ghostNote() { return this._options.ghostNote === true; }
+	//get graceNote() { return this._options.graceNote; } // Corrigido e SOBREPOSTO // overwrite
+	get hammerOn() { return this._options.hammerOn === true; }
+	get ligada() { return this._options.ligada === true; }
+	get marcato() { return this._options.marcato === true; }
+	get mordente() { return this._options.mordente === true; }
+	get openString() { return this._options.openString === true; }
+	get pizzicato() { return this._options.pizzicato === true; }
+	get pullOff() { return this._options.pullOff === true; }
+	get roll() { return this._options.roll === true; }
+	get snapPizzicato() { return this._options.snapPizzicato === true; }
+	get staccatissimo() { return this._options.staccatissimo === true; }
+	get staccato() { return this._options.staccato === true; }
+	get sustenido() { return this._options.sustenido === true; }
+	get tenuto() { return this._options.tenuto === true; }
+	get thumb() { return this._options.thumb === true; }
+	get trinado() { return this._options.trinado === true; }
+	get turn() { return this._options.turn === true; }
+	get upBow() { return this._options.upBow === true; }
+	get upperMordent() { return this._options.upperMordent === true; }
+
+	// --- SETTERS ---
+	set acento(val) { this._options.acento = !!val; }
+	set acordes(val) { this._options.acordes = val; } // Array
+	set arpeggio(val) { this._options.arpeggio = !!val; }
+	set bemol(val) { this._options.bemol = !!val; }
+	set beQuad(val) { this._options.beQuad = !!val; }
+	set breath(val) { this._options.breath = !!val; }
+	set crescendo(val) { this._options.crescendo = val; } // String / null
+	//set dedilhado(val) { this._options.dedilhado = val; } // SOBREPOSTO // overwrite
+	set diminuendo(val) { this._options.diminuendo = val; } // String / null
+	set dinamicaForte(val) { this._options.dinamicaForte = val; } // Number
+	set dinamicaMeioForte(val) { this._options.dinamicaMeioForte = !!val; } // Boolean
+	set dinamicaSuave(val) { this._options.dinamicaSuave = val; } // Number
+	set downBow(val) { this._options.downBow = !!val; }
+	set fermataInvertida(val) { this._options.fermataInvertida = !!val; }
+	set fermata(val) { this._options.fermata = !!val; }
+	set ghostNote(val) { this._options.ghostNote = !!val; }
+	//set graceNote(val) { this._options.graceNote = val; } // SOBREPOSTO // overwrite
+	set hammerOn(val) { this._options.hammerOn = !!val; }
+	set ligada(val) { this._options.ligada = !!val; }
+	set marcato(val) { this._options.marcato = !!val; }
+	set mordente(val) { this._options.mordente = !!val; }
+	set openString(val) { this._options.openString = !!val; }
+	set pizzicato(val) { this._options.pizzicato = !!val; }
+	set pullOff(val) { this._options.pullOff = !!val; }
+	set roll(val) { this._options.roll = !!val; }
+	set snapPizzicato(val) { this._options.snapPizzicato = !!val; }
+	set staccatissimo(val) { this._options.staccatissimo = !!val; }
+	set staccato(val) { this._options.staccato = !!val; }
+	set sustenido(val) { this._options.sustenido = !!val; }
+	set tenuto(val) { this._options.tenuto = !!val; }
+	set thumb(val) { this._options.thumb = !!val; }
+	set trinado(val) { this._options.trinado = !!val; }
+	set turn(val) { this._options.turn = !!val; }
+	set upBow(val) { this._options.upBow = !!val; }
+	set upperMordent(val) { this._options.upperMordent = !!val; }
 }

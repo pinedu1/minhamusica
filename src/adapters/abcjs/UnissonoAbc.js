@@ -115,63 +115,6 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 
 	/**
 	 * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
-	 * @param {string} unissonoString - A string do unissono (ex: "[CEG]2").
-	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
-	 * @returns {Unissono} Uma nova instância da classe Unissono.
-	 */
-/*
-	static fromAbc(unissonoString, contextOptions) {
-		const unissonoRegex = /\[([^\]]+)\]([0-9]*\/!*[0-9]*)?(-)?/;
-		const match = unissonoString.match(unissonoRegex);
-
-		if (!match) {
-			throw new Error(`Unissono.parseAbc: String de unissono inválida: "${unissonoString}"`);
-		}
-
-		const [notasArray, notasStr, duracaoStr, ligadura] = match;
-		const unissonoOptions = { ...contextOptions };
-
-		const duracao = this._calcularDuracaoAbcString( unissonoOptions, duracaoStr ?? '');
-
-		if (ligadura) {
-			unissonoOptions.ligada = true;
-		}
-
-		// 2. Parsing das notas internas
-		const notaInternaRegex = /([=^_]?[a-gA-G][,']*)/g;
-		const notas = [];
-		let notaMatch;
-		while ((notaMatch = notaInternaRegex.exec(notasStr)) !== null) {
-			// A duração de cada nota interna é a mesma do unissono.
-			// Passamos a string da nota e o contexto, mas a duração será a do unissono.
-			const nota = NotaAbc.fromAbc(notaMatch[0], contextOptions);
-			notas.push(nota);
-		}
-
-		// 3. Criação do Unissono
-		const unissono = new Unissono(notas, duracao, unissonoOptions);
-
-		// Garante que a duração de cada nota individual seja a mesma do unissono
-		unissono.notas.forEach(n => n.duracao = unissono.duracao);
-
-		return unissono;
-	}
-*/
-
-	/**
-	 * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
-	 * @param {string} unissonoString - A string do unissono (ex: "Gm"![a' !ppp!A,]2-).
-	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
-	 * @returns {Unissono} Uma nova instância da classe Unissono.
-	 */
-	/**
-	 * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
-	 * @param {string} unissonoString - A string do unissono (ex: "Gm"![a' !ppp!A,]2-).
-	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
-	 * @returns {Unissono} Uma nova instância da classe Unissono.
-	 */
-	/**
-	 * USAGE: Cria uma nova instância de Unissono a partir de uma string de notação ABC.
 	 * @param {string} unissonoString - A string do unissono (ex: "Gm"![a' !ppp!A,]2-).
 	 * @param {Object} contextOptions - Opções de contexto (L, M, K).
 	 * @returns {Unissono} Uma nova instância da classe Unissono.
@@ -191,7 +134,6 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 		const { payloadString, optionsGerado } = this._trataPayLoad(payloadGlobalStr);
 
 		let finalOptions = {
-			...contextOptions,
 			...optionsGerado
 		};
 
@@ -205,7 +147,7 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 		const duracaoStr = matchEstrutura[2] || "";
 		if (matchEstrutura[3]) finalOptions.ligada = true;
 
-		const duracaoComum = this._calcularDuracaoAbcString(finalOptions, duracaoStr);
+		const duracaoComum = this._calcularDuracaoAbcString(contextOptions, duracaoStr);
 		const elements = [];
 
 		// --- 3. LOOP DE ELEMENTOS (NOTAS INTERNAS) ---
@@ -213,14 +155,14 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 		let payloadAcumulado = "";
 
 		// Regexes de busca
-		const reUnissono  = /^\[[^\]]+\][\d/]*/;
+		const reUnissono  = /^\[[^\]]+\][\d/]*\-?/;
 		// 1. Quialtera com proporção (p:q:r)
-		const reQuialteraComplexa = /^\([0-9]+:[0-9]+:[0-9]+[a-gA-GzxyZXY[=^_]/;
+		const reQuialteraComplexa = /^\([0-9]+:[0-9]+:[0-9]+[a-gA-GzxyZXY[=^_]\-?/;
 		// 2. Quialtera simples (n ou apenas ()
-		const reQuialteraSimples  = /^\([0-9]*[a-gA-GzxyZXY[=^_]/;
+		const reQuialteraSimples  = /^\([0-9]*[a-gA-GzxyZXY[=^_]\-?/;
 
-		const rePausa     = /^[zxyZXY][\d/]*/;
-		const reNota      = /^[=^_]?[a-gA-G][,']*/;
+		const rePausa     = /^[zxyZXY][\d/]*\-?/;
+		const reNota      = /^[=^_]?[a-gA-G][,']*\-?/;
 
 		while (strLoop.length > 0) {
 			let matchElemento = null;

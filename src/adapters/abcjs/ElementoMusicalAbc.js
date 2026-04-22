@@ -611,6 +611,10 @@ export class ElementoMusicalAbc extends AdapterUtils {
 			options.beQuad = true;
 			payloadString = payloadString.replaceAll("=", '');
 		}
+		if ( payloadString.endsWith ( "-" ) ) {
+			options.ligada = true;
+			payloadString = payloadString.slice(0, -1);
+		}
 
 		// 1. DEDILHADO (Letras p, i, m, a, c OU números)
 		if (payloadString.includes("$")) {

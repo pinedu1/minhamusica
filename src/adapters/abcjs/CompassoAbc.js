@@ -191,13 +191,19 @@ export class CompassoAbc {
 
 		// --- 2. DEFINIÇÃO DOS REGEX DE BUSCA (Individuais) ---
 		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (cifra)
-		const reUnissono  = /^\[[^\]]+\][\d/]*/;
-		const reQuialtera = /^\([0-9]+(?::[0-9]+:[0-9]+)?/;
-		const rePausa     = /^[zxyZXY][\d/]*/;
-		const reNota      = /^[=^_]?[a-gA-G][,']*[\d/]*/; // A nota pura
+		const reUnissono  = /^\[[^\]]+\][\d/]*\-?/;
+		const reQuialtera = /^\([0-9]+(?::[0-9]+:[0-9]+)?\-?/;
+		const rePausa     = /^[zxyZXY][\d/]*\-?/;
+		const reNota      = /^[=^_]?[a-gA-G][,']*[\d/]*\-?/; // A nota pura
 
 		// Regex para identificar se o início da string é um Payload
-		const rePayload   = /^("[^"]+"|![^!]+!)+/;
+		//const rePayload   = /^("[^"]+"|![^!]+!)+/;
+		// Captura qualquer coisa (incluindo espaços e pontos)
+		// desde que a posição atual NÃO seja o início de um elemento musical.
+		//const rePayload = /^((?!"|!|\[|\(|[zxyZXY]|[=^_]?[a-gA-G]).)+/;
+		// Captura 1 ou mais ocorrências de: Cifras ("...") OU Dinâmicas (!...!) OU qualquer caractere
+		// que NÃO seja início de Nota, Pausa, Uníssono, Quialtera ou Barras/Ligaduras
+		const rePayload = /^(?:"[^"]*"|![^!]*!|[^\[\(=^_a-gA-GzxyZXY\-\|:])+/;
 
 		// --- 3. LOOP DE ELEMENTOS ---
 		while (str.length > 0) {
@@ -224,10 +230,79 @@ export class CompassoAbc {
 			} else if ((matchElemento = str.match(reNota))) {
 				tipoEncontrado = 'nota';
 			}
+			if (matchElemento) {
+				let textoCorpo = matchElemento[0]; // Transformado em 'let' para ser atualizado pela quiáltera
+				let fullToken = payloadAcumulado + textoCorpo;
 
+				// Instancia de acordo com o tipo
+				switch (tipoEncontrado) {
+					case 'unissono':
+						elements.push(UnissonoAbc.fromAbc(fullToken, contextOptions));
+						break;
+					case 'quialtera': {
+						// 1. Extrai 'p' e 'r' do cabeçalho da quiáltera para saber quantas notas caçar
+						const matchHeader = textoCorpo.match(/^\(([0-9]+)(?::([0-9]+))?(?::([0-9]+))?/);
+						const p = parseInt(matchHeader[1], 10);
+						const r = matchHeader[3] ? parseInt(matchHeader[3], 10) : null;
+						const limiteNotas = r || p;
+
+						let subStr = str.substring(textoCorpo.length); // O resto da string, logo após o "(p:q:r"
+						let notasConsumidas = "";
+						let contador = 0;
+
+						// 2. Caça e recorta exatamente 'limiteNotas' elementos musicais
+						while (subStr.length > 0 && contador < limiteNotas) {
+							let matchSubPayload;
+							// Consome payloads perdidos no meio (ex: "C" ou espaços)
+							while ((matchSubPayload = subStr.match(rePayload))) {
+								notasConsumidas += matchSubPayload[0];
+								subStr = subStr.substring(matchSubPayload[0].length);
+							}
+
+							// Verifica se o próximo item é Nota, Pausa ou Uníssono
+							let subElem = subStr.match(reUnissono) || subStr.match(rePausa) || subStr.match(reNota);
+							if (subElem) {
+								notasConsumidas += subElem[0];
+								subStr = subStr.substring(subElem[0].length);
+								contador++;
+							} else {
+								break; // Evita loop infinito se a sintaxe estiver quebrada
+							}
+						}
+
+						// 3. Captura traço de ligadura se estiver grudado após a última nota da quiáltera
+						if (subStr.startsWith('-')) {
+							notasConsumidas += '-';
+						}
+
+						// 4. "Engorda" as strings originais com o que foi consumido
+						fullToken += notasConsumidas;
+						textoCorpo += notasConsumidas; // ISSO garante que o 'str.substring' lá embaixo corte tudo!
+
+						elements.push(QuialteraAbc.fromAbc(fullToken, contextOptions));
+						break;
+					}
+					case 'pausa':
+						elements.push(PausaAbc.fromAbc(fullToken, contextOptions));
+						break;
+					case 'nota':
+						elements.push(NotaAbc.fromAbc(fullToken, contextOptions));
+						break;
+				}
+
+				// Graças ao 'textoCorpo += notasConsumidas', isso agora corta a quiáltera inteira!
+				str = str.substring(textoCorpo.length).trimStart();
+			} else {
+				// Se restou algo que não é header, barra ou nota (ex: lixo ou erro de sintaxe)
+				if (str.startsWith('-') || str.match(regexBarra)) break;
+
+				console.warn("Caractere ignorado pelo Lexer:", str[0]);
+				str = str.substring(1).trimStart();
+			}
+/*
 			if (matchElemento) {
 				const textoCorpo = matchElemento[0];
-				const fullToken = payloadAcumulado + textoCorpo;
+				let fullToken = payloadAcumulado + textoCorpo;
 
 				// Instancia de acordo com o tipo
 				switch (tipoEncontrado) {
@@ -253,6 +328,7 @@ export class CompassoAbc {
 				console.warn("Caractere ignorado pelo Lexer:", str[0]);
 				str = str.substring(1).trimStart();
 			}
+*/
 		}
 
 		// --- 4. LIGADURAS E BARRA FINAL ---
