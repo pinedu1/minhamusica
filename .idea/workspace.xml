@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/voz/Voz.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/voz/Voz.js" afterDir="false" />
-    </list>
+    <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -170,7 +166,7 @@
       <workItem from="1776595096477" duration="24465000" />
       <workItem from="1776685094475" duration="33307000" />
       <workItem from="1776771838663" duration="37319000" />
-      <workItem from="1776854732885" duration="64304000" />
+      <workItem from="1776854732885" duration="64532000" />
     </task>
     <servers />
   </component>
