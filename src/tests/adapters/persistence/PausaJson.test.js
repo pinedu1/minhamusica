@@ -67,11 +67,6 @@ describe( 'PausaJson', () => {
 			      breath: true,
 			      acordes: [ 'C', 'G' ],
 			      pausaDeCompasso: true,
-			      fermataInvertida: false,
-			      unidadeTempo: null,
-			      obra: null,
-			      voz: null,
-			      compasso: null,
 		      }
 	      }
       );
@@ -87,16 +82,6 @@ describe( 'PausaJson', () => {
 		      tipo: 'pausa'
 		      , duracao: '1/2'
 		      , options: {
-			      invisivel: false,
-			      fermata: false,
-			      breath: false,
-			      acordes: [],
-			      pausaDeCompasso: false,
-			      fermataInvertida: false,
-			      unidadeTempo: null,
-			      obra: null,
-			      voz: null,
-			      compasso: null,
 		      }
 	      }
       );

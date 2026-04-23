@@ -35,7 +35,7 @@ export class Pausa extends ElementoMusical {
         };
         this._duracao = duracao;
     }
-
+	get tipo() { return 'pausa'; }
     /**
      * Retorna se a pausa possui fermata.
      *

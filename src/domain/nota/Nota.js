@@ -108,7 +108,6 @@ export class Nota extends ElementoMusical {
 
 			...options
 		};
-
 		// --- VALIDAÇÕES DEFENSIVAS MANUAIS ---
 
 		if (this._options.dinamicaForte < 0 || this._options.dinamicaForte > 3) {
@@ -136,6 +135,7 @@ export class Nota extends ElementoMusical {
 			throw new TypeError("Nota: dedilhado deve ser Array, null ou false.");
 		}
 	}
+	get tipo() { return 'nota'; }
 
     // Getters / Setters
     get altura() { return this.#altura; }

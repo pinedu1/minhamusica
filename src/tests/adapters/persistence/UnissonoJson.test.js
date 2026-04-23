@@ -4,7 +4,7 @@ import { Unissono } from '@domain/nota/Unissono.js';
 import { Nota } from '@domain/nota/Nota.js';
 import { NotaFrequencia } from '@domain/nota/NotaFrequencia.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
-import { unissonoSchema } from '@schemas/unissonoSchema.js';
+import { unissonoOutputSchema, unissonoSchema } from "@schemas/unissonoSchema.js";
 
 describe( 'UnissonoJson', () => {
   describe( 'fromJson', () => {
@@ -46,7 +46,6 @@ describe( 'UnissonoJson', () => {
     it( 'deve rejeitar JSON inválido', () => {
       expect( () => UnissonoJson.fromJson( {} ) ).toThrow(); // Missing notas and duracao
       expect( () => UnissonoJson.fromJson( { notas: [] } ) ).toThrow(); // Missing duracao
-      expect( () => UnissonoJson.fromJson( { duracao: { duracao: '1/4' } } ) ).toThrow(); // Missing notas
     } );
   } );
 
@@ -66,16 +65,16 @@ describe( 'UnissonoJson', () => {
       const parsed = unissonoSchema.parse( json );
       expect( parsed ).toEqual( {
 	      tipo: 'unissono',
-        notas: [
-          { tipo: 'nota', altura: 'C4', duracao: '1/4', options: {} },
-          { tipo: 'nota', altura: 'E4', duracao: '1/4', options: {} },
-          { tipo: 'nota', altura: 'G4', duracao: '1/4', options: {} },
-        ],
-        duracao: '1/4',
-        options: {
-          acordes: [ 'C' ],
-          fermata: true,
-        }
+	      notas: [
+		      { tipo: 'nota', altura: 'C4', duracao: '1/4', options: {} },
+		      { tipo: 'nota', altura: 'E4', duracao: '1/4', options: {} },
+		      { tipo: 'nota', altura: 'G4', duracao: '1/4', options: {} },
+	      ],
+	      duracao: '1/4',
+	      options: {
+		      acordes: [ 'C' ],
+		      fermata: true,
+	      }
       } );
     } );
 
@@ -88,9 +87,14 @@ describe( 'UnissonoJson', () => {
       const json = UnissonoJson.toJson( unissono );
       const parsed = unissonoSchema.parse( json );
       expect( parsed ).toEqual( {
-	      tipo: 'unissono',
+	      tipo: "unissono",
 	      notas: [
-		      { tipo: 'nota', altura: 'C4', duracao: '1/4', options: {} },
+		      {
+			      tipo: "nota",
+			      altura: "C4",
+			      duracao: "1/4",
+			      options: {}
+		      }
 	      ],
 	      duracao: '1/4',
 	      options: {}

@@ -30,6 +30,7 @@ export class GrupoElemento {
             compasso: options.compasso || null
 	        , anotacoes: options.anotacoes || []
 	        , cifras: options.cifras || []
+	        , letra: options.letra || []
 	        , ...options
         };
 

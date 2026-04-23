@@ -110,7 +110,7 @@ export class Quialtera extends ElementoMusical {
 			...options
 		};
 	}
-
+	get tipo() { return 'quialtera'; }
 	/**
 	 * Adiciona um elemento à sequência da quiáltera.
 	 * @param {ElementoMusical} elemento

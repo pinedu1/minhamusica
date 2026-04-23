@@ -17,7 +17,11 @@ export class Compasso {
 
     /** @type {Array<GrupoElemento>} */
     #grupos = [];
-	/** @type {Array<ElementoMusical>} */
+
+	/** 
+     * @deprecated A propriedade #elements está obsoleta. Use #grupos em seu lugar.
+     * @type {Array<ElementoMusical>} 
+     */
 	#elements = [];
 
     /** @type {Object} */

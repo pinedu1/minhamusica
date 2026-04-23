@@ -16,14 +16,20 @@ export const tipoBarraSchema = z.union([
 	// 2. Permite passar diretamente a chave como string (ex: 'FINAL')
 	z.enum([chavesTipoBarra[0], ...chavesTipoBarra.slice(1)])
 ]);
+
+
+// ============================================================================
+// CLOSURE REUTILIZÁVEL DE EXTRAÇÃO
+// ============================================================================
+
 /**
- * Schema para exportação simplificada do Tipo de Barra.
- * Transforma a entrada no formato: { tipoBarra: 'REPEAT_OPEN' }
+ * Helper para extrair apenas a string da chave (ex: 'REPEAT_OPEN', 'FINAL')
+ * de qualquer tipo de entrada (Objeto Enum ou String).
  */
-export const tipoBarraOutputSchema = z.preprocess((val) => {
-	// Se recebermos a chave diretamente como string
+const extrairChaveTipoBarra = (val) => {
+	// Se recebermos a chave diretamente como string válida no enum
 	if (typeof val === 'string' && TipoBarra[val]) {
-		return { tipoBarra: val };
+		return val;
 	}
 
 	// Se recebermos o objeto do enum {nome, abc}
@@ -31,10 +37,33 @@ export const tipoBarraOutputSchema = z.preprocess((val) => {
 		const chave = Object.keys(TipoBarra).find(
 			k => TipoBarra[k].nome === val.nome
 		);
-		return { tipoBarra: chave || 'NONE' };
+		return chave || 'NONE'; // Retorna a chave ou 'NONE' como fallback
 	}
 
-	return val;
-}, z.object({
-	tipoBarra: z.string()
-}));
+	return 'NONE'; // Fallback final de segurança
+};
+
+
+// ============================================================================
+// SCHEMAS DE SAÍDA (OUTPUT)
+// ============================================================================
+
+/**
+ * NOVO: Schema para exportação apenas da STRING pura.
+ * Transforma a entrada e retorna APENAS 'Chave' (ex: 'REPEAT_OPEN')
+ */
+export const tipoBarraOutputStringSchema = z.preprocess(
+	(val) => extrairChaveTipoBarra(val),
+	z.string()
+);
+
+/**
+ * Schema para exportação do OBJETO simplificado.
+ * Transforma a entrada no formato: { tipoBarra: 'REPEAT_OPEN' }
+ */
+export const tipoBarraOutputSchema = z.preprocess(
+	(val) => ({ tipoBarra: extrairChaveTipoBarra(val) }),
+	z.object({
+		tipoBarra: z.string()
+	})
+);

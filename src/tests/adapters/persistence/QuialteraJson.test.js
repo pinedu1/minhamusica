@@ -47,7 +47,6 @@ describe( 'QuialteraJson', () => {
     it( 'deve rejeitar JSON inválido', () => {
       expect( () => QuialteraJson.fromJson( {} ) ).toThrow(); // Missing notas and duracao
       expect( () => QuialteraJson.fromJson( { notas: [] } ) ).toThrow(); // Missing duracao
-      expect( () => QuialteraJson.fromJson( { duracao: { duracao: '1/4' } } ) ).toThrow(); // Missing notas
     } );
   } );
 

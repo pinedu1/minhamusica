@@ -5,48 +5,8 @@
  */
 
 import { z } from 'zod';
-import { notaSchema, notaOutputSchema } from '@schemas/notaSchema.js';
-import { pausaSchema, pausaOutputSchema } from "@schemas/pausaSchema.js";
-import { unissonoSchema, unissonoOutputSchema } from "@schemas/quialteraSchema.js";
 import { tempoDuracaoSchema, tempoDuracaoOutputSchema } from '@schemas/tempoDuracaoSchema.js';
-
-/**
- * Validação de instâncias de classe (Domain) - Usado APENAS na entrada
- */
-const instanciaMusical = z.any().refine(val => {
-	// CORREÇÃO 1: Adicionado o 'return'
-	return val && ['nota', 'pausa', 'unissono', 'quialtera'].includes(val.tipo);
-}, {
-	message: "Cada item deve ser um objeto JSON válido ou uma instância de Nota, Pausa, Unissono ou Quialtera."
-});
-
-/**
- * Validação do array de notas/pausas para entrada.
- */
-const arrayNotasSchema = z.array(
-	z.union([
-		z.lazy(() => notaSchema),
-		z.lazy(() => pausaSchema),
-		z.lazy(() => unissonoSchema),
-		z.lazy(() => quialteraSchema),
-		instanciaMusical // Permitimos instâncias entrarem
-	])
-).min(1, {
-	message: "Uma quialtera deve conter pelo menos um item."
-});
-
-/**
- * Validação do array de notas/pausas para saída.
- */
-const arrayNotasOutputSchema = z.array(
-	z.union([
-		z.lazy(() => notaOutputSchema),
-		z.lazy(() => pausaOutputSchema),
-		z.lazy(() => unissonoOutputSchema),
-		z.lazy(() => quialteraOutputSchema)
-		// CORREÇÃO 3: instanciaMusical removida. A saída DEVE forçar a serialização.
-	])
-).min(1, { message: "Um unissono deve conter pelo menos uma nota." });
+import { arrayElementosOutputSchema, arrayElementosSchema } from "@schemas/elementosSchema.js";
 
 /**
  * Schema de entrada para as opções do Unissono.
@@ -133,7 +93,7 @@ const quialteraOptionsSchema = z.object({
  */
 export const quialteraSchema = z.object({
 	tipo: z.literal( 'quialtera' ).default( 'quialtera' ),
-	notas: arrayNotasSchema,
+	notas: z.lazy(() => arrayElementosSchema).default([]),
 	duracao: tempoDuracaoSchema.transform((val) => { return `${val.numerador}/${val.denominador}` }),
 	options: quialteraOptionsSchema.default({})
 }).strict()
@@ -159,7 +119,7 @@ export const quialteraSchema = z.object({
  */
 export const quialteraOutputSchema = z.object({
 	tipo: z.literal( 'quialtera' ).default( 'quialtera' ),
-	notas: arrayNotasOutputSchema,
+	notas: z.lazy(() => arrayElementosOutputSchema),
 	duracao: tempoDuracaoOutputSchema.transform((val) => { return val.duracao }),
 	// Lê as propriedades internas (geralmente mapeadas como _options na classe)
 	_options: quialteraOptionsSchema

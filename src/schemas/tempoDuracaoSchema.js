@@ -89,3 +89,14 @@ export const tempoDuracaoOutputSchema = z.object({
 		duracao: `${val.numerador}/${val.denominador}`
 	};
 });
+
+/**
+ * Schema focado em transformar a Classe/Objeto de domínio em String para JSON.
+ * Usado pelo adaptador static toJson().
+ */
+export const tempoDuracaoOutputStringSchema = z.object({
+	numerador: z.number(),
+	denominador: z.number()
+}).transform((val) => {
+	return `${val.numerador}/${val.denominador}`;
+});

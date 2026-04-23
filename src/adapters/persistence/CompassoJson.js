@@ -7,6 +7,8 @@ import { PausaJson } from "@persistence/PausaJson.js";
 import { NotaJson } from "@persistence/NotaJson.js";
 import { UnissonoJson } from "@persistence/UnissonoJson.js";
 import { GrupoElemento } from "@domain/compasso/GrupoElemento.js";
+import { GrupoElementoJson } from "@persistence/GrupoElementoJson.js";
+import { Tonalidade } from '@domain/compasso/Tonalidade.js';
 
 export class CompassoJson {
 	/**
@@ -36,10 +38,10 @@ export class CompassoJson {
 		const optionsProcessado = { };
 
 		if (options.barraInicial) {
-			optionsProcessado.barraInicial = new TipoBarra(options.barraInicial);
+			optionsProcessado.barraInicial = TipoBarra.get(options.barraInicial);
 		}
 		if (options.barraFinal) {
-			optionsProcessado.barraFinal = new TipoBarra(options.barraFinal);
+			optionsProcessado.barraFinal = TipoBarra.get(options.barraFinal);
 		}
 		if (options.mudancaDeTom) {
 			optionsProcessado.mudancaDeTom = Tonalidade.create(options.mudancaDeTom);
@@ -59,25 +61,23 @@ export class CompassoJson {
 
 		// 2. CRIAÇÃO DA INSTÂNCIA PRIMEIRO (Ainda sem elementos para não engatilhar validação)
 		const compasso = new Compasso([], optionsProcessado);
-
 		// 3. Roteamento e Instanciação dos Elementos (Nota, Pausa, Unissono ou Quialtera)
-		const instanciasElementos = elementos.map(n => {
-			if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
-			if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
-			if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
-			if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
-			throw new Error(`CompassoJson.elements: Tipo de elemento desconhecido: "${n.tipo}"`);
-		});
-		const arrayGrupos = grupos.map(grupo => {
-			const instanciasGrupoElementos = grupo.map(n => {
+		let instanciasElementos = [];
+		let arrayGrupos = [];
+		if (elementos && Array.isArray(elementos) && elementos.length > 0) {
+			instanciasElementos = elementos.map(n => {
 				if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
 				if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
 				if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
 				if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
-				return NotaJson.fromJson(n);
+				throw new Error(`CompassoJson.elements: Tipo de elemento desconhecido: "${n.tipo}"`);
 			});
-			throw new Error(`CompassoJson.grupo.elements: Tipo de elemento desconhecido: "${n.tipo}"`);
-		});
+		}
+		if (grupos && Array.isArray(grupos) && grupos.length > 0) {
+			arrayGrupos = grupos.map(grupo => {
+				return GrupoElementoJson.fromJson(grupo);
+			});
+		}
 		compasso.grupos = arrayGrupos;
 		// 4. Atribuir os elementos já hidratados
 		compasso.elements = instanciasElementos;

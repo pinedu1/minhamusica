@@ -23,7 +23,7 @@ describe('CompassoAbc', () => {
 					bpm: 90,
 					unidade: new TempoDuracao(1, 4)
 				},
-				tonalidade: Tonalidade.Dm,
+				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
 			const compasso = new Compasso([], {
 				barraInicial: TipoBarra.NONE,
@@ -56,7 +56,7 @@ describe('CompassoAbc', () => {
 					bpm: 90,
 					unidade: new TempoDuracao(1, 4)
 				},
-				tonalidade: Tonalidade.Dm,
+				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
 			const compasso = new Compasso([], {});
 			compasso.obra = obraMock;
@@ -88,7 +88,7 @@ describe('CompassoAbc', () => {
 					bpm: 90,
 					unidade: new TempoDuracao(1, 4)
 				},
-				tonalidade: Tonalidade.Dm,
+				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
 			const compasso = new Compasso([], {
 				barraInicial: TipoBarra.get('REPEAT_OPEN')
@@ -115,7 +115,7 @@ describe('CompassoAbc', () => {
 					bpm: 90,
 					unidade: new TempoDuracao(1, 4)
 				},
-				tonalidade: Tonalidade.Dm,
+				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
 			const compasso = new Compasso([], {
 				barraInicial: TipoBarra.get('REPEAT_OPEN')
@@ -144,7 +144,34 @@ describe('CompassoAbc', () => {
 					bpm: 90,
 					unidade: new TempoDuracao(1, 4)
 				},
-				tonalidade: Tonalidade.Dm,
+				tonalidade: Tonalidade.create('Dm'),
+			}); // O ID ou estrutura que a classe Obra exigir
+			const compasso = new Compasso([], {
+				barraInicial: TipoBarra.get('REPEAT_OPEN')
+				, barraFinal: TipoBarra.get('REPEAT_CLOSE')
+			});
+			compasso.obra = obraMock;
+			//:|C D E F:|\nw:A-ti-rei o
+			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4), { letra: 'A' }); // Usando new Nota diretamente
+			const n2 = new Nota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4), { letra: 'ti' }); // Usando new Nota diretamente
+			const n3 = new Nota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4), { letra: 'rei' }); // Usando new Nota diretamente
+			const n4 = new Nota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4), { letra: 'o' }); // Usando new Nota diretamente
+			const g1 = new GrupoElemento([n1, n2], {compasso: compasso});
+			const g2 = new GrupoElemento([n3, n4], {compasso: compasso});
+			compasso.grupos = [g1, g2];
+
+			const abcResult = CompassoAbc.toAbc(compasso);
+			expect(abcResult).toBe('|:CD EF:|\nw:|A ti rei o|');
+		});
+		it('f) Teste de letra na Nota saída deve ser: |:CD EF:|\\nw:|A ti rei o|', () => {
+			let obraMock = new Obra(1, [],{
+				metrica: new TempoMetrica(4, 4),
+				unidadeTempo: new TempoDuracao(1, 4),
+				andamento: {
+					bpm: 90,
+					unidade: new TempoDuracao(1, 4)
+				},
+				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
 			const compasso = new Compasso([], {
 				barraInicial: TipoBarra.get('REPEAT_OPEN')
@@ -304,6 +331,99 @@ describe('CompassoAbc', () => {
 			expect(grupo.elements[0].altura.abc).toBe('d');
 			expect(grupo.elements[0].duracao.toString()).toBe('1/8');
 			expect(compasso.barraFinal).toBe(TipoBarra.STANDARD);
+		});
+		it('8) Deve parsear "| A B C D |" com entrada de letra A ti re i', () => {
+			const compassoString = "| A B C D |";
+			const letraString = "A ti re i";
+			const compasso = CompassoAbc.fromAbc(compassoString, { ...obraMock.options, ...{ letraString: letraString } });
+
+			expect(compasso.grupos.length).toBe(4);
+			let grupo = compasso.grupos[0];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('A');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('A');
+			grupo = compasso.grupos[1];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('B');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('ti');
+			grupo = compasso.grupos[2];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('C');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('re');
+			grupo = compasso.grupos[3];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('D');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('i');
+		});
+		it('9) Deve parsear "| A B C D |" com entrada de letra "A ti re i o" letra > notas', () => {
+			const compassoString = "| A B C D |";
+			const letraString = "A ti re i o";
+			const compasso = CompassoAbc.fromAbc(compassoString, { ...obraMock.options, ...{ letraString: letraString } });
+
+			expect(compasso.grupos.length).toBe(4);
+			let grupo = compasso.grupos[0];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('A');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('A');
+			grupo = compasso.grupos[1];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('B');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('ti');
+			grupo = compasso.grupos[2];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('C');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('re');
+			grupo = compasso.grupos[3];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('D');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('i.o');
+		});
+		it('9) Deve parsear "| A B C D |" com entrada de letra "A ti rei" letra > notas', () => {
+			const compassoString = "| A B C D |";
+			const letraString = "A ti rei";
+			const compasso = CompassoAbc.fromAbc(compassoString, { ...obraMock.options, ...{ letraString: letraString } });
+
+			expect(compasso.grupos.length).toBe(4);
+			let grupo = compasso.grupos[0];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('A');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('A');
+			grupo = compasso.grupos[1];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('B');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('ti');
+			grupo = compasso.grupos[2];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('C');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('rei');
+			grupo = compasso.grupos[3];
+			expect(grupo.elements.length).toBe(1);
+			expect(grupo.elements[0]).toBeInstanceOf(Nota);
+			expect(grupo.elements[0].altura.abc).toBe('D');
+			expect(grupo.elements[0].duracao.toString()).toBe('1/4');
+			expect(grupo.elements[0].letra).toBe('');
 		});
 	});
 	describe('Sessão 3: Testes de parse de ABC para Compasso (fromAbc) 6/8 K:B', () => {

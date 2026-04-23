@@ -350,6 +350,54 @@ export class CompassoAbc {
 		} else {
 			compassoInstance.elements = elements;
 		}
+
+		// --- NOVO BLOCO: CASAMENTO DE LETRAS ---
+		if (contextOptions && contextOptions.letraString) {
+			this.#aplicarLetras(compassoInstance, contextOptions.letraString);
+		}
+
 		return compassoInstance;
+	}
+
+	/**
+	 * Tokeniza a string de letras (w:) e mapeia para os elementos musicais do compasso.
+	 * @param {Compasso} compasso O compasso já preenchido com os elementos musicais.
+	 * @param {string} letraString A string da letra extraída do ABC (ex: "| A ti rei o |")
+	 * @private
+	 */
+	static #aplicarLetras(compasso, letraString) {
+		// 1. Limpa e tokeniza a string de letras
+		const cleanString = letraString.replace(/\|/g, '').trim();
+		if (!cleanString) return;
+
+		const tokens = cleanString.match(/([^\s\-]+-?|-)/g) || [];
+		const numTokens = tokens.length;
+
+		// 2. Coleta todos os elementos que podem receber letra em uma lista única
+		const lyricableElements = [];
+		if (compasso.grupos && compasso.grupos.length > 0) {
+			compasso.grupos.forEach(grupo => lyricableElements.push(...grupo.elements));
+		} else {
+			lyricableElements.push(...compasso.elements);
+		}
+		const numElements = lyricableElements.length;
+
+		if (numElements === 0) return;
+
+		// 3. Aplica a lógica de distribuição
+		if (numTokens > numElements) {
+			// a) Mais tokens que elementos: agrupa o excedente no último
+			for (let i = 0; i < numElements - 1; i++) {
+				lyricableElements[i].letra = tokens[i];
+			}
+			const remainingTokens = tokens.slice(numElements - 1);
+			lyricableElements[numElements - 1].letra = remainingTokens.join('.');
+
+		} else {
+			// b) Menos ou igual número de tokens: distribui e completa com vazio
+			for (let i = 0; i < numElements; i++) {
+				lyricableElements[i].letra = (i < numTokens) ? tokens[i] : '';
+			}
+		}
 	}
 }
