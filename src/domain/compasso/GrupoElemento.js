@@ -35,6 +35,12 @@ export class GrupoElemento {
 
         this.elements = elements;
     }
+	/**
+	 * USAGE: Adiciona anotação.
+	 */
+	addAnotacao(texto, posicao, local = "_") {
+		this.#options.anotacoes.push({ texto, posicao, local });
+	}
 
     /**
      * Adiciona um elemento musical ao grupo.
@@ -98,7 +104,7 @@ export class GrupoElemento {
 	 * @returns {Number}
 	 */
 	getPulsos() {
-		return this.compasso.getPulsos(this.getUnidadeTempo());
+		return this.compasso.getTotalPulsos(this.getUnidadeTempo());
 	}
 	/**
 	 * USAGE: Adiciona cifra.
@@ -138,5 +144,8 @@ export class GrupoElemento {
 
 	get acordes() {
 		return this.#options.acordes;
+	}
+	get pulsosOcupados() {
+		return this.elements.reduce((total, e) => total + e.pulsoElemento, 0);
 	}
 }

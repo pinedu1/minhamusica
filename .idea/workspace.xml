@@ -6,7 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Compasso.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Compasso.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Duracao.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Duracao.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/compasso/GrupoElemento.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/GrupoElemento.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +109,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="NotaAbc.test" />
+      <arguments value="CompassoAbc.test" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -169,7 +177,7 @@
       <workItem from="1776595096477" duration="24465000" />
       <workItem from="1776685094475" duration="33307000" />
       <workItem from="1776771838663" duration="37319000" />
-      <workItem from="1776854732885" duration="33434000" />
+      <workItem from="1776854732885" duration="37278000" />
     </task>
     <servers />
   </component>

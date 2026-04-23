@@ -8,6 +8,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "testes": "npm run test:domain && npm run test:persistence && npm run test:abcjs && npm run test:integration",
+    "test:domain": "vitest run src/tests/domain",
+    "test:adapters": "vitest run src/tests/adapters",
+    "test:persistence": "vitest run src/tests/adapters/persistence",
+    "test:abcjs": "vitest run src/tests/adapters/abcjs",
+    "test:integration": "vitest run src/tests/integration",
     "lint": "eslint src --ext .js,.ts",
     "sass": "sass src/style/style.scss:src/style/style.css",
     "sass:watch": "sass --watch src/style/style.scss:src/style/style.css"

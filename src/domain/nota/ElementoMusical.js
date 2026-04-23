@@ -62,7 +62,11 @@ export class ElementoMusical {
 		}
 		return acorde;
 	}
-
+	get pulsoElemento() {
+		const ut = this.getUnidadeTempo().razao;
+		const rz = this.duracao.razao
+		return rz / ut;
+	}
 	/**
 	 * Busca Numero de semitons para tranpor a musica
 	 * esta propriedade será definida nos objetos superiores. (compasso|voz|obra)

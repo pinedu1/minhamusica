@@ -16,7 +16,7 @@ import { GrupoElementoAbc } from "@abcjs/GrupoElementoAbc.js";
 export class CompassoAbc {
 	/**
 	 * USAGE: Orquestra a geração da string ABC completa do compasso.
-	 * Agrupa as notas visivelmente baseando-se no total de pulsos e na metade do compasso.
+	 * Agrupa as notas visivelmente baseando-se no total de pulsosOcupados e na metade do compasso.
 	 * @param {Compasso} compasso - O compasso a ser convertido.
 	 * @returns {string}
 	 */
@@ -24,7 +24,7 @@ export class CompassoAbc {
 		let abc = "";
 		// Resolvendo unidade de tempo local com fallback para 1/8 exclusivo deste método
 		const ut = compasso.getUnidadeTempo();
-		let pulsosTotais = compasso.getPulsos(ut);
+		let pulsosTotais = compasso.getTotalPulsos(ut);
 
 		if (compasso.options.barraInicial && (compasso.options.barraInicial !== TipoBarra.NONE)) {
 			abc += compasso.options.barraInicial.abc;
@@ -78,8 +78,6 @@ export class CompassoAbc {
 				}
 				return ''; // Fallback de segurança
 			})(elemento)}`;
-			const pulsosElemento = elemento.duracao.razao / ut.razao;
-			pulsosAcumulados += pulsosElemento;
 
 			// Insere o espaço para quebrar o agrupamento (beam) na metade do compasso
 			// Usa uma pequena margem (0.001) para contornar imprecisões de ponto flutuante
@@ -90,6 +88,7 @@ export class CompassoAbc {
 				meioAlcancado = true;
 			}
 		});
+		pulsosAcumulados += compasso.pulsosOcupados;
 		// --- NOVO BLOCO: COMPLEMENTO DE PAUSA (CORRIGIDO) ---
 		const pulsosFaltantes = pulsosTotais - pulsosAcumulados;
 

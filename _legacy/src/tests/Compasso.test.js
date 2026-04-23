@@ -53,7 +53,7 @@ describe('Classe Compasso', () => {
 
     describe('Geração ABC e Agrupamento (Beaming)', () => {
         it('deve agrupar corretamente compassos pares (M: 4/4, 4 semínimas)', () => {
-            // Em 4/4 com 4 notas de 1 tempo, o corte é no meio (após 2 pulsos)
+            // Em 4/4 com 4 notas de 1 tempo, o corte é no meio (após 2 pulsosOcupados)
             const compasso = Compasso.create({
                 elementos: [
                     { freq: "C", tempo: "1/4" },
@@ -71,7 +71,7 @@ describe('Classe Compasso', () => {
         });
 
         it('deve agrupar compassos ímpares dando prioridade à primeira metade (M: 3/4, 3 semínimas)', () => {
-            // Em 3/4 com 3 notas, Math.ceil(3/2) = 2 pulsos.
+            // Em 3/4 com 3 notas, Math.ceil(3/2) = 2 pulsosOcupados.
             // O espaço deve vir após a segunda nota.
             const compasso = Compasso.create({
                 elementos: [
@@ -196,9 +196,9 @@ describe('Classe Compasso', () => {
 	    
 	    // Matemática do ABC:
 	    // L:1/4
-	    // Duração do G (3/8) -> (3/8) / (1/4) = 1.5 pulsos
-	    // Pulsos totais (4/4) = 4.0 pulsos
-	    // Falta = 4.0 - 1.5 = 2.5 pulsos
+	    // Duração do G (3/8) -> (3/8) / (1/4) = 1.5 pulsosOcupados
+	    // Pulsos totais (4/4) = 4.0 pulsosOcupados
+	    // Falta = 4.0 - 1.5 = 2.5 pulsosOcupados
             const result = compasso.toAbc();
             console.log("----------------------");
             console.log(result);

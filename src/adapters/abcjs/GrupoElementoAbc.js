@@ -10,7 +10,7 @@ import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
 export class GrupoElementoAbc {
 	/**
 	 * USAGE: Orquestra a geração da string ABC completa do compasso.
-	 * Agrupa as notas visivelmente baseando-se no total de pulsos e na metade do compasso.
+	 * Agrupa as notas visivelmente baseando-se no total de pulsosOcupados e na metade do compasso.
 	 * @param {Compasso} grupoElemento - O compasso a ser convertido.
 	 * @returns {string}
 	 */

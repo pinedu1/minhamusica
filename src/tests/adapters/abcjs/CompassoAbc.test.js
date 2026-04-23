@@ -48,7 +48,7 @@ describe('CompassoAbc', () => {
 			expect(abcResult).toBe("CD EF");
 		});
 
-		it('b) Teste de anotações/cifras', () => {
+		it('b) Teste de anotações/cifras saída deve ser: ^dedilhado especial"C z3|', () => {
 			let obraMock = new Obra(1, [],{
 				metrica: new TempoMetrica(4, 4),
 				unidadeTempo: new TempoDuracao(1, 4),
@@ -62,18 +62,13 @@ describe('CompassoAbc', () => {
 			compasso.obra = obraMock;
 			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
 			const g1 = new GrupoElemento([n1], {compasso: compasso});
+			g1.addAnotacao("dedilhado especial", 0, "^");
 			compasso.grupos = [g1];
-/*
-			//TODO: Verificar depois o que fazer com isso
-			compasso.addAnotacao("dedilhado especial", 0, "^");
-*/
 
 			const abcResult = CompassoAbc.toAbc(compasso);
-			//TODO: Contar pulsos no GrupoElemento e no Compasso
-			//expect(abcResult).toBe('"^dedilhado especial"C z3|');
-			expect(abcResult).toBe('C|');
+			expect(abcResult).toBe('"^dedilhado especial"C z3|');
 		});
-		it('c) Teste de Barras, Métrica e Tom', () => {
+		it('c) Teste de Barras, Métrica e Tom, saída deve ser: |:[M:4/4][K:G]:|', () => {
 			const compasso = new Compasso([], {
 				metrica: new TempoMetrica(4, 4),
 				mudancaDeTom: Tonalidade.create('G'),

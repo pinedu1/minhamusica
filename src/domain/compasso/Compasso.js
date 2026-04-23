@@ -113,19 +113,29 @@ export class Compasso {
      * @param unidadeTempo @type{TempoDuracao}
      * @returns {Number}
      */
-    getPulsos(unidadeTempo) {
+    getTotalPulsos( unidadeTempo) {
         const metricaRef = this.getMetrica();
         let pulsosTotais = 0;
         if (metricaRef) {
-            // Ex: M: 4/4, L: 1/8 => (4/4) / 0.125 = 8 pulsos.
+            // Ex: M: 4/4, L: 1/8 => (4/4) / 0.125 = 8 pulsosOcupados.
             pulsosTotais = metricaRef.razao / unidadeTempo.razao;
         } else {
-            // Fallback: calcula pulsos baseados na soma das durações reais dos elementos
+            // Fallback: calcula pulsosOcupados baseados na soma das durações reais dos elementos
             const somaRazoes = this.elements.reduce((acc, el) => acc + el.duracao.razao, 0);
             pulsosTotais = somaRazoes / unidadeTempo.razao;
         }
         return pulsosTotais;
     }
+	get pulsosOcupados() {
+		let total = 0;
+		if ( this.grupos.length > 0 ) {
+			total = this.grupos.reduce((total, g) => total + g.pulsosOcupados, 0);
+		}
+		if ( this.elements.length > 0 ) {
+			total += this.elements.reduce((total, e) => total + e.pulsoElemento, 0);
+		}
+		return total;
+	}
 
 
 
@@ -283,12 +293,6 @@ export class Compasso {
         this.#options.cifras.push({ texto, posicao });
     }
 
-    /**
-     * USAGE: Adiciona anotação.
-     */
-    addAnotacao(texto, posicao, local = "_") {
-        this.#options.anotacoes.push({ texto, posicao, local });
-    }
 
     /**
      * Usage: Letra pertencente ao compasso
@@ -314,5 +318,4 @@ export class Compasso {
     }
 
     get options() { return this.#options; }
-
 }

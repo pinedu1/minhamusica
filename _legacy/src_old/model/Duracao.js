@@ -81,7 +81,7 @@ export class Duracao {
         // Ex: L: 1/4 = 0.25
         // Ex: L: 1/8 = 0.125
 
-        // 3. A FÓRMULA MÁGICA: Quantos pulsos a nossa base ocupa?
+        // 3. A FÓRMULA MÁGICA: Quantos pulsosOcupados a nossa base ocupa?
         const quantidadeDePulsos = valorDaBase / valorDeUmPulso;
 
         return quantidadeDePulsos;
@@ -90,7 +90,7 @@ export class Duracao {
         return this.#estruturaTempo.razao / this.#unidadePulso.razao;
     }
     /**
-     * Converte um valor decimal de pulsos para o modificador de duração do ABC.
+     * Converte um valor decimal de pulsosOcupados para o modificador de duração do ABC.
      * @returns {string} - A string formatada para o ABC (ex: "3/4", "/2", "", "2")
      */
     toAbc() {
