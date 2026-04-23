@@ -37,8 +37,10 @@ describe( 'Pausa Integration', () => {
 	    {
 		    tipo: 'pausa'
 		    , duracao: '4/1'
-		    , acordes: [ 'D' ]
-		    , pausaDeCompasso: true
+		    , options: {
+			    acordes: [ 'D' ]
+			    , pausaDeCompasso: true
+		    }
 	    }
     );
   } );
