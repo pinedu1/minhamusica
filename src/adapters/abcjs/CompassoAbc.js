@@ -361,6 +361,13 @@ export class CompassoAbc {
 
 	/**
 	 * Tokeniza a string de letras (w:) e mapeia para os elementos musicais do compasso.
+	 * TODO: O padrão ABC de letras (w:) tem algumas regras específicas que você precisará tratar nesse tokensLetra:
+	 ** - (Hífen solto): Liga sílabas entre notas.
+	 ** _ (Underline): Pula a nota atual (deixa ela sem letra).
+	 ** * (Asterisco): Pula um tempo/nota.
+	 ** ~ (Til): Une duas palavras na mesma nota.
+	 *
+	 *
 	 * @param {Compasso} compasso O compasso já preenchido com os elementos musicais.
 	 * @param {string} letraString A string da letra extraída do ABC (ex: "| A ti rei o |")
 	 * @private

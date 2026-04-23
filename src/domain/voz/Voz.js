@@ -110,3 +110,30 @@ export class Voz {
     get options() { return this.#options; }
 
 }
+/*
+
+Carregue o arquivo /CONTEXT.md, para te auxiliar no processo
+a) No abcjs, eu posso adicionar letras a minha obra:
+obraabc=`
+X: 1
+T: Musica
+M: 4/4
+L: 1/8
+K: C
+| a c b d | e f g a | a c b d | e f g a |
+w:| A ti rei o | pau-no gato to | mas o gato to | nao mor re u |
+| a c b d | e f g a | a c b d | e f g a |
+w:| Dona Chi ca ca  | adimi rou-sse se | com o ber ro | que o gato deu |
+`;
+A questão, que eu vou ter que casar, se e somente se, na varredura da obra dar parse do abc para minhas classe de domain, numa forma de capturar:
+o compasso e sua letra, se houver na linha seguinte, w:
+
+Resolvida esta questão:
+Caio o problema imediato, terei:
+. O CompassoAbc:| a c b d |
+. A LetraAbc: | A ti rei o |
+Como enviar isto para meu parser tokenizar e casar letra e compasso?
+Carregue as Classes: @Compasso e @CompassoAbc. Sujira uma alteração no método @CompassoAbc.fromAbc(...), uma forma de tokenizar para:
+Compasso->grupos->elements->letra, cada um dos tokens encontrados, e casados entra Nota e letra
+
+ */
