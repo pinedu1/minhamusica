@@ -1,13 +1,9 @@
 import { TipoBarra } from "@domain/compasso/TipoBarra.js";
-import { Nota } from "@domain/nota/Nota.js";
-import { Pausa } from "@domain/nota/Pausa.js";
-import { Unissono } from "@domain/nota/Unissono.js";
 import { Voz } from "@domain/voz/Voz.js";
 import { Obra } from "@domain/obra/Obra.js";
 import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { Tonalidade } from "@domain/compasso/Tonalidade.js";
-import { compassoSchema } from "@schemas/compassoSchema.js";
 import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 import { GrupoElemento } from "@domain/compasso/GrupoElemento.js";
 
@@ -39,6 +35,7 @@ export class Compasso {
 			, obra: options.obra || null
 			, anotacoes: options.anotacoes || []
 			, cifras: options.cifras || []
+			, letra: options.letra || null
 			, unidadeTempo: null
 			, barraInicial: options.barraInicial || TipoBarra.NONE
 			, barraFinal: options.barraFinal || TipoBarra.STANDARD

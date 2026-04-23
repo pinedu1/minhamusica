@@ -80,6 +80,33 @@ describe('CompassoAbc', () => {
 			// Ordem esperada: Barra -> Metrica -> Tom -> (elementos vazios) -> Barra final
 			expect(abcResult).toBe("|:[M:4/4][K:G]:|");
 		});
+		it('d) Teste de letra saída deve ser: ||', () => {
+			let obraMock = new Obra(1, [],{
+				metrica: new TempoMetrica(4, 4),
+				unidadeTempo: new TempoDuracao(1, 4),
+				andamento: {
+					bpm: 90,
+					unidade: new TempoDuracao(1, 4)
+				},
+				tonalidade: Tonalidade.Dm,
+			}); // O ID ou estrutura que a classe Obra exigir
+			const compasso = new Compasso([], {
+				barraInicial: TipoBarra.get('REPEAT_OPEN')
+				, barraFinal: TipoBarra.get('REPEAT_CLOSE')
+			});
+			compasso.obra = obraMock;
+			compasso.letra = ['A','ti','rei', 'o'];
+			//:|C D E F:|\nw:A-ti-rei o
+			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
+			const n2 = new Nota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
+			const n3 = new Nota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
+			const n4 = new Nota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
+			const g1 = new GrupoElemento([n1, n2. n3, n4], {compasso: compasso});
+			compasso.grupos = [g1];
+
+			const abcResult = CompassoAbc.toAbc(compasso);
+			expect(abcResult).toBe(':|C D E F:|\nw:A-ti-rei o');
+		});
 	});
 	describe('Sessão 2: Testes de parse de ABC para Compasso (fromAbc) 4/4', () => {
 		let obraMock = new Obra(1, [],{

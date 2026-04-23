@@ -116,7 +116,11 @@ export class CompassoAbc {
 		if (compasso.barraFinal && (compasso.barraFinal !== TipoBarra.NONE)) {
 			abc += compasso.barraFinal.abc;
 		}
-
+		if ( compasso.letra && compasso.letra.length > 0) {
+			abc += `\nw:${compasso.letra.map( letra => {
+				return letra;
+			}).join('-')}`;
+		}
 		return abc;
 	}
 	/**
