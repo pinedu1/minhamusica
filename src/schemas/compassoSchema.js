@@ -3,10 +3,11 @@ import { z } from 'zod';
 import { notaSchema, notaOutputSchema } from '@schemas/notaSchema.js';
 import { pausaSchema, pausaOutputSchema } from '@schemas/pausaSchema.js';
 import { unissonoSchema, unissonoOutputSchema } from '@schemas/unissonoSchema.js';
+import { quialteraSchema, quialteraOutputSchema } from "@schemas/quialteraSchema.js";
 import { tempoDuracaoSchema, tempoDuracaoOutputSchema } from '@schemas/tempoDuracaoSchema.js';
 import { tempoMetricaSchema, tempoMetricaOutputSchema } from '@schemas/tempoMetricaSchema.js';
 import { tipoBarraSchema, tipoBarraOutputSchema } from '@schemas/tipoBarraSchema.js';
-import { quialteraSchema, quialteraOutputSchema } from "@schemas/quialteraSchema.js";
+import { grupoElementoOutputSchema, grupoElementoSchema } from "@schemas/grupoElementoSchema.js";
 
 /**
  * Schema para validação de anotações e cifras
@@ -43,7 +44,7 @@ const elementoMusicalSchema = z.lazy(() => z.union([
 export const compassoSchema = z.object({
     // Elementos podem ser objetos de dados ou instâncias já criadas
 	elements: z.array(elementoMusicalSchema).default([]),
-
+	grupos: grupoElementoSchema.default([]),
     options: z.object({
         // Referências circulares tratadas com refine para evitar importação de Voz/Obra aqui
         voz: z.any().optional().nullable(),
@@ -96,6 +97,7 @@ const elementoMusicalOutputSchema = z.lazy(() => z.union([
 export const compassoOutputSchema = z.object({
 	// Valida o array com os 4 tipos definidos na union acima
 	elements: z.array(elementoMusicalOutputSchema).default([]),
+	grupos: grupoElementoOutputSchema.default([]),
 
 	options: z.object({
 		// Substituindo referências completas por IDs para evitar loops no JSON

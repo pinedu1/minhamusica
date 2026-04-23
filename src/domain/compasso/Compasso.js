@@ -9,6 +9,7 @@ import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { Tonalidade } from "@domain/compasso/Tonalidade.js";
 import { compassoSchema } from "@schemas/compassoSchema.js";
 import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
+import { GrupoElemento } from "@domain/compasso/GrupoElemento.js";
 
 
 /**
@@ -18,20 +19,44 @@ export class Compasso {
     /** @type {number} */
     #index = 0;
 
-    /** @type {Array<Nota|Pausa|Unissono>} */
-    #elements = [];
+    /** @type {Array<GrupoElemento>} */
+    #grupos = [];
+	/** @type {Array<ElementoMusical>} */
+	#elements = [];
 
     /** @type {Object} */
     #options;
 
+	/**
+	 * USAGE: Construtor do Compasso. Inicializa o conteúdo e valida metadados.
+	 *
+	 * @param {Array<ElementoMusical>} elements - Matriz de elementos musicais.
+	 * @param {Object} [options={}] - Configurações detalhadas.
+	 */
+	constructor(elements = [], options = {}) {
+		this.#options = {
+			voz: options.voz || null
+			, obra: options.obra || null
+			, anotacoes: options.anotacoes || []
+			, cifras: options.cifras || []
+			, unidadeTempo: null
+			, barraInicial: options.barraInicial || TipoBarra.NONE
+			, barraFinal: options.barraFinal || TipoBarra.STANDARD
+			, mudancaDeTom: options.mudancaDeTom || null
+			, ...options
+		};
+		this.elements = elements;
+		this.index = options.index || 0;
+	}
 
-    /**
+/*
+    /!**
      * USAGE: Construtor do Compasso. Inicializa o conteúdo e valida metadados.
      *
-     * @param {Array<Nota|Pausa|Unissono>} elements - Matriz de elementos musicais.
+     * @param {Array<GrupoElemento>} grupos - Matriz de grupos de elementos musicais.
      * @param {Object} [options={}] - Configurações detalhadas.
-     */
-    constructor(elements = [], options = {}) {
+     *!/
+    constructor(grupos = [], options = {}) {
         this.#options = {
             voz: options.voz || null
             , obra: options.obra || null
@@ -43,9 +68,11 @@ export class Compasso {
             , mudancaDeTom: options.mudancaDeTom || null
             , ...options
         };
-        this.elements = elements;
+        
+        this.grupos = grupos;
         this.index = options.index || 0;
     }
+*/
 
     getUnidadeTempo() {
         if (this.unidadeTempo) {
@@ -94,7 +121,7 @@ export class Compasso {
             pulsosTotais = metricaRef.razao / unidadeTempo.razao;
         } else {
             // Fallback: calcula pulsos baseados na soma das durações reais dos elementos
-            const somaRazoes = this.#elements.reduce((acc, el) => acc + el.duracao.razao, 0);
+            const somaRazoes = this.elements.reduce((acc, el) => acc + el.duracao.razao, 0);
             pulsosTotais = somaRazoes / unidadeTempo.razao;
         }
         return pulsosTotais;
@@ -117,6 +144,62 @@ export class Compasso {
         if (!(val instanceof Voz)) throw new TypeError('Compasso: O objeto deve ser uma instância de Voz.');
         this.#options.voz = val;
     }
+	
+    /**
+     * Retorna os grupos de elementos do compasso.
+     * @returns {Array<GrupoElemento>}
+     */
+    get grupos() {
+	    if (this.#grupos.length === 0) {
+		    this.#grupos = [new GrupoElemento([], { compasso: this })];
+	    }
+        return this.#grupos;
+    }
+
+    /**
+     * Define os grupos de elementos do compasso.
+     * @param {Array<GrupoElemento>} val - Um array de GrupoElemento.
+     */
+    set grupos(val) {
+        if (!Array.isArray(val) || !val.every(g => g instanceof GrupoElemento)) {
+            throw new TypeError('Compasso: A propriedade "grupos" deve ser um Array de instâncias de GrupoElemento.');
+        }
+        this.#grupos = val;
+        this.#grupos.forEach(g => g.compasso = this);
+    }
+	/**
+	 * Adiciona um elemento musical ao último grupo de elementos do compasso.
+	 * @param {ElementoMusical} elemento - A instância de Nota, Pausa, Unissono ou Quialtera.
+	 */
+	addElementoGrupo(elemento, indexGrupo = this.grupos.length - 1) {
+		if ( !( elemento instanceof ElementoMusical ) ) {
+			throw new TypeError('Compasso.addElementoGrupo: O elemento deve ser uma instância de ElementoMusical.');
+		}
+		if ( !( indexGrupo >= 0 && indexGrupo < this.grupos.length ) ) {
+			throw new TypeError('Compasso.addElementoGrupo: O indice do grupo está fora da faixa de grupos do Compasso.');
+		}
+		// Se indexGrupo foi passado, usa ele. Se não, usa o padrão (último item).
+		const grupoAlvo = this.grupos[indexGrupo];
+		grupoAlvo.elements.push(elemento);
+	}
+	/*
+	/!**
+	 * [DEPRECIADO] Retorna uma lista achatada de todos os elementos de todos os grupos.
+	 * @returns {Array<ElementoMusical>}
+	 *!/
+	get elements() {
+		return this.#grupos.flatMap(g => g.elements);
+	}
+
+	/!**
+	 * [DEPRECIADO] Substitui todos os elementos, colocando-os em um único grupo.
+	 * @param {Array<ElementoMusical>} val - Um array de elementos musicais.
+	 *!/
+	set elements(val) {
+		const novoGrupo = new GrupoElemento(val, { compasso: this });
+		this.grupos = [novoGrupo];
+	}
+*/
 	#addElemento(elemento) {
 		if ( !( elemento instanceof ElementoMusical ) ) {
 			throw new TypeError('Compasso.elemnts: Deve ser intância de Nota, Pausa, Unissono ou Quialtera.');
@@ -124,17 +207,18 @@ export class Compasso {
 		elemento.options.compasso = this;
 		this.#elements.push(elemento);
 	}
-    /**
-     * USAGE: Elementos musicais (Nota, Pausa, Unissono).
-     */
-    get elements() { return this.#elements; }
-    set elements(val) {
-        if (!Array.isArray(val)) {
-            throw new TypeError('Compasso: Elementos devem ser um Array.');
-        }
+	/**
+	 * USAGE: Elementos musicais (Nota, Pausa, Unissono).
+	 */
+	get elements() { return this.#elements; }
+	set elements(val) {
+		if (!Array.isArray(val)) {
+			throw new TypeError('Compasso: Elementos devem ser um Array.');
+		}
 		this.#elements = [];
 		val.forEach(e => this.#addElemento(e));
-    }
+	}
+
     /**
      * USAGE: Barra inicial.
      */

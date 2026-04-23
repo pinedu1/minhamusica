@@ -453,6 +453,82 @@ export class ElementoMusicalAbc extends AdapterUtils {
 		}
 		return abc;
 	}
+
+	static _consomePayloadInicioSentenca( strIn ) {
+		let conteudoRestante = strIn.trim();
+		let conteudoEncontrado = "";
+
+		// REGEXES LIMPOS (Sem o /g no final)
+		const regexAcordes = /^"(.*?)"/;
+		const regexDedilhado = /^"\$\((.*?)\)"/; // O nosso dedilhado!
+		const regexPulaLinha = /^\$(?!\()/;     // Blindado para ignorar o dedilhado
+		const regexMarca = /^!(.*?)!/;
+		const regexStaccato = /^\./;
+		const regexFermata = /^H/;
+		const regexRoll = /^~/;
+		while (conteudoRestante.length > 0) {
+			let achei = false; // Declarar no início do loop é o mais correto
+
+			const matchRoll = conteudoRestante.match(regexRoll);
+			if (matchRoll) {
+				conteudoEncontrado += matchRoll[0]; // Adiciona um espaço de respiro
+				conteudoRestante = conteudoRestante.substring(matchRoll[0].length).trimStart();
+				achei = true;
+			}
+			const matchFermata = conteudoRestante.match(regexFermata);
+			if (matchFermata) {
+				conteudoEncontrado += matchFermata[0]; // Adiciona um espaço de respiro
+				conteudoRestante = conteudoRestante.substring(matchFermata[0].length).trimStart();
+				achei = true;
+			}
+			const matchStaccato = conteudoRestante.match(regexStaccato);
+			if (matchStaccato) {
+				conteudoEncontrado += matchStaccato[0]; // Adiciona um espaço de respiro
+				conteudoRestante = conteudoRestante.substring(matchStaccato[0].length).trimStart();
+				achei = true;
+			}
+			const matchDedilhado = conteudoRestante.match(regexDedilhado);
+			if (matchDedilhado) {
+				conteudoEncontrado += matchDedilhado[0]; // Adiciona um espaço de respiro
+				conteudoRestante = conteudoRestante.substring(matchDedilhado[0].length).trimStart();
+				achei = true;
+			}
+
+			const matchAcordes = conteudoRestante.match(regexAcordes);
+			if (matchAcordes) {
+				conteudoEncontrado += matchAcordes[0];
+				conteudoRestante = conteudoRestante.substring(matchAcordes[0].length).trimStart();
+				achei = true;
+			}
+
+			const matchPulaLinha = conteudoRestante.match(regexPulaLinha);
+			if (matchPulaLinha) {
+				conteudoEncontrado += matchPulaLinha[0];
+				conteudoRestante = conteudoRestante.substring(matchPulaLinha[0].length).trimStart();
+				achei = true;
+			}
+
+			const matchMarca = conteudoRestante.match(regexMarca);
+			if (matchMarca) {
+				conteudoEncontrado += matchMarca[0];
+				conteudoRestante = conteudoRestante.substring(matchMarca[0].length).trimStart();
+				achei = true;
+			}
+			conteudoRestante = conteudoRestante.trim();
+			// Se passou por todas as verificações e não achou nada,
+			// significa que bateu na nota musical. Hora de parar o loop!
+			if (!achei) {
+				break;
+			}
+		}
+		if ( conteudoRestante.endsWith( "-" ) ) {
+			conteudoRestante = conteudoRestante.substring(0, conteudoRestante.length - 1);
+			conteudoEncontrado += '-';
+		}
+		// Dá um trim() final no payload caso ele tenha um espaço sobrando no fim
+		return { conteudoEncontrado, conteudoRestante };
+	}
+
 	static _trataPayLoad(payloadString) {
 		let options = {  };
 		if ( payloadString.includes ( "!style=x!" ) ) {

@@ -159,7 +159,6 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 
 		// Chamada para o formato do trataPayLoad (herdado de ElementoMusicalAbc)
 		const { payloadString, optionsGerado } = this._trataPayLoad(payloadGlobalStr);
-
 		// 2. EXTRAÇÃO DO CORPO DA QUIALTERA
 		// Captura (p, opcionalmente :q, opcionalmente :r, opcionalmente -, e o corpo de notas
 		const quialteraRegex = /^\(([0-9]+)(?::([0-9]+))?(?::([0-9]+))?(-)?(.*)$/;

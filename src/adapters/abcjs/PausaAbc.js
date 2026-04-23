@@ -70,12 +70,13 @@ export class PausaAbc extends ElementoMusicalAbc {
 	static fromAbc( abcString, contextOptions = {} ) {
 		let tempAbc = abcString;
 
-		let {payloadString, optionsGerado} = this._trataPayLoad(tempAbc)
+		let { conteudoEncontrado, conteudoRestante} = this._consomePayloadInicioSentenca( tempAbc );
+		let { payloadString, optionsGerado} = this._trataPayLoad( conteudoEncontrado )
 		const options = {
 			...optionsGerado
 		};
 
-		tempAbc = payloadString;
+		tempAbc = conteudoRestante;
 
 		// 3. IDENTIFICAÇÃO DE TIPO E INVISIBILIDADE
 		// O caractere 'x' ou 'X' define a pausa invisível

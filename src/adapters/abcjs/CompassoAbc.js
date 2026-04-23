@@ -10,6 +10,7 @@ import { UnissonoAbc } from "@adapters/abcjs/UnissonoAbc.js";
 import { Pausa } from "@domain/nota/Pausa.js";
 import { TempoDuracaoAbc } from "@abcjs/TempoDuracaoAbc.js";
 import { Unissono } from "@domain/nota/Unissono.js";
+import { GrupoElementoAbc } from "@abcjs/GrupoElementoAbc.js";
 
 
 export class CompassoAbc {
@@ -43,6 +44,15 @@ export class CompassoAbc {
 
 		let pulsosAcumulados = 0;
 		let meioAlcancado = false;
+
+		if (compasso.grupos.length > 0) {
+			if (compasso.grupos[0].elements.length > 0) {
+				const strMiolo = compasso.grupos.map( grupo => {
+					return GrupoElementoAbc.toAbc( grupo );
+				} ).join(' ');
+				abc += strMiolo;
+			}
+		}
 
 		compasso.elements.forEach((elemento, idx) => {
 			const cifrasDaPosicao = compasso.options.cifras.filter(c => c.posicao === idx);
@@ -181,13 +191,28 @@ export class CompassoAbc {
 
 		// --- 1. CABEÇALHOS E BARRA INICIAL ---
 		const regexBarra = /^(:\|:|\|:|:\||\|\]|\|\||\|)/;
+		const regexBarraFim = /(:\|:|\|:|:\||\|\]|\|\||\|)$/;
 		const matchBarraIni = str.match(regexBarra);
 		if (matchBarraIni) {
 			barraInicial = TipoBarra.getByAbc(matchBarraIni[0]);
 			str = str.substring(matchBarraIni[0].length).trimStart(); // CORTA barra inicial
 		}
+		const matchBarraFim = str.match(regexBarraFim);
+		if (matchBarraFim) {
+			barraFinal = TipoBarra.getByAbc(matchBarraFim[0]);
+			str = str.slice(0, -matchBarraFim[0].length).trim(); // CORTA barra final
+		}
 
 		str = this.#extrairHeadersIniciais(str, inlineHeaders);
+
+		const strGrupo = str.split(' ');
+		const grupos = strGrupo.map(grupo => {
+			const grupoStr = grupo.trim();
+			if (grupoStr.length > 0) {
+				return GrupoElementoAbc.fromAbc(grupoStr, contextOptions);
+			}
+		});
+
 
 		// --- 2. DEFINIÇÃO DOS REGEX DE BUSCA (Individuais) ---
 		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (cifra)
@@ -286,6 +311,9 @@ export class CompassoAbc {
 						elements.push(PausaAbc.fromAbc(fullToken, contextOptions));
 						break;
 					case 'nota':
+						if ( fullToken.endsWith('-') ) {
+							console.log( 'Ligada', fullToken )
+						}
 						elements.push(NotaAbc.fromAbc(fullToken, contextOptions));
 						break;
 				}
@@ -299,55 +327,19 @@ export class CompassoAbc {
 				console.warn("Caractere ignorado pelo Lexer:", str[0]);
 				str = str.substring(1).trimStart();
 			}
-/*
-			if (matchElemento) {
-				const textoCorpo = matchElemento[0];
-				let fullToken = payloadAcumulado + textoCorpo;
-
-				// Instancia de acordo com o tipo
-				switch (tipoEncontrado) {
-					case 'unissono':
-						elements.push(UnissonoAbc.fromAbc(fullToken, contextOptions));
-						break;
-					case 'quialtera':
-						elements.push(QuialteraAbc.fromAbc(fullToken, contextOptions));
-						break;
-					case 'pausa':
-						elements.push(PausaAbc.fromAbc(fullToken, contextOptions));
-						break;
-					case 'nota':
-						elements.push(NotaAbc.fromAbc(fullToken, contextOptions));
-						break;
-				}
-
-				str = str.substring(textoCorpo.length).trimStart(); // CORTA o elemento processado
-			} else {
-				// Se restou algo que não é header, barra ou nota (ex: lixo ou erro de sintaxe)
-				if (str.startsWith('-') || str.match(regexBarra)) break;
-
-				console.warn("Caractere ignorado pelo Lexer:", str[0]);
-				str = str.substring(1).trimStart();
-			}
-*/
 		}
 
-		// --- 4. LIGADURAS E BARRA FINAL ---
-		if (str.startsWith('-')) {
-			inlineHeaders.ligadoAoProximo = true;
-			str = str.substring(1).trimStart(); // CORTA traço
-		}
-
-		const matchBarraFim = str.match(regexBarra);
-		if (matchBarraFim) {
-			barraFinal = TipoBarra.getByAbc(matchBarraFim[0]);
-			str = str.substring(matchBarraFim[0].length).trim(); // CORTA barra final
-		}
-
-		return new Compasso(elements, {
+		const compassoInstance = new Compasso([], {
 			...contextOptions,
 			...inlineHeaders,
 			barraInicial: barraInicial || contextOptions.barraInicial || TipoBarra.NONE,
 			barraFinal: barraFinal || contextOptions.barraFinal || TipoBarra.NONE
 		});
+		if (grupos.length > 0) {
+			compassoInstance.grupos = grupos;
+		} else {
+			compassoInstance.elements = elements;
+		}
+		return compassoInstance;
 	}
 }

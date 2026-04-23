@@ -33,11 +33,17 @@ export class NotaAbc extends ElementoMusicalAbc {
 			console.log("abcString", abcString);
 		}
 */
-		let {payloadString, optionsGerado} = this._trataPayLoad(tempAbc)
+		let { conteudoEncontrado, conteudoRestante} = this._consomePayloadInicioSentenca( tempAbc );
+/*
+		if ( conteudoEncontrado ) {
+			console.log("conteudoEncontrado:", conteudoEncontrado);
+		}
+*/
+		let { payloadString, optionsGerado} = this._trataPayLoad( conteudoEncontrado )
 		const options = {
 			...optionsGerado
 		};
-		tempAbc = payloadString;
+		tempAbc = conteudoRestante;
 
 		const matchNota = tempAbc.match ( /([A-Ga-g][',]*)(.*)/ );
 

@@ -169,7 +169,9 @@ export class Nota extends ElementoMusical {
 	get roll() { return this._options.roll === true; }
 	get snapPizzicato() { return this._options.snapPizzicato === true; }
 	get staccatissimo() { return this._options.staccatissimo === true; }
-	get staccato() { return this._options.staccato === true; }
+	get staccato() {
+		return this._options.staccato === true;
+	}
 	get sustenido() { return this._options.sustenido === true; }
 	get tenuto() { return this._options.tenuto === true; }
 	get thumb() { return this._options.thumb === true; }

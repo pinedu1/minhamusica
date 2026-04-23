@@ -6,6 +6,7 @@ import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
 import { PausaJson } from "@persistence/PausaJson.js";
 import { NotaJson } from "@persistence/NotaJson.js";
 import { UnissonoJson } from "@persistence/UnissonoJson.js";
+import { GrupoElemento } from "@domain/compasso/GrupoElemento.js";
 
 export class CompassoJson {
 	/**
@@ -29,7 +30,7 @@ export class CompassoJson {
 			throw new TypeError("Compasso.create: Erro na estrutura dos dados: " +	JSON.stringify(resultado.error.format(), null, 2));
 		}
 
-		const { elementos, options } = resultado.data;
+		const { elementos, grupos , options } = resultado.data;
 
 		// 1. Processamento de Options (Tempo e Métrica) PRIMEIRO
 		const optionsProcessado = { };
@@ -65,9 +66,19 @@ export class CompassoJson {
 			if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
 			if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
 			if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
-			return NotaJson.fromJson(n);
+			throw new Error(`CompassoJson.elements: Tipo de elemento desconhecido: "${n.tipo}"`);
 		});
-
+		const arrayGrupos = grupos.map(grupo => {
+			const instanciasGrupoElementos = grupo.map(n => {
+				if ( n.tipo === 'pausa' ) return PausaJson.fromJson(n);
+				if ( n.tipo === 'nota' ) return NotaJson.fromJson(n);
+				if ( n.tipo === 'unissono' ) return UnissonoJson.fromJson(n);
+				if ( n.tipo === 'quialtera' ) return QuialteraJson.fromJson(n);
+				return NotaJson.fromJson(n);
+			});
+			throw new Error(`CompassoJson.grupo.elements: Tipo de elemento desconhecido: "${n.tipo}"`);
+		});
+		compasso.grupos = arrayGrupos;
 		// 4. Atribuir os elementos já hidratados
 		compasso.elements = instanciasElementos;
 
