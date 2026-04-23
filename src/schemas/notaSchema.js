@@ -19,6 +19,7 @@ export const notaSchema = z.object({
 		compasso: z.any().nullable().default(null),
 		unidadeTempo: tempoDuracaoSchema.nullable().default(null),
 		acordes: z.union([z.string(), z.array(z.string())]).default([]),
+		letra: z.string().nullable().default(null),
 
 		// ACENTUAÇÃO E ARTICULAÇÃO
 		acento: z.boolean().default(false),
@@ -97,6 +98,7 @@ export const notaSchema = z.object({
 const notaOptionsOutputSchema = z.object({
 	unidadeTempo: tempoDuracaoOutputSchema.nullable().optional().default(null),
 	acordes: z.union([z.string(), z.array(z.string())]),
+	letra: z.string().default(null),
 
 	// ACENTUAÇÃO E ARTICULAÇÃO
 	acento: z.boolean(),

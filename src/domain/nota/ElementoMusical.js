@@ -304,4 +304,14 @@ export class ElementoMusical {
 			this._addGraceNote(item);
 		})
 	}
+	get letra() {
+		return this._options.letra;
+	}
+	set letra(val) {
+		if (val === undefined || val === null) { return; }
+		if (typeof val !== 'string') {
+			throw new TypeError('ElementoMusical.letra: Deve ser uma String.');
+		}
+		this._options.letra = val;
+	}
 }

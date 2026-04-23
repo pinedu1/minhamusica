@@ -64,6 +64,7 @@ const quialteraOptionsSchema = z.object({
 		return `${val.numerador}/${val.denominador}`;
 	}),
 	acordes: z.union([z.string(), z.array(z.string())]).default([]),
+	letra: z.string().nullable().default(null),
 
 	// --- ACENTUAÇÃO E ARTICULAÇÃO ---
 	acento: z.boolean().default(false),

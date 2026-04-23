@@ -9,6 +9,7 @@ import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 @property {Compasso|null} [options.compasso=null] - Referência ao compasso atual.
 @property {TempoDuracao|null} [options.unidadeTempo=null] - Unidade de tempo vigente.
 @property {Acorde[]|string} [options.acordes=[]] - Acordes associados à nota.
+ @property {string:null} [options.letra='ma'] - letra associado à nota.
 @property {boolean} [options.fermata=false] - Símbolo !fermata! (H).
 @property {boolean} [options.fermataInvertida=false] - Símbolo !invertedfermata!.
 @property {boolean} [options.acento=false] - Símbolo !accent! ou !emphasis!.
@@ -50,6 +51,7 @@ export class Unissono extends ElementoMusical {
             compasso: null,
             unidadeTempo: null,
 	        acordes: [],
+	        letra: null,
 
 	        // ACENTUAÇÃO E ARTICULAÇÃO
 	        acento: false,
@@ -100,10 +102,7 @@ export class Unissono extends ElementoMusical {
             ...options
         };
 
-        // Validação da propriedade graceNote (Idêntica à classe Nota)
-        const gn = this._options.graceNote;
         this.graceNote = this._options.graceNote;
-	    const de = this._options.dedilhado;
 	    this.dedilhado = this._options.dedilhado;
     }
 

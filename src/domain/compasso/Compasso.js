@@ -290,6 +290,31 @@ export class Compasso {
         this.#options.cifras.push({ texto, posicao });
     }
 
+	/**
+	 * Retorna a array de letras.
+	 * Contatenando as letras da notas com as letras intrinsecas do grupo
+	 * @return {string[]}
+	 */
+	getLetras() {
+		const letras = []; // Agora pode ser const!
+
+		this.grupos.forEach((grupo) => {
+			const letraGrupo = grupo.getLetras();
+			if (letraGrupo && letraGrupo.length > 0) {
+				// O push aceita o spread! Ele "injeta" os itens no array existente
+				letras.push( ...letraGrupo );
+			}
+		});
+		this.elements.forEach((elemento) => {
+			if ( elemento.letra ) {
+				letras.push( elemento.letra );
+			}
+		});
+		if ( this.letra && this.letra.length > 0 ) {
+			letras.push( ...this.letra );
+		}
+		return letras;
+	}
 
     /**
      * Usage: Letra pertencente ao compasso

@@ -58,6 +58,7 @@ const unissonoOptionsSchema = z.object({
 	voz: z.any().nullable().default(null),
 	compasso: z.any().nullable().default(null),
 	unidadeTempo: tempoDuracaoSchema.nullable().default(null),
+	letra: z.string().nullable().default(null),
 	acordes: z.union([z.string(), z.array(z.string())]).default([]),
 
 	// --- ACENTUAÇÃO E ARTICULAÇÃO ---

@@ -119,6 +119,24 @@ export class GrupoElemento {
 	addAnotacao(texto, posicao, local = "_") {
 		this.#options.anotacoes.push({ texto, posicao, local });
 	}
+
+	/**
+	 * Retorna a array de letras.
+	 * Contatenando as letras da notas com as letras intrinsecas do grupo
+	 * @return {string[]}
+	 */
+	getLetras() {
+		let letras = [];
+		this.elements.forEach((elemento) => {
+			if ( elemento.letra ) {
+				letras.push(elemento.letra);
+			}
+		});
+		if ( this.letra && this.letra.length > 0 ) {
+			letras.push( ...this.letra );
+		}
+		return letras;
+	}
 	/**
 	 * Usage: Letra pertencente ao compasso
 	 * Nota: Está nota não pode ser usada no metodo toAbc() do Compasso

@@ -12,6 +12,7 @@ export const pausaSchema = z.object( {
 	, invisivel: z.boolean().optional().default( false )
 	, pausaDeCompasso: z.boolean().optional().default( false )
 	, acordes: z.union( [ z.string(), z.array( z.string() ) ] ).optional().default( [] )
+	, letra: z.string().nullable().default(null)
 
 	// Explicitamente nullable para garantir o retorno nulo
 	, unidadeTempo: tempoDuracaoSchema.nullable().optional().default( null )
@@ -54,6 +55,7 @@ export const pausaSchema = z.object( {
 				, invisivel: data.options.invisivel || data.invisivel
 				, pausaDeCompasso: data.options.pausaDeCompasso || data.pausaDeCompasso
 				, acordes: (data.options.acordes?.length > 0) ? data.options.acordes : data.acordes
+				, letra: data.options.letra || null
 
 				// Para objetos complexos/nullables
 				, unidadeTempo: pick( data.options.unidadeTempo, data.unidadeTempo )
@@ -75,6 +77,7 @@ export const pausaOutputSchema = z.object({
 	invisivel: z.boolean().default(false),
 	pausaDeCompasso: z.boolean().default(false),
 	acordes: z.union([z.string(), z.array(z.string())]).default([]),
+	letra: z.string().default(null),
 
 	// unidadeTempo também usa o schema de output
 	unidadeTempo: tempoDuracaoOutputSchema.nullable().default(null),

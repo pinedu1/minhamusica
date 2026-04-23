@@ -18,6 +18,7 @@ export class Nota extends ElementoMusical {
 	 * @property {Compasso|null} [options.compasso=null] - Referência ao compasso atual.
 	 * @property {TempoDuracao|null} [options.unidadeTempo=null] - Unidade de tempo vigente.
 	 * @property {Acorde[]|string} [options.acordes=[]] - Acordes associados à nota.
+	 * @property {string:null} [options.letra='ma'] - letra associado à nota.
 	 * @property {boolean} [options.fermata=false] - Símbolo !fermata! (H).
 	 * @property {boolean} [options.fermataInvertida=false] - Símbolo !invertedfermata!.
 	 * @property {boolean} [options.acento=false] - Símbolo !accent! ou !emphasis!.
@@ -56,6 +57,7 @@ export class Nota extends ElementoMusical {
 			compasso: null,
 			unidadeTempo: null,
 			acordes: [],
+			letra: null,
 
 			// ACENTUAÇÃO E ARTICULAÇÃO
 			acento: false,

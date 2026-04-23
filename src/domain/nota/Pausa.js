@@ -13,6 +13,7 @@ export class Pausa extends ElementoMusical {
      * @param {import('@domain/tempo/TempoDuracao').TempoDuracao} duracao - Duração da pausa.
      * @param {Object} [options={}] - Configurações opcionais.
      * @param {string|string[]|null} [options.acordes] - Acorde(s) na posição da pausa.
+     * @property {string:null} [options.letra='ma'] - letra associado à nota.
      * @param {boolean} [options.invisivel=false] - Define se é pausa de espaço (x).
      * @param {Object} [options.voz] - Instância da voz a que pertence.
      */
@@ -23,6 +24,7 @@ export class Pausa extends ElementoMusical {
             , voz: null
             , compasso: null
             , unidadeTempo: null
+	        , letra: null
             , fermata: false
 	        , fermataInvertida: false
             , breath: false

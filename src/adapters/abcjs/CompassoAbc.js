@@ -116,10 +116,17 @@ export class CompassoAbc {
 		if (compasso.barraFinal && (compasso.barraFinal !== TipoBarra.NONE)) {
 			abc += compasso.barraFinal.abc;
 		}
-		if ( compasso.letra && compasso.letra.length > 0) {
-			abc += `\nw:${compasso.letra.map( letra => {
-				return letra;
-			}).join('-')}`;
+		const letras = compasso.getLetras();
+		if (letras && letras.length > 0) {
+			let str = '';
+			if (compasso.options.barraInicial && (compasso.options.barraInicial !== TipoBarra.NONE)) {
+				str += TipoBarra.STANDARD.abc;
+			}
+			str += letras.join(' ');
+			if (compasso.barraFinal && (compasso.barraFinal !== TipoBarra.NONE)) {
+				str += TipoBarra.STANDARD.abc;
+			}
+			abc += `\nw:${str}`;
 		}
 		return abc;
 	}
