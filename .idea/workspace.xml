@@ -5,22 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/adapters/persistence/GrupoElementoJson.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/domain/compasso/GrupoElemento.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/schemas/grupoElementoSchema.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/PausaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/PausaAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/QuialteraAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/QuialteraAbc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/CompassoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/CompassoJson.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/domain/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Nota.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/schemas/compassoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/compassoSchema.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +101,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="CompassoAbc.test.js" />
+      <arguments value="NotaAbc.test" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -183,7 +169,7 @@
       <workItem from="1776595096477" duration="24465000" />
       <workItem from="1776685094475" duration="33307000" />
       <workItem from="1776771838663" duration="37319000" />
-      <workItem from="1776854732885" duration="32840000" />
+      <workItem from="1776854732885" duration="33434000" />
     </task>
     <servers />
   </component>
@@ -223,18 +209,6 @@
           <url>file://$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js</url>
           <line>206</line>
           <option name="timeStamp" value="160" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js</url>
-          <line>72</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="273" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js</url>
-          <line>70</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="274" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

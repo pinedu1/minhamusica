@@ -45,14 +45,12 @@ export class NotaAbc extends ElementoMusicalAbc {
 		};
 		tempAbc = conteudoRestante;
 
-		const matchNota = tempAbc.match ( /([A-Ga-g][',]*)(.*)/ );
+		const matchNota = tempAbc.match( /([_^=]*[A-Ga-g][',]*)(.*)/ );
 
 		let alturaString = matchNota
 			? matchNota[ 1 ]
 			: "C"
 		;
-		if ( options.sustenido ) alturaString = `^${alturaString}`;
-		if ( options.bemol ) alturaString = `_${alturaString}`;
 
 		const duracaoString = matchNota
 			? matchNota[ 2 ]
