@@ -341,9 +341,11 @@ export class CompassoAbc {
 						elements.push(PausaAbc.fromAbc(fullToken, contextOptions));
 						break;
 					case 'nota':
+/*
 						if ( fullToken.endsWith('-') ) {
 							console.log( 'Ligada', fullToken )
 						}
+*/
 						elements.push(NotaAbc.fromAbc(fullToken, contextOptions));
 						break;
 				}

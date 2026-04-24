@@ -86,18 +86,6 @@ describe('Integração de Compasso - Ciclo Completo (Domain -> ABC -> JSON)', ()
     it('deve manter a integridade dos dados após o ciclo Domain -> JSON -> Domain', () => {
         const compassoOriginal = criarCompassoComplexo();
 
-        // VALIDAÇÃO ANTES DO ERRO: Localizar qual elemento está com problema na propriedade letra
-        compassoOriginal.grupos.forEach((grupo, i) => {
-            grupo.elements.forEach((el, j) => {
-                const letra = el.options.letra;
-                if (Array.isArray(letra)) {
-                    console.warn(`[AVISO] O elemento ${el.constructor.name} no grupo ${i}, index ${j} está com a letra em formato de Array:`, letra);
-                } else if (typeof letra === 'string') {
-                    console.log(`[OK] O elemento ${el.constructor.name} no grupo ${i}, index ${j} está com a letra correta (String): "${letra}"`);
-                }
-            });
-        });
-
         const json = CompassoJson.toJson(compassoOriginal);
 	    json.options = { ...json.options, ...obraMockJson.options };
         const compassoFromJson = CompassoJson.fromJson(json);
