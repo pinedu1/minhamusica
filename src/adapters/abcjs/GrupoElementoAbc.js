@@ -216,6 +216,30 @@ export class GrupoElementoAbc {
 				str = str.substring(1).trimStart();
 			}
 		}
+
+		if ( optionsGerado.acordes.length > 0 ) {
+			let deuCerto = true;
+
+			optionsGerado.acordes.forEach((c, idx) => {
+				const [texto, posicao] = c;
+
+				if ( posicao in elements ) {
+					elements[posicao].acorde = texto;
+					// Marca como processado com sucesso
+					optionsGerado.acordes[idx] = null;
+				} else {
+					deuCerto = false;
+				}
+			});
+
+			if ( deuCerto ) {
+				// Se tudo deu certo, remove a propriedade inteira
+				delete optionsGerado.acordes;
+			} else {
+				// Se sobraram pendências, reconstrói o array ignorando os nulls
+				optionsGerado.acordes = optionsGerado.acordes.filter(c => c !== null);
+			}
+		}
 		return new GrupoElemento(elements, {
 			...contextOptions,
 			...optionsGerado,
