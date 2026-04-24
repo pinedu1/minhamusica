@@ -1,19 +1,33 @@
 import { GrupoElemento } from "@domain/compasso/GrupoElemento.js";
-import { Compasso } from "@domain/compasso/Compasso.js";
 import { PausaAbc } from "@abcjs/PausaAbc.js";
 import { NotaAbc } from "@abcjs/NotaAbc.js";
 import { QuialteraAbc } from "@abcjs/QuialteraAbc.js";
 import { UnissonoAbc } from "@adapters/abcjs/UnissonoAbc.js";
-import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
 import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 
-
+/**
+ * Classe responsável por orquestrar a análise léxica (Lexer) e o parsing de strings
+ * na notação ABC, convertendo-as em instâncias de domínio musical e vice-versa.
+ */
 export class GrupoElementoAbc {
+
+	// --- 1. REGEXES CENTRALIZADOS ---
+	static #REGEX = {
+		unissono: /^\[[^\]]+\][\d/]*\-?/,
+		quialtera: /^\([0-9]+(?::[0-9]+:[0-9]+)?\-?/,
+		pausa: /^[zxyZXY][\d/]*\-?/,
+		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (acorde)
+		nota: /^[=^_]?[a-gA-G][,']*[\d/]*\-?/,
+		// Captura 1 ou mais ocorrências de: acordes ("...") OU Dinâmicas (!...!) OU qualquer caractere
+		// que NÃO seja início de Nota, Pausa, Uníssono, Quialtera ou Barras/Ligaduras
+		payload: /^(?:"[^"]*"|![^!]*!|[^\[\(=^_a-gA-GzxyZXY\-\|:])+/
+	};
+
 	/**
-	 * USAGE: Orquestra a geração da string ABC completa do compasso.
-	 * Agrupa as notas visivelmente baseando-se no total de pulsosOcupados e na metade do compasso.
-	 * @param {Compasso} grupoElemento - O compasso a ser convertido.
-	 * @returns {string}
+	 * Orquestra a geração da string ABC completa do grupo/compasso.
+	 * Agrupa as notas visivelmente baseando-se no total de pulsos ocupados e na metade do compasso.
+	 * * @param {Compasso} grupoElemento - O compasso (ou grupo) a ser convertido para string ABC.
+	 * @returns {string} A representação em texto ABC do grupo de elementos.
 	 */
 	static toAbc(grupoElemento) {
 		let abc = "";
@@ -46,6 +60,15 @@ export class GrupoElementoAbc {
 
 		return abc;
 	}
+
+	/**
+	 * Extrai anotações prévias (payloads) que precedem um elemento musical na string.
+	 * Varre o início da string em busca de acordes (entre aspas) e marcações
+	 * de salto de linha/dedilhado (iniciadas com $), separando-os da notação musical real.
+	 * * @protected
+	 * @param {string} strIn - A porção atual da string ABC a ser processada.
+	 * @returns {{ conteudoEncontrado: string, conteudoRestante: string }} Objeto contendo o agrupamento dos payloads encontrados e a string limpa para o lexer.
+	 */
 	static _consomePayloadInicioSentenca( strIn ) {
 		let conteudoRestante = strIn.trim();
 		let conteudoEncontrado = "";
@@ -53,8 +76,9 @@ export class GrupoElementoAbc {
 		// REGEXES LIMPOS (Sem o /g no final)
 		const regexAcordes = /^"(.*?)"/;
 		const regexPulaLinha = /^\$(?!\()/;     // Blindado para ignorar o dedilhado
+
 		while (conteudoRestante.length > 0) {
-			let achei = false; // Declarar no início do loop é o mais correto
+			let achei = false;
 
 			const matchAcordes = conteudoRestante.match(regexAcordes);
 			if (matchAcordes) {
@@ -71,18 +95,24 @@ export class GrupoElementoAbc {
 			}
 
 			conteudoRestante = conteudoRestante.trim();
-			// Se passou por todas as verificações e não achou nada,
-			// significa que bateu na nota musical. Hora de parar o loop!
+
 			if (!achei) {
 				break;
 			}
 		}
-		// Dá um trim() final no payload caso ele tenha um espaço sobrando no fim
+
 		return { conteudoEncontrado, conteudoRestante };
 	}
+
+	/**
+	 * Analisa a string de payload extraída e converte-a em objetos estruturados de domínio.
+	 * Mapeia os acordes encontrados em texto para um array de opções contendo o texto e a posição de ancoragem.
+	 * * @protected
+	 * @param {string} payloadString - A string isolada contendo apenas os dados não-musicais (ex: `"C7""Am"`).
+	 * @returns {{ payloadString: string, optionsGerado: { acordes: Array<{texto: string, posicao: number}>, anotacoes: Array<any> } }} Os dados limpos e o objeto de metadados extraídos.
+	 */
 	static _trataPayLoad(payloadString) {
 		let options = { acordes: [], anotacoes: [] };
-		// 2. ACORDES (O que sobrar entre aspas)
 		const regexAcordes = /"(.*?)"/g;
 		const matchesAcordes = payloadString.match(regexAcordes);
 
@@ -92,18 +122,21 @@ export class GrupoElementoAbc {
 				const posicao = options.acordes.length;
 				return {texto: texto, posicao: posicao};
 			});
-			// Remove os acordes reais da string
 			payloadString = payloadString.replace(regexAcordes, '');
 		}
 
 		return {payloadString: payloadString.trim(), optionsGerado: options};
 	}
+
 	/**
-	 * Tenta aplicar a fila de acordes gerados aos elementos do grupo.
-	 * Retém na fila os acordes que não puderam ser aplicados (falta de posição ou colisão).
+	 * Tenta aplicar a fila de acordes gerados aos elementos musicais do grupo/compasso.
+	 * Retém na fila os acordes que não puderam ser aplicados (por falta de posição ou colisão).
+	 * * @private
+	 * @param {{ acordes: Array<{texto: string, posicao: number}>, anotacoes: Array<any> }} optionsGerado - As opções extraídas do payload inicial.
+	 * @param {Array<ElementoMusical>} elements - O array de instâncias de ElementoMusical recém-criadas.
+	 * @throws {TypeError} Lança um erro se o acorde for mal formatado ou se o elemento ancorado for inválido.
 	 */
 	static #sincronizarAcordes(optionsGerado, elements) {
-		// 🛡️ Early Return: Se não tem acorde pra processar, sai imediatamente
 		if (!optionsGerado.acordes || optionsGerado.acordes.length === 0) {
 			return;
 		}
@@ -142,126 +175,161 @@ export class GrupoElementoAbc {
 		}
 	}
 
+	// ==========================================
+	// MÉTODOS PRIVADOS DE ANÁLISE LÉXICA (LEXER)
+	// ==========================================
+
 	/**
-	 * USAGE: Cria uma nova instância de Compasso a partir de uma string de notação ABC.
-	 * Segue a lógica de: Cabeçalhos Iniciais -> Loop de Elementos -> Metadados Finais.
+	 * Sub-loop interno para extrair todos os payloads avulsos que precedem diretamente um elemento no meio do fluxo de texto.
+	 * * @private
+	 * @param {string} str - A string ABC em processo de leitura.
+	 * @returns {{ payloadAcumulado: string, strSemPayload: string }} O payload capturado e a nova string após o corte.
+	 */
+	static #extrairPayloadsIntermediarios(str) {
+		let payloadAcumulado = "";
+		let matchPayload;
+		while ((matchPayload = str.match(this.#REGEX.payload))) {
+			payloadAcumulado += matchPayload[0];
+			str = str.substring(matchPayload[0].length).trimStart();
+		}
+		return { payloadAcumulado, strSemPayload: str };
+	}
+
+	/**
+	 * Identifica dinamicamente qual é o próximo token musical na string, avaliando as regras de prioridade do Regex.
+	 * * @private
+	 * @param {string} str - A string ABC pronta para leitura.
+	 * @returns {{ tipo: 'unissono'|'quialtera'|'pausa'|'nota', textoCorpo: string } | null} Os dados de identificação do token ou null se for um caractere órfão.
+	 */
+	static #identificarElemento(str) {
+		let match;
+		if ((match = str.match(this.#REGEX.unissono))) return { tipo: 'unissono', textoCorpo: match[0] };
+		if ((match = str.match(this.#REGEX.quialtera))) return { tipo: 'quialtera', textoCorpo: match[0] };
+		if ((match = str.match(this.#REGEX.pausa))) return { tipo: 'pausa', textoCorpo: match[0] };
+		if ((match = str.match(this.#REGEX.nota))) return { tipo: 'nota', textoCorpo: match[0] };
+
+		return null;
+	}
+
+	/**
+	 * Actua como uma Factory. Recebe o tipo do elemento identificado e delega a criação para a respectiva classe adaptadora.
+	 * * @private
+	 * @param {'unissono'|'quialtera'|'pausa'|'nota'} tipo - A categoria do elemento a fabricar.
+	 * @param {string} textoCorpo - O trecho exacto que despoletou a identificação inicial.
+	 * @param {string} payloadAcumulado - As anotações anexadas que precedem o elemento.
+	 * @param {string} strAtual - A string matriz completa no momento atual.
+	 * @param {object} contextOptions - Opções globais ou de compasso recebidas pelo Lexer superior.
+	 * @returns {{ elemento: ElementoMusical, textoConsumido: string }} A instância fabricada e a totalidade do texto lido e processado.
+	 */
+	static #fabricarElemento(tipo, textoCorpo, payloadAcumulado, strAtual, contextOptions) {
+		let fullToken = payloadAcumulado + textoCorpo;
+
+		if (tipo === 'quialtera') {
+			return this.#processarQuialtera(textoCorpo, strAtual, fullToken, contextOptions);
+		}
+
+		let elemento;
+		switch (tipo) {
+			case 'unissono': elemento = UnissonoAbc.fromAbc(fullToken, contextOptions); break;
+			case 'pausa':    elemento = PausaAbc.fromAbc(fullToken, contextOptions); break;
+			case 'nota':     elemento = NotaAbc.fromAbc(fullToken, contextOptions); break;
+		}
+
+		return {
+			elemento: elemento,
+			textoConsumido: textoCorpo
+		};
+	}
+
+	/**
+	 * Lida exclusivamente com a lógica complexa de caça a múltiplas notas, aninhamentos e metadados pertencentes a uma quiáltera estruturada.
+	 * * @private
+	 * @param {string} textoCorpo - A declaração de abertura da quiáltera (ex: "(3").
+	 * @param {string} strAtual - O corpo total da string de entrada restante.
+	 * @param {string} fullToken - O token musical acumulado da quiáltera até ao momento.
+	 * @param {object} contextOptions - Opções estruturais recebidas no topo da análise.
+	 * @returns {{ elemento: ElementoMusical, textoConsumido: string }} O Grupo/Quiáltera compilado e a dimensão de caracteres extraídos do fluxo de texto.
+	 */
+	static #processarQuialtera(textoCorpo, strAtual, fullToken, contextOptions) {
+		const matchHeader = textoCorpo.match(/^\(([0-9]+)(?::([0-9]+))?(?::([0-9]+))?/);
+		const p = parseInt(matchHeader[1], 10);
+		const r = matchHeader[3] ? parseInt(matchHeader[3], 10) : null;
+		const limiteNotas = r || p;
+
+		let subStr = strAtual.substring(textoCorpo.length);
+		let notasConsumidas = "";
+		let contador = 0;
+
+		while (subStr.length > 0 && contador < limiteNotas) {
+			let matchSubPayload;
+			while ((matchSubPayload = subStr.match(this.#REGEX.payload))) {
+				notasConsumidas += matchSubPayload[0];
+				subStr = subStr.substring(matchSubPayload[0].length);
+			}
+
+			let subElem = subStr.match(this.#REGEX.unissono) || subStr.match(this.#REGEX.pausa) || subStr.match(this.#REGEX.nota);
+			if (subElem) {
+				notasConsumidas += subElem[0];
+				subStr = subStr.substring(subElem[0].length);
+				contador++;
+			} else {
+				break;
+			}
+		}
+
+		if (subStr.startsWith('-')) {
+			notasConsumidas += '-';
+		}
+
+		fullToken += notasConsumidas;
+		const textoConsumidoTotal = textoCorpo + notasConsumidas;
+
+		return {
+			elemento: QuialteraAbc.fromAbc(fullToken, contextOptions),
+			textoConsumido: textoConsumidoTotal
+		};
+	}
+
+	/**
+	 * Ponto de entrada do Lexer. Instancia a colecção primária de elementos musicais e produz um objecto `GrupoElemento`.
+	 * O motor de orquestração flui por: Limpeza e Payloads Iniciais -> Extracção Cíclica -> Sincronização Final.
+	 * * @param {string} grupoElementoString - O texto bruto em notação ABC que corresponde aos limites deste compasso ou grupo.
+	 * @param {object} contextOptions - Variáveis rítmicas ou opções suplementares derivadas da armação global.
+	 * @returns {GrupoElemento} O contentor estruturado do compasso, com notas já indexadas e opções assinaladas.
 	 */
 	static fromAbc(grupoElementoString, contextOptions) {
 		let str = grupoElementoString.trim();
 		const elements = [];
-		// --- 2. DEFINIÇÃO DOS REGEX DE BUSCA (Individuais) ---
-		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (acorde)
-		const reUnissono  = /^\[[^\]]+\][\d/]*\-?/;
-		const reQuialtera = /^\([0-9]+(?::[0-9]+:[0-9]+)?\-?/;
-		const rePausa     = /^[zxyZXY][\d/]*\-?/;
-		const reNota      = /^[=^_]?[a-gA-G][,']*[\d/]*\-?/; // A nota pura
 
-		// Regex para identificar se o início da string é um Payload
-		//const rePayload   = /^("[^"]+"|![^!]+!)+/;
-		// Captura qualquer coisa (incluindo espaços e pontos)
-		// desde que a posição atual NÃO seja o início de um elemento musical.
-		//const rePayload = /^((?!"|!|\[|\(|[zxyZXY]|[=^_]?[a-gA-G]).)+/;
-		// Captura 1 ou mais ocorrências de: acordes ("...") OU Dinâmicas (!...!) OU qualquer caractere
-		// que NÃO seja início de Nota, Pausa, Uníssono, Quialtera ou Barras/Ligaduras
-		const rePayload = /^(?:"[^"]*"|![^!]*!|[^\[\(=^_a-gA-GzxyZXY\-\|:])+/;
-		let { conteudoEncontrado, conteudoRestante} = this._consomePayloadInicioSentenca( str );
-		let { payloadString, optionsGerado} = this._trataPayLoad( conteudoEncontrado );
-		str = conteudoRestante
+		// --- 1. TRATAMENTO INICIAL DE PAYLOADS GLOBAIS ---
+		let { conteudoEncontrado, conteudoRestante } = this._consomePayloadInicioSentenca(str);
+		let { payloadString, optionsGerado } = this._trataPayLoad(conteudoEncontrado);
+		str = conteudoRestante;
 
-		// --- 3. LOOP DE ELEMENTOS ---
+		// --- 2. LOOP PRINCIPAL DE EXTRAÇÃO ---
 		while (str.length > 0) {
 			str = str.trimStart();
-			let payloadAcumulado = "";
 
-			// Sub-loop para extrair todos os payloads que precedem o elemento
-			let matchPayload;
-			while ((matchPayload = str.match(rePayload))) {
-				payloadAcumulado += matchPayload[0];
-				str = str.substring(matchPayload[0].length).trimStart(); // CORTA payload
-			}
+			const { payloadAcumulado, strSemPayload } = this.#extrairPayloadsIntermediarios(str);
+			str = strSemPayload;
 
-			// Agora testamos os elementos musicais na ordem de prioridade
-			let matchElemento = null;
-			let tipoEncontrado = null;
+			const item = this.#identificarElemento(str);
 
-			if ((matchElemento = str.match(reUnissono))) {
-				tipoEncontrado = 'unissono';
-			} else if ((matchElemento = str.match(reQuialtera))) {
-				tipoEncontrado = 'quialtera';
-			} else if ((matchElemento = str.match(rePausa))) {
-				tipoEncontrado = 'pausa';
-			} else if ((matchElemento = str.match(reNota))) {
-				tipoEncontrado = 'nota';
-			}
-			if (matchElemento) {
-				let textoCorpo = matchElemento[0]; // Transformado em 'let' para ser atualizado pela quiáltera
-				let fullToken = payloadAcumulado + textoCorpo;
+			if (item) {
+				const { elemento, textoConsumido } = this.#fabricarElemento(
+					item.tipo, item.textoCorpo, payloadAcumulado, str, contextOptions
+				);
 
-				// Instancia de acordo com o tipo
-				switch (tipoEncontrado) {
-					case 'unissono':
-						elements.push(UnissonoAbc.fromAbc(fullToken, contextOptions));
-						break;
-					case 'quialtera': {
-						// 1. Extrai 'p' e 'r' do cabeçalho da quiáltera para saber quantas notas caçar
-						const matchHeader = textoCorpo.match(/^\(([0-9]+)(?::([0-9]+))?(?::([0-9]+))?/);
-						const p = parseInt(matchHeader[1], 10);
-						const r = matchHeader[3] ? parseInt(matchHeader[3], 10) : null;
-						const limiteNotas = r || p;
-
-						let subStr = str.substring(textoCorpo.length); // O resto da string, logo após o "(p:q:r"
-						let notasConsumidas = "";
-						let contador = 0;
-
-						// 2. Caça e recorta exatamente 'limiteNotas' elementos musicais
-						while (subStr.length > 0 && contador < limiteNotas) {
-							let matchSubPayload;
-							// Consome payloads perdidos no meio (ex: "C" ou espaços)
-							while ((matchSubPayload = subStr.match(rePayload))) {
-								notasConsumidas += matchSubPayload[0];
-								subStr = subStr.substring(matchSubPayload[0].length);
-							}
-
-							// Verifica se o próximo item é Nota, Pausa ou Uníssono
-							let subElem = subStr.match(reUnissono) || subStr.match(rePausa) || subStr.match(reNota);
-							if (subElem) {
-								notasConsumidas += subElem[0];
-								subStr = subStr.substring(subElem[0].length);
-								contador++;
-							} else {
-								break; // Evita loop infinito se a sintaxe estiver quebrada
-							}
-						}
-
-						// 3. Captura traço de ligadura se estiver grudado após a última nota da quiáltera
-						if (subStr.startsWith('-')) {
-							notasConsumidas += '-';
-						}
-
-						// 4. "Engorda" as strings originais com o que foi consumido
-						fullToken += notasConsumidas;
-						textoCorpo += notasConsumidas; // ISSO garante que o 'str.substring' lá embaixo corte tudo!
-
-						elements.push(QuialteraAbc.fromAbc(fullToken, contextOptions));
-						break;
-					}
-					case 'pausa':
-						elements.push(PausaAbc.fromAbc(fullToken, contextOptions));
-						break;
-					case 'nota':
-						elements.push(NotaAbc.fromAbc(fullToken, contextOptions));
-						break;
-				}
-
-				// Graças ao 'textoCorpo += notasConsumidas', isso agora corta a quiáltera inteira!
-				str = str.substring(textoCorpo.length).trimStart();
+				elements.push(elemento);
+				str = str.substring(textoConsumido.length).trimStart();
 			} else {
 				console.warn("Caractere ignorado pelo Lexer:", str);
 				str = str.substring(1).trimStart();
 			}
 		}
 
-		this.#sincronizarAcordes(optionsGerado, elements)
+		// --- 3. SINCRONIZAÇÃO E RETORNO ---
+		this.#sincronizarAcordes(optionsGerado, elements);
 
 		return new GrupoElemento(elements, {
 			...contextOptions,
