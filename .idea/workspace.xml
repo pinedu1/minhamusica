@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -171,7 +170,7 @@
       <workItem from="1776771838663" duration="37319000" />
       <workItem from="1776854732885" duration="64532000" />
       <workItem from="1776984481385" duration="341000" />
-      <workItem from="1777034734160" duration="22042000" />
+      <workItem from="1777034734160" duration="22270000" />
     </task>
     <servers />
   </component>
@@ -191,6 +190,20 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js</url>
+          <line>225</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js</url>
+          <line>223</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="dart-exception" />
         <breakpoint log-message="true" log-stack="true" type="javascript-exception" />

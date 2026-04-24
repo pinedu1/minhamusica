@@ -221,7 +221,7 @@ export class GrupoElementoAbc {
 			let deuCerto = true;
 
 			optionsGerado.acordes.forEach((c, idx) => {
-				const [texto, posicao] = c;
+				const { texto, posicao } = c;
 
 				if ( posicao in elements ) {
 					elements[posicao].acorde = texto;
