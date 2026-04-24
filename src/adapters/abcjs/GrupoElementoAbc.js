@@ -5,6 +5,7 @@ import { NotaAbc } from "@abcjs/NotaAbc.js";
 import { QuialteraAbc } from "@abcjs/QuialteraAbc.js";
 import { UnissonoAbc } from "@adapters/abcjs/UnissonoAbc.js";
 import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
+import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 
 
 export class GrupoElementoAbc {
@@ -96,6 +97,49 @@ export class GrupoElementoAbc {
 		}
 
 		return {payloadString: payloadString.trim(), optionsGerado: options};
+	}
+	/**
+	 * Tenta aplicar a fila de acordes gerados aos elementos do grupo.
+	 * Retém na fila os acordes que não puderam ser aplicados (falta de posição ou colisão).
+	 */
+	static #sincronizarAcordes(optionsGerado, elements) {
+		// 🛡️ Early Return: Se não tem acorde pra processar, sai imediatamente
+		if (!optionsGerado.acordes || optionsGerado.acordes.length === 0) {
+			return;
+		}
+
+		let sucessoTotal = true;
+
+		optionsGerado.acordes.forEach((c, idx) => {
+			if (!c || typeof c !== 'object') {
+				throw new TypeError(`Formato de acorde inválido no índice ${idx}. Esperado um objeto válido, recebido: ${JSON.stringify(c)}`);
+			}
+
+			const { texto, posicao } = c;
+
+			if (posicao in elements) {
+				const elemento = elements[posicao];
+
+				if (!(elemento instanceof ElementoMusical)) {
+					throw new TypeError(`O elemento dentro do Grupo deve ser um ElementoMusical`);
+				}
+
+				if (!elemento.acorde) {
+					elemento.acorde = texto;
+					optionsGerado.acordes[idx] = null;
+				} else {
+					sucessoTotal = false;
+				}
+			} else {
+				sucessoTotal = false;
+			}
+		});
+
+		if (sucessoTotal) {
+			delete optionsGerado.acordes;
+		} else {
+			optionsGerado.acordes = optionsGerado.acordes.filter(c => c !== null);
+		}
 	}
 
 	/**
@@ -217,29 +261,8 @@ export class GrupoElementoAbc {
 			}
 		}
 
-		if ( optionsGerado.acordes.length > 0 ) {
-			let deuCerto = true;
+		this.#sincronizarAcordes(optionsGerado, elements)
 
-			optionsGerado.acordes.forEach((c, idx) => {
-				const { texto, posicao } = c;
-
-				if ( posicao in elements ) {
-					elements[posicao].acorde = texto;
-					// Marca como processado com sucesso
-					optionsGerado.acordes[idx] = null;
-				} else {
-					deuCerto = false;
-				}
-			});
-
-			if ( deuCerto ) {
-				// Se tudo deu certo, remove a propriedade inteira
-				delete optionsGerado.acordes;
-			} else {
-				// Se sobraram pendências, reconstrói o array ignorando os nulls
-				optionsGerado.acordes = optionsGerado.acordes.filter(c => c !== null);
-			}
-		}
 		return new GrupoElemento(elements, {
 			...contextOptions,
 			...optionsGerado,
