@@ -16,7 +16,7 @@ const pausaOptionsSchema = z.object({
 	invisivel: z.boolean().default(false),
 	pausaDeCompasso: z.boolean().default(false),
 	acordes: z.union([z.string(), z.array(z.string())]).nullable().optional().default([]),
-	letra: z.union([z.string(), z.array(z.string())]).nullable().optional().default([]),
+	letra: z.string().nullable().default(null),
 	unidadeTempo: tempoDuracaoSchema.nullable().optional().default(null),
 	obra: z.any().nullable().default(null),
 	voz: z.any().nullable().default(null),
@@ -68,8 +68,7 @@ const pausaOptionsOutputSchema = z.object({
 	invisivel: z.boolean().default(false),
 	pausaDeCompasso: z.boolean().default(false),
 	acordes: z.union([z.string(), z.array(z.string())]).default([]),
-	// Forçamos a letra a sempre sair como Array na serialização, conforme combinado
-	letra: z.array(z.string()).nullable().default([]),
+	letra: z.string().nullable().default(null),
 	unidadeTempo: tempoDuracaoOutputStringSchema.nullable().default(null),
 	obra: z.any().nullable().default(null),
 	voz: z.any().nullable().default(null),

@@ -29,7 +29,7 @@ export class GrupoElemento {
         this.#options = {
             compasso: options.compasso || null
 	        , anotacoes: options.anotacoes || []
-	        , cifras: options.cifras || []
+	        , acordes: options.acordes || []
 	        , letra: options.letra || []
 	        , ...options
         };
@@ -108,10 +108,10 @@ export class GrupoElemento {
 		return this.compasso.getTotalPulsos(this.getUnidadeTempo());
 	}
 	/**
-	 * USAGE: Adiciona cifra.
+	 * USAGE: Adiciona acorde.
 	 */
-	addCifra(texto, posicao) {
-		this.#options.cifras.push({ texto, posicao });
+	addAcorde(texto, posicao) {
+		this.#options.acordes.push({ texto, posicao });
 	}
 
 	/**

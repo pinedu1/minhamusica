@@ -9,6 +9,7 @@ import { ElementoMusical } from '@domain/nota/ElementoMusical.js';
  * const pausa = new Pausa( duracao, { invisivel: true } );
  */
 export class Pausa extends ElementoMusical {
+	tipo = 'pausa';
     /**
      * @param {import('@domain/tempo/TempoDuracao').TempoDuracao} duracao - Duração da pausa.
      * @param {Object} [options={}] - Configurações opcionais.
@@ -35,7 +36,6 @@ export class Pausa extends ElementoMusical {
         };
         this._duracao = duracao;
     }
-	get tipo() { return 'pausa'; }
     /**
      * Retorna se a pausa possui fermata.
      *

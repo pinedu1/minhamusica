@@ -8,7 +8,7 @@ import { tonalidadeOutputStringSchema, tonalidadeSchema } from "@schemas/tonalid
 import { arrayElementosOutputSchema, arrayElementosSchema } from "@schemas/elementosSchema.js";
 
 /**
- * Schema para validação de anotações e cifras
+ * Schema para validação de anotações e acordes
  */
 const anotacaoSchema = z.object({
     texto: z.string(),
@@ -16,7 +16,7 @@ const anotacaoSchema = z.object({
     local: z.string().optional().default("_")
 });
 
-const cifraSchema = z.object({
+const acordeschema = z.object({
     texto: z.string(),
     posicao: z.number().int().min(0)
 });
@@ -33,7 +33,7 @@ export const compassoSchema = z.object({
         obra: z.any().optional().nullable(),
 
         anotacoes: z.array(anotacaoSchema).default([]),
-        cifras: z.array(cifraSchema).default([]),
+        acordes: z.array(acordeschema).default([]),
 	    letra: z.array(z.string()).nullable().default([]),
 
         // Estruturas de Tempo
@@ -48,7 +48,7 @@ export const compassoSchema = z.object({
 });
 
 /**
- * Schemas para anotações e cifras no formato de saída
+ * Schemas para anotações e acordes no formato de saída
  */
 const anotacaoOutputSchema = z.object({
 	texto: z.string(),
@@ -56,7 +56,7 @@ const anotacaoOutputSchema = z.object({
 	local: z.string().optional().default("_")
 });
 
-const cifraOutputSchema = z.object({
+const acordeOutputSchema = z.object({
 	texto: z.string(),
 	posicao: z.number().int().min(0)
 });
@@ -75,7 +75,7 @@ export const compassoOutputSchema = z.object({
 		obraId: z.string().optional().nullable(),
 
 		anotacoes: z.array(anotacaoOutputSchema).default([]),
-		cifras: z.array(cifraOutputSchema).default([]),
+		acordes: z.array(acordeOutputSchema).default([]),
 		letra: z.array(z.string()).nullable().default([]),
 
 		// Estruturas de Tempo convertidas para output

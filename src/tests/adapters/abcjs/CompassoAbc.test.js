@@ -48,7 +48,7 @@ describe('CompassoAbc', () => {
 			expect(abcResult).toBe("CD EF");
 		});
 
-		it('b) Teste de anotações/cifras saída deve ser: ^dedilhado especial"C z3|', () => {
+		it('b) Teste de anotações/acordes saída deve ser: ^dedilhado especial"C z3|', () => {
 			let obraMock = new Obra(1, [],{
 				metrica: new TempoMetrica(4, 4),
 				unidadeTempo: new TempoDuracao(1, 4),
@@ -491,12 +491,12 @@ describe('CompassoAbc', () => {
 			},
 			tonalidade: Tonalidade.create('G'),
 		}); // O ID ou estrutura que a classe Obra exigir
-		it('1) Deve parsear "| "G" [GAB]c dedB " com quialtera e cifra', () => {
+		it('1) Deve parsear "| "G" [GAB]c dedB " com quialtera e acorde', () => {
 			const compassoString = '| "G" [GAB]c dedB ';
 			const compasso = CompassoAbc.fromAbc(compassoString, obraMock.options);
 
 			let grupo = compasso.grupos[0];
-			expect(grupo.acordes[0]).toBe('G');
+			expect(grupo.acordes[0]).toEqual({texto: 'G', posicao: 0});
 			expect(compasso.grupos.length).toBe(3);
 			grupo = compasso.grupos[1];
 			expect(grupo.elements.length).toBe(2); // (GAB), c
@@ -514,7 +514,7 @@ describe('CompassoAbc', () => {
 			expect(grupo.elements[3].altura.abc).toBe('B');
 			expect(grupo.elements[3].duracao.toString()).toBe('1/8');
 		});
-		it('2) Deve parsear "| "G" .d.e.d.B dedB |" com staccato e cifra', () => {
+		it('2) Deve parsear "| "G" .d.e.d.B dedB |" com staccato e acorde', () => {
 			const compassoString = '| "G" .d.e.d.B dedB |';
 			const compasso = CompassoAbc.fromAbc(compassoString, obraMock.options);
 
@@ -560,7 +560,7 @@ describe('CompassoAbc', () => {
 			expect(grupo.elements[2].altura.abc).toBe('B');
 			expect(grupo.elements[2].ligada).toBe(true);
 		});
-		it('4) Deve parsear "| "C" [cde]- "Am" ec |" com quialtera e cifras', () => {
+		it('4) Deve parsear "| "C" [cde]- "Am" ec |" com quialtera e acordes', () => {
 			const compassoString = '| "C" [cde]- "Am" ec |';
 			const compasso = CompassoAbc.fromAbc(compassoString, obraMock.options);
 
@@ -581,7 +581,7 @@ describe('CompassoAbc', () => {
 			expect(grupo.elements[1].altura.abc).toBe('c');
 			expect(grupo.elements[1].duracao.toString()).toBe('1/8');
 		});
-		it('5) Deve parsear "| "C" (5cdedc "Am" ec"Bm"B2"G"dB |" com quialtera e cifras', () => {
+		it('5) Deve parsear "| "C" (5cdedc "Am" ec"Bm"B2"G"dB |" com quialtera e acordes', () => {
 			const compassoString = '| "C" (5cdedc "Am" ec"Bm"B2"G"dB |';
 			const compasso = CompassoAbc.fromAbc(compassoString, obraMock.options);
 

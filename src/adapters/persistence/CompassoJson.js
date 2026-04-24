@@ -55,8 +55,8 @@ export class CompassoJson {
 		if (options.anotacoes && Array.isArray(options.anotacoes) && options.anotacoes.length > 0) {
 			optionsProcessado.anotacoes = anotacoes;
 		}
-		if (options.cifras && Array.isArray(options.cifras) && options.cifras.length > 0) {
-			optionsProcessado.cifras = cifras;
+		if (options.acordes && Array.isArray(options.acordes) && options.acordes.length > 0) {
+			optionsProcessado.acordes = acordes;
 		}
 
 		// 2. CRIAÇÃO DA INSTÂNCIA PRIMEIRO (Ainda sem elementos para não engatilhar validação)

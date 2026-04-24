@@ -7,6 +7,7 @@ import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 export class Nota extends ElementoMusical {
     /** @type {NotaFrequencia} */
     #altura;
+	tipo = 'nota';
 
 	/**
 	 * @param {NotaFrequencia} altura
@@ -135,7 +136,6 @@ export class Nota extends ElementoMusical {
 			throw new TypeError("Nota: dedilhado deve ser Array, null ou false.");
 		}
 	}
-	get tipo() { return 'nota'; }
 
     // Getters / Setters
     get altura() { return this.#altura; }

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { arrayElementosOutputSchema, arrayElementosSchema } from "@schemas/elementosSchema.js";
 /**
- * Schema para validação de anotações e cifras
+ * Schema para validação de anotações e acordes
  */
 const anotacaoSchema = z.object({
 	texto: z.string(),
@@ -9,7 +9,7 @@ const anotacaoSchema = z.object({
 	local: z.string().optional().default("_")
 });
 
-const cifraSchema = z.object({
+const acordeschema = z.object({
 	texto: z.string(),
 	posicao: z.number().int().min(0)
 });
@@ -22,12 +22,12 @@ export const grupoElementoSchema = z.object({
 	elements: arrayElementosSchema.default([]),
 	options: z.object({
 		anotacoes: z.array(anotacaoSchema).default([]),
-		cifras: z.array(cifraSchema).default([]),
+		acordes: z.array(acordeschema).default([]),
 		letra: z.array(z.string()).nullable().default([]),
 	}).optional().default( { }),
 });
 /**
- * Schemas para anotações e cifras no formato de saída
+ * Schemas para anotações e acordes no formato de saída
  */
 const anotacaoOutputSchema = z.object({
 	texto: z.string(),
@@ -35,7 +35,7 @@ const anotacaoOutputSchema = z.object({
 	local: z.string().optional().default("_")
 });
 
-const cifraOutputSchema = z.object({
+const acordeOutputSchema = z.object({
 	texto: z.string(),
 	posicao: z.number().int().min(0)
 });
@@ -47,7 +47,7 @@ export const grupoElementoOutputSchema = z.object({
 	elements: arrayElementosOutputSchema.default([]),
 	options: z.object({
 		anotacoes: z.array(anotacaoSchema).default([]),
-		cifras: z.array(cifraSchema).default([]),
+		acordes: z.array(acordeschema).default([]),
 		letra: z.array(z.string()).nullable().default([]),
 	}),
 });

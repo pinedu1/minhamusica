@@ -1,9 +1,9 @@
 /**
- * Representa uma cifra harmônica ancorada a um tempo do compasso.
+ * Representa uma acorde harmônica ancorada a um tempo do compasso.
  */
-export class Cifra {
+export class Acorde {
     /** @type {string} - Ex: "E", "Am", "D7" */
-    #cifra;
+    #acorde;
     /** @type {string | null} - Ex: "G#" em E/G# */
     #baixo;
     /** @type {number} - Posição rítmica no compasso */
@@ -14,22 +14,22 @@ export class Cifra {
      * @param {number} posicao - Momento rítmico (0 = início).
      * @param {string | null} baixo - Nota do baixo se for invertido.
      */
-    constructor(cifra, posicao = 0, baixo = null) {
-        this.#cifra = fundamental;
+    constructor(acorde, posicao = 0, baixo = null) {
+        this.#acorde = fundamental;
         this.#posicao = posicao;
         this.#baixo = baixo;
     }
 
     /**
-     * Retorna a representação textual da cifra.
+     * Retorna a representação textual da acorde.
      * @example "E/G#", "Am7"
      */
     get texto() {
-        return this.#baixo ? `${this.#cifra}/${this.#baixo}` : this.#cifra;
+        return this.#baixo ? `${this.#acorde}/${this.#baixo}` : this.#acorde;
     }
 
     /**
-     * Formata para a sintaxe de cifra do abcjs: "Texto"
+     * Formata para a sintaxe de acorde do abcjs: "Texto"
      */
     toAbc() {
         return `"${this.texto}"`;

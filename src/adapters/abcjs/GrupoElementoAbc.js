@@ -16,9 +16,10 @@ export class GrupoElementoAbc {
 	 */
 	static toAbc(grupoElemento) {
 		let abc = "";
+		const acordes = grupoElemento.options.acordes;
 		grupoElemento.elements.forEach((elemento, idx) => {
-			const cifrasDaPosicao = grupoElemento.options.cifras.filter(c => c.posicao === idx);
-			cifrasDaPosicao.forEach(c => { abc += `"${c.texto}"`; });
+			const acordesDaPosicao = acordes.filter(c => c.posicao === idx);
+			acordesDaPosicao.forEach(c => { abc += `"${c.texto}"`; });
 
 			const anotacoesDaPosicao = grupoElemento.options.anotacoes.filter(a => a.posicao === idx);
 			anotacoesDaPosicao.forEach(a => {
@@ -78,6 +79,24 @@ export class GrupoElementoAbc {
 		// Dá um trim() final no payload caso ele tenha um espaço sobrando no fim
 		return { conteudoEncontrado, conteudoRestante };
 	}
+	static _trataPayLoad(payloadString) {
+		let options = { acordes: [], anotacoes: [] };
+		// 2. ACORDES (O que sobrar entre aspas)
+		const regexAcordes = /"(.*?)"/g;
+		const matchesAcordes = payloadString.match(regexAcordes);
+
+		if (matchesAcordes) {
+			options.acordes = matchesAcordes.map(a => {
+				const texto = a.replace(/"/g, '');
+				const posicao = options.acordes.length;
+				return {texto: texto, posicao: posicao};
+			});
+			// Remove os acordes reais da string
+			payloadString = payloadString.replace(regexAcordes, '');
+		}
+
+		return {payloadString: payloadString.trim(), optionsGerado: options};
+	}
 
 	/**
 	 * USAGE: Cria uma nova instância de Compasso a partir de uma string de notação ABC.
@@ -87,7 +106,7 @@ export class GrupoElementoAbc {
 		let str = grupoElementoString.trim();
 		const elements = [];
 		// --- 2. DEFINIÇÃO DOS REGEX DE BUSCA (Individuais) ---
-		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (cifra)
+		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (acorde)
 		const reUnissono  = /^\[[^\]]+\][\d/]*\-?/;
 		const reQuialtera = /^\([0-9]+(?::[0-9]+:[0-9]+)?\-?/;
 		const rePausa     = /^[zxyZXY][\d/]*\-?/;
@@ -98,11 +117,11 @@ export class GrupoElementoAbc {
 		// Captura qualquer coisa (incluindo espaços e pontos)
 		// desde que a posição atual NÃO seja o início de um elemento musical.
 		//const rePayload = /^((?!"|!|\[|\(|[zxyZXY]|[=^_]?[a-gA-G]).)+/;
-		// Captura 1 ou mais ocorrências de: Cifras ("...") OU Dinâmicas (!...!) OU qualquer caractere
+		// Captura 1 ou mais ocorrências de: acordes ("...") OU Dinâmicas (!...!) OU qualquer caractere
 		// que NÃO seja início de Nota, Pausa, Uníssono, Quialtera ou Barras/Ligaduras
 		const rePayload = /^(?:"[^"]*"|![^!]*!|[^\[\(=^_a-gA-GzxyZXY\-\|:])+/;
 		let { conteudoEncontrado, conteudoRestante} = this._consomePayloadInicioSentenca( str );
-		let { payloadString, optionsGerado} = ElementoMusicalAbc._trataPayLoad( conteudoEncontrado );
+		let { payloadString, optionsGerado} = this._trataPayLoad( conteudoEncontrado );
 		str = conteudoRestante
 
 		// --- 3. LOOP DE ELEMENTOS ---

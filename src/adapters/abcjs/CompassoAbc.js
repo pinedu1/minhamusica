@@ -55,8 +55,8 @@ export class CompassoAbc {
 		}
 
 		compasso.elements.forEach((elemento, idx) => {
-			const cifrasDaPosicao = compasso.options.cifras.filter(c => c.posicao === idx);
-			cifrasDaPosicao.forEach(c => { abc += `"${c.texto}"`; });
+			const acordesDaPosicao = compasso.options.acordes.filter(c => c.posicao === idx);
+			acordesDaPosicao.forEach(c => { abc += `"${c.texto}"`; });
 
 			const anotacoesDaPosicao = compasso.options.anotacoes.filter(a => a.posicao === idx);
 			anotacoesDaPosicao.forEach(a => {
@@ -192,8 +192,28 @@ export class CompassoAbc {
 	 * USAGE: Cria uma nova instância de Compasso a partir de uma string de notação ABC.
 	 * Segue a lógica de: Cabeçalhos Iniciais -> Loop de Elementos -> Metadados Finais.
 	 */
-	static fromAbc(compassoString, contextOptions) {
+	static fromAbc(compassoString, contextOptions = {}) {
+		let letraString = null;
+		if (contextOptions.letraString) {
+			letraString = contextOptions.letraString;
+		} else {
+			const abcStringParts = compassoString.split('\n');
+			if (abcStringParts[1] && typeof abcStringParts[1] === 'string' && abcStringParts[1].trim().startsWith('w:')) {
+				const abcStringPartsCompasso = abcStringParts[0];
+				const abcStringPartsLetra = abcStringParts[1];
+				compassoString = abcStringPartsCompasso.trim();
+				letraString = abcStringPartsLetra.substring(2).trim();
+			}
+		}
+		delete contextOptions.letraString;
+
 		let str = compassoString.trim();
+
+		const tokenizaEnter = str.split('\n');
+		if ( tokenizaEnter.length > 1 ) {
+			throw new TypeError("Compasso.fromAbc: Existem caracteres inválidos na string. Use '\\n' para quebrar linhas.");
+		}
+
 		const elements = [];
 		let inlineHeaders = {};
 		let barraInicial = null;
@@ -225,7 +245,7 @@ export class CompassoAbc {
 
 
 		// --- 2. DEFINIÇÃO DOS REGEX DE BUSCA (Individuais) ---
-		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (cifra)
+		// A Nota tem uma regra especial: captura a letra apenas se NÃO for seguida por " (acorde)
 		const reUnissono  = /^\[[^\]]+\][\d/]*\-?/;
 		const reQuialtera = /^\([0-9]+(?::[0-9]+:[0-9]+)?\-?/;
 		const rePausa     = /^[zxyZXY][\d/]*\-?/;
@@ -236,7 +256,7 @@ export class CompassoAbc {
 		// Captura qualquer coisa (incluindo espaços e pontos)
 		// desde que a posição atual NÃO seja o início de um elemento musical.
 		//const rePayload = /^((?!"|!|\[|\(|[zxyZXY]|[=^_]?[a-gA-G]).)+/;
-		// Captura 1 ou mais ocorrências de: Cifras ("...") OU Dinâmicas (!...!) OU qualquer caractere
+		// Captura 1 ou mais ocorrências de: acordes ("...") OU Dinâmicas (!...!) OU qualquer caractere
 		// que NÃO seja início de Nota, Pausa, Uníssono, Quialtera ou Barras/Ligaduras
 		const rePayload = /^(?:"[^"]*"|![^!]*!|[^\[\(=^_a-gA-GzxyZXY\-\|:])+/;
 
@@ -352,8 +372,8 @@ export class CompassoAbc {
 		}
 
 		// --- NOVO BLOCO: CASAMENTO DE LETRAS ---
-		if (contextOptions && contextOptions.letraString) {
-			this.#aplicarLetras(compassoInstance, contextOptions.letraString);
+		if (letraString && letraString.trim().length > 0) {
+			this.#aplicarLetras(compassoInstance, letraString);
 		}
 
 		return compassoInstance;

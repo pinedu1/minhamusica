@@ -52,7 +52,7 @@ export const setupMusic = async (visualSelector, audioSelector, abcString) => {
             }
 
             if (alvo.classList.contains("abcjs-chord")) {
-                // console.log("Clicou na cifra:", alvo.textContent);
+                // console.log("Clicou na acorde:", alvo.textContent);
                 return;
             }
 

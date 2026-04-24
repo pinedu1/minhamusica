@@ -44,7 +44,7 @@ export class Compasso {
     constructor(elements = [], options = {}) {
         this.#options = {
             anotacoes: options.anotacoes || [],
-            cifras: options.cifras || [],
+            acordes: options.acordes || [],
             mudancaDeTom: null,
             ...options
         };
@@ -80,8 +80,8 @@ export class Compasso {
         }
 
         this.#elements.forEach((elemento, idx) => {
-            const cifrasDaPosicao = this.#options.cifras.filter(c => c.posicao === idx);
-            cifrasDaPosicao.forEach(c => { abc += `"${c.texto}"`; });
+            const acordesDaPosicao = this.#options.acordes.filter(c => c.posicao === idx);
+            acordesDaPosicao.forEach(c => { abc += `"${c.texto}"`; });
 
             const anotacoesDaPosicao = this.#options.anotacoes.filter(a => a.posicao === idx);
             anotacoesDaPosicao.forEach(a => {
@@ -178,10 +178,10 @@ export class Compasso {
     }
 
     /**
-     * USAGE: Adiciona cifra.
+     * USAGE: Adiciona acorde.
      */
-    addCifra(texto, posicao) {
-        this.#options.cifras.push({ texto, posicao });
+    addAcorde(texto, posicao) {
+        this.#options.acordes.push({ texto, posicao });
     }
 
     /**

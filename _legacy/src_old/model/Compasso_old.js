@@ -96,7 +96,7 @@ export class Compasso_old {
     #anotacoes = null;
 
     /**
-     * USAGE: Lista de acordes (cifras) que guiam a harmonia do compasso.
+     * USAGE: Lista de acordes (acordes) que guiam a harmonia do compasso.
      * @type {Array<Acorde> | null}
      */
     #acordes = null;

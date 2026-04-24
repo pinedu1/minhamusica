@@ -60,7 +60,7 @@ describe('Classe Compasso', () => {
         expect(resultadoAbc).toBe('C2E/G/|');
     });
 
-    it('4. Deve renderizar ABC com notas e cifras (acordes) sincronizados pelo índice', () => {
+    it('4. Deve renderizar ABC com notas e acordes (acordes) sincronizados pelo índice', () => {
         const compasso = new Compasso(4);
 
         const mockNota1 = new Nota( Altura.resolverAltura('E' ), Duracao.QUARTER);  //{ toAbc: () => 'E2' };
@@ -70,8 +70,8 @@ describe('Classe Compasso', () => {
 
         // Mocks de Acordes apontando para as posições rítmicas (índices 0 e 1)
         const mockAcordes = [
-            { posicao: 0, cifra: 'E' },
-            { posicao: 1, cifra: 'B7' }
+            { posicao: 0, acorde: 'E' },
+            { posicao: 1, acorde: 'B7' }
         ];
 
         // ATENÇÃO: Você precisará criar o método definirAcordes() na classe Compasso!

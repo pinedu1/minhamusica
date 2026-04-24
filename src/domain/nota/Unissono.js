@@ -38,6 +38,7 @@ import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 export class Unissono extends ElementoMusical {
     /** @type {Array<Nota>} */
     #notas = [];
+	tipo = 'unissono';
     /**
      * @param {Array<Nota>} notas - Notas que compõem o unissono.
      * @param {TempoDuracao} duracao - Duração do conjunto.
@@ -105,7 +106,6 @@ export class Unissono extends ElementoMusical {
         this.graceNote = this._options.graceNote;
 	    this.dedilhado = this._options.dedilhado;
     }
-	get tipo() { return 'unissono'; }
 	#addNota(elemento) {
 		if (!(elemento instanceof ElementoMusical)) {
 			throw new TypeError('O elemento deve ser uma instância de ElementoMusical (Nota, Pausa, Unissono ou Quialtera).');

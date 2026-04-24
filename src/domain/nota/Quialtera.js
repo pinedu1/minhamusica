@@ -40,6 +40,7 @@ import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 export class Quialtera extends ElementoMusical {
 	/** @type {Array<ElementoMusical>} */
 	#notas = [];
+	tipo = 'quialtera';
 
 	/**
 	 * @param {Array<ElementoMusical>} notas - Notas, pausas ou uníssonos que compõem a quiáltera.
@@ -110,7 +111,6 @@ export class Quialtera extends ElementoMusical {
 			...options
 		};
 	}
-	get tipo() { return 'quialtera'; }
 	/**
 	 * Adiciona um elemento à sequência da quiáltera.
 	 * @param {ElementoMusical} elemento
@@ -142,6 +142,18 @@ export class Quialtera extends ElementoMusical {
 	get quantidade() {
 		return this.#notas.length;
 	}
+
+	/**
+	 * Calcular a duração em pulsos deste elemento
+	 * overwrite
+	 * @return {number}
+	 */
+	get pulsoElemento() {
+		const ut = this.getUnidadeTempo().razao;
+		const rz = this.duracao.razao
+		return rz / ut;
+	}
+
 	get acordes() { return this._options.acordes; }
 
 	get acento() { return this._options.acento === true; }

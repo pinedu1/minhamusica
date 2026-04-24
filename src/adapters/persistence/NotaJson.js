@@ -60,6 +60,19 @@ export class NotaJson {
 			    return null;
 		    });
 	    }
-        return new Nota( NotaFrequencia.getByKey( altura.key ), TempoDuracaoJson.fromJson( duracao ), optionsProcessado );
+		let alturaObj = null;
+		if ( typeof altura === 'string' ) {
+			alturaObj = NotaFrequencia.getByKey( altura );
+		} else if ( typeof altura === 'object' ) {
+			if ( altura.key ) {
+				alturaObj = NotaFrequencia.getByKey( altura.key );
+			} else if ( altura.abc ) {
+				alturaObj = NotaFrequencia.getByAbc( altura.abc );
+			}
+		}
+		if ( !alturaObj ) {
+			throw new TypeError(`NotaJson.fromJson: Não foi possivel encontrar a altura para a nota ${altura}.`);
+		}
+        return new Nota( alturaObj, TempoDuracaoJson.fromJson( duracao ), optionsProcessado );
     }
 }

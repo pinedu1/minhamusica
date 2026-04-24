@@ -209,7 +209,7 @@ export class ElementoMusicalAbc extends AdapterUtils {
 
 		// 1. DECORADORES DO BLOCO (Prefixos que afetam o acorde inteiro)
 		if ( opt ) {
-			// Acordes de Cifra (Texto sobre o bloco)
+			// Acordes de Acorde (Texto sobre o bloco)
 			if ( opt.acordes && opt.acordes.length > 0 ) {
 				abc += opt.acordes.map( acorde => `"${ acorde }"` ).join( " " );
 			}
@@ -290,7 +290,7 @@ export class ElementoMusicalAbc extends AdapterUtils {
 
 		// 0. ACORDES E DECORADORES INICIAIS
 		if ( opt ) {
-			// Acordes (letras de cifra sobre a nota)
+			// Acordes (letras de acorde sobre a nota)
 			if ( opt.acordes && opt.acordes.length > 0 ) {
 				abc += opt.acordes.map( acorde => `"${ acorde }"` ).join( " " );
 			}

@@ -40,18 +40,18 @@ describe('CompassoJson', () => {
             expect(json.grupos[1].elements[1].altura).toBe('F4');
         });
 
-        it('deve serializar anotações e cifras em um grupo', () => {
+        it('deve serializar anotações e acordes em um grupo', () => {
             const n1 = new Nota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 4));
             const g1 = new GrupoElemento([n1]);
             g1.addAnotacao("dedilhado", 0, "^");
-            g1.addCifra("Cmaj7", 0);
+            g1.addAcorde("Cmaj7", 0);
             const compasso = new Compasso([], { obra: obraMock });
             compasso.grupos = [g1];
 
             const json = CompassoJson.toJson(compasso);
 
             expect(json.grupos[0].options.anotacoes[0]).toEqual({ texto: "dedilhado", posicao: 0, local: "^" });
-            expect(json.grupos[0].options.cifras[0]).toEqual({ texto: "Cmaj7", posicao: 0 });
+            expect(json.grupos[0].options.acordes[0]).toEqual({ texto: "Cmaj7", posicao: 0 });
         });
 
         it('deve serializar barras, métrica e mudança de tom', () => {
@@ -123,13 +123,13 @@ describe('CompassoJson', () => {
             expect(compasso.pulsosOcupados).toBe(2);
         });
 
-        it('deve desserializar anotações e cifras', () => {
+        it('deve desserializar anotações e acordes', () => {
             const json = {
                 grupos: [{
                     elements: [{ tipo: 'nota', altura: { key: 'C4' }, duracao: '1/4' }],
                     options: {
                         anotacoes: [{ texto: "teste", posicao: 0, local: "_" }],
-                        cifras: [{ texto: "Am", posicao: 0 }]
+                        acordes: [{ texto: "Am", posicao: 0 }]
                     }
                 }],
                 options: { metrica: '4/4', unidadeTempo: '1/4' }
@@ -139,7 +139,7 @@ describe('CompassoJson', () => {
             const grupo = compasso.grupos[0];
 
             expect(grupo.options.anotacoes[0].texto).toBe("teste");
-            expect(grupo.options.cifras[0].texto).toBe("Am");
+            expect(grupo.options.acordes[0].texto).toBe("Am");
         });
 
         it('deve desserializar barras, métrica e tom', () => {
