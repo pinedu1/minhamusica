@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { Compasso } from '@domain/compasso/Compasso.js';
-import { Nota } from '@domain/nota/Nota.js';
-import { Pausa } from '@domain/nota/Pausa.js';
 import { Unissono } from '@domain/nota/Unissono.js';
-import { Quialtera } from '@domain/nota/Quialtera.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
 import { NotaFrequencia } from '@domain/nota/NotaFrequencia.js';
@@ -12,7 +8,6 @@ import { TipoBarra } from '@domain/compasso/TipoBarra.js';
 import { CompassoAbc } from '@abcjs/CompassoAbc.js';
 import { CompassoJson } from '@persistence/CompassoJson.js';
 import { Obra } from '@domain/obra/Obra.js';
-import { GrupoElemento } from '@domain/compasso/GrupoElemento.js';
 import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 beforeEach( () => {
