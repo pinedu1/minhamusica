@@ -6,9 +6,9 @@ import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
 import { PausaJson } from "@persistence/PausaJson.js";
 import { NotaJson } from "@persistence/NotaJson.js";
 import { UnissonoJson } from "@persistence/UnissonoJson.js";
-import { GrupoElemento } from "@domain/compasso/GrupoElemento.js";
 import { GrupoElementoJson } from "@persistence/GrupoElementoJson.js";
 import { Tonalidade } from '@domain/compasso/Tonalidade.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class CompassoJson {
 	/**
@@ -60,7 +60,7 @@ export class CompassoJson {
 		}
 
 		// 2. CRIAÇÃO DA INSTÂNCIA PRIMEIRO (Ainda sem elementos para não engatilhar validação)
-		const compasso = new Compasso([], optionsProcessado);
+		const compasso = ObjectFactory.newCompasso([], optionsProcessado);
 		// 3. Roteamento e Instanciação dos Elementos (Nota, Pausa, Unissono ou Quialtera)
 		let instanciasElementos = [];
 		let arrayGrupos = [];

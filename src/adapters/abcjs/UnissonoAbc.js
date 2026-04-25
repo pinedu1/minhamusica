@@ -1,12 +1,10 @@
 import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
-import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { Nota } from "@domain/nota/Nota.js";
 import { Unissono } from "@domain/nota/Unissono.js";
 import { NotaAbc } from "@abcjs/NotaAbc.js";
 import { PausaAbc } from "@abcjs/PausaAbc.js";
 import { QuialteraAbc } from "@abcjs/QuialteraAbc.js";
-import { TipoBarra } from "@domain/compasso/TipoBarra.js";
-import { Compasso } from "@domain/compasso/Compasso.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class UnissonoAbc extends ElementoMusicalAbc {
 	/**
@@ -212,7 +210,7 @@ export class UnissonoAbc extends ElementoMusicalAbc {
 		}
 
 		// 4. RETORNO DO OBJETO
-		const unissono = new Unissono(elements, duracaoComum, finalOptions);
+		const unissono = ObjectFactory.newUnissono(elements, duracaoComum, finalOptions);
 		unissono.notas.forEach(n => n.duracao = duracaoComum);
 
 		return unissono;

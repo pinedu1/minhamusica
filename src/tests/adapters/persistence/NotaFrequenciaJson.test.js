@@ -1,8 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { NotaFrequenciaJson } from '@adapters/persistence/NotaFrequenciaJson.js';
 import { NotaFrequencia } from '@domain/nota/NotaFrequencia.js';
 import { notaFrequenciaSchema } from '@schemas/notaFrequenciaSchema.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'NotaFrequenciaJson', () => {
   describe( 'fromJson', () => {
     it( 'deve criar a partir de um objeto com chave', () => {

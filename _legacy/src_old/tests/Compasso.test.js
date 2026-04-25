@@ -11,7 +11,7 @@ import { Altura } from "../src/domain/Altura.js";
 describe('Classe Compasso', () => {
 
     it('1. Deve instanciar corretamente com valores padrão', () => {
-        const compasso = new Compasso(1);
+        const compasso = ObjectFactory.newCompasso(1);
 
         expect(compasso.indice).toBe(1);
         expect(compasso.vozes).toEqual([]);
@@ -25,7 +25,7 @@ describe('Classe Compasso', () => {
         const mockClave = new Clave( ClaveTipo.TREBLE );
         const mockArmadura = new ArmaduraClave( 'G', 'maior' );
 
-        const compasso = new Compasso(2, {
+        const compasso = ObjectFactory.newCompasso(2, {
             estruturaTempo: mockTempo,
             clave: mockClave,
             armaduraClave: mockArmadura
@@ -41,12 +41,12 @@ describe('Classe Compasso', () => {
     });
 
     it('3. Deve renderizar ABC contendo notas inseridas', () => {
-        const compasso = new Compasso(3);
+        const compasso = ObjectFactory.newCompasso(3);
 
         // Criando Mocks de notas
-        const mockNota1 = new Nota( Altura.resolverAltura('C' ), Duracao.QUARTER);  //{ toAbc: () => 'C2' };
-        const mockNota2 = new Nota( Altura.resolverAltura('E' ), Duracao.SIXTEENTH);  //{ toAbc: () => 'E/' };
-        const mockNota3 = new Nota( Altura.resolverAltura('G' ), Duracao.SIXTEENTH);  //{ toAbc: () => 'G/' };
+        const mockNota1 = ObjectFactory.newNota( Altura.resolverAltura('C' ), Duracao.QUARTER);  //{ toAbc: () => 'C2' };
+        const mockNota2 = ObjectFactory.newNota( Altura.resolverAltura('E' ), Duracao.SIXTEENTH);  //{ toAbc: () => 'E/' };
+        const mockNota3 = ObjectFactory.newNota( Altura.resolverAltura('G' ), Duracao.SIXTEENTH);  //{ toAbc: () => 'G/' };
 
         // ATENÇÃO: Você precisará criar o método adicionarNota() na classe Compasso!
         compasso.notaAppend(mockNota1);
@@ -61,10 +61,10 @@ describe('Classe Compasso', () => {
     });
 
     it('4. Deve renderizar ABC com notas e acordes (acordes) sincronizados pelo índice', () => {
-        const compasso = new Compasso(4);
+        const compasso = ObjectFactory.newCompasso(4);
 
-        const mockNota1 = new Nota( Altura.resolverAltura('E' ), Duracao.QUARTER);  //{ toAbc: () => 'E2' };
-        const mockNota2 = new Nota( Altura.resolverAltura('B' ), Duracao.QUARTER);  //{ toAbc: () => 'B2' };
+        const mockNota1 = ObjectFactory.newNota( Altura.resolverAltura('E' ), Duracao.QUARTER);  //{ toAbc: () => 'E2' };
+        const mockNota2 = ObjectFactory.newNota( Altura.resolverAltura('B' ), Duracao.QUARTER);  //{ toAbc: () => 'B2' };
         compasso.notaAppend(mockNota1);
         compasso.notaAppend(mockNota2);
 
@@ -85,7 +85,7 @@ describe('Classe Compasso', () => {
     });
 
     it('5. Deve renderizar uma barra de fechamento personalizada', () => {
-        const compasso = new Compasso(5);
+        const compasso = ObjectFactory.newCompasso(5);
 
         // ATENÇÃO: Você precisará criar o setter setTipoBarra() na classe Compasso!
         compasso.tipoBarraFechamento = '||';
@@ -97,7 +97,7 @@ describe('Classe Compasso', () => {
     });
 
     it('6. Deve adicionar quebra de linha ao final do compasso se configurado', () => {
-        const compasso = new Compasso(6);
+        const compasso = ObjectFactory.newCompasso(6);
 
         // ATENÇÃO: Você precisará criar o setter setQuebraDeLinha() na classe Compasso!
         compasso.quebraDeLinha = true;

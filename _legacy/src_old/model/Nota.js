@@ -88,6 +88,6 @@ export class Nota {
     set ligada(valor) { this.#options.ligada = !!valor; }
 
     static resolverNota(alturaStr, duracao = null, options = {}) {
-        return new Nota(Altura.resolverAltura(alturaStr), duracao, options);
+        return ObjectFactory.newNota(Altura.resolverAltura(alturaStr), duracao, options);
     }
 }

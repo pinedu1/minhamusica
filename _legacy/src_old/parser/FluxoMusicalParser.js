@@ -22,7 +22,7 @@ export class FluxoMusicalParser {
         const compassos = [];
         const valorMaximo = formula.getValorTotal();
 
-        let compassoAtual = new Compasso(compassos.length, { estruturaTempo: formula });
+        let compassoAtual = ObjectFactory.newCompasso(compassos.length, { estruturaTempo: formula });
         let acumuladoNoCompasso = 0;
 
         const TOKEN_REGEX = /\[([^\]]+)\]([\d/]*)([-]?)|([\^=_]*[A-Ga-g][,']*)([\d/]*)([-]?)/g;
@@ -49,7 +49,7 @@ export class FluxoMusicalParser {
 
                 if (espacoDisponivel <= 0) {
                     if (compassoAtual.vozes.length > 0) compassos.push(compassoAtual);
-                    compassoAtual = new Compasso(compassos.length, { estruturaTempo: formula });
+                    compassoAtual = ObjectFactory.newCompasso(compassos.length, { estruturaTempo: formula });
                     acumuladoNoCompasso = 0;
                     continue;
                 }
@@ -81,7 +81,7 @@ export class FluxoMusicalParser {
 
                 if (acumuladoNoCompasso >= valorMaximo) {
                     compassos.push(compassoAtual);
-                    compassoAtual = new Compasso(compassos.length, { estruturaTempo: formula });
+                    compassoAtual = ObjectFactory.newCompasso(compassos.length, { estruturaTempo: formula });
                     acumuladoNoCompasso = 0;
                 }
             }

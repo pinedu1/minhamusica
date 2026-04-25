@@ -83,6 +83,7 @@ const unissonoOptionsSchema = z.object({
  * Valida a estrutura JSON e aplica os defaults antes da instanciação.
  */
 export const unissonoSchema = z.object({
+	id: z.number(),
 	tipo: z.literal( 'unissono' ).default( 'unissono' ),
 	notas: z.lazy(() => arrayElementosSchema).default([]),
 	duracao: tempoDuracaoSchema.transform((val) => `${val.numerador}/${val.denominador}`),
@@ -109,6 +110,7 @@ export const unissonoSchema = z.object({
  * Serializa a instância da classe Unissono para um JSON plano e otimizado.
  */
 export const unissonoOutputSchema = z.object({
+	id: z.number(),
 	tipo: z.literal( 'unissono' ).default( 'unissono' ),
 	notas: z.lazy(() => arrayElementosOutputSchema),
 	duracao: tempoDuracaoOutputStringSchema,
@@ -128,7 +130,7 @@ export const unissonoOutputSchema = z.object({
 	);
 
 	return {
-		// CORREÇÃO 2: Apenas repassa o valor da string, sem recriar o schema Zod
+		id: val.id,
 		tipo: val.tipo,
 		notas: val.notas,
 		duracao: val.duracao,

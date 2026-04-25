@@ -1,5 +1,6 @@
 import { Compasso } from "@domain/compasso/Compasso.js";
 import { Voz } from "@domain/voz/Voz.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class VozAbc {
 	/**

@@ -4,6 +4,7 @@ import { PausaJson } from "@persistence/PausaJson.js";
 import { NotaJson } from "@persistence/NotaJson.js";
 import { UnissonoJson } from "@persistence/UnissonoJson.js";
 import { QuialteraJson } from "@persistence/QuialteraJson.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class GrupoElementoJson {
 	static toJson(grupoElemento) {
@@ -27,6 +28,6 @@ export class GrupoElementoJson {
 			});
 		}
 
-		return new GrupoElemento(e, options);
+		return ObjectFactory.newGrupoElemento(e, options);
 	}
 }

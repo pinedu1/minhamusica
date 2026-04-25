@@ -4,6 +4,7 @@ import { NotaJson } from "@persistence/NotaJson.js";
 import { PausaJson } from "@persistence/PausaJson.js";
 import { UnissonoJson } from "@persistence/UnissonoJson.js";
 import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class QuialteraJson {
 	/**
@@ -62,6 +63,6 @@ export class QuialteraJson {
 			});
 		}
 		// 5. Retorna a nova instância de Quialtera
-		return new Quialtera(instanciasNotas, instanciaDuracao, optionsProcessado);
+		return ObjectFactory.newQuialtera(instanciasNotas, instanciaDuracao, optionsProcessado);
 	}
 }

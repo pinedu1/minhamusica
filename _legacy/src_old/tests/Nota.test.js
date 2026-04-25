@@ -16,7 +16,7 @@ describe('Classe Nota', () => {
             new UnidadeDuracao(1, 8)  // Representa a unidade base L: 1/8
         );
 
-        const nota = new Nota(altura, duracaoNota);
+        const nota = ObjectFactory.newNota(altura, duracaoNota);
         const resultado = nota.toAbc();
 
         console.log("--- RESULTADO ABC ---");
@@ -32,7 +32,7 @@ describe('Classe Nota', () => {
         const lBase = new UnidadeDuracao(1, 4); // L: 1/4 (0.25)
 
         // Criamos uma Semínima (0.25). Como L: também é 1/4 (0.25), a razão é 1.
-        const nota = new Nota(altura, null, {compasso: {estruturaTempo: formula, unidadeBase: lBase}});
+        const nota = ObjectFactory.newNota(altura, null, {compasso: {estruturaTempo: formula, unidadeBase: lBase}});
 
         const resultado = nota.toAbc();
 
@@ -50,7 +50,7 @@ describe('Classe Nota', () => {
             new UnidadeDuracao(3, 8) // L: 3/8 -> Base de 3/8
         );
         // Criamos uma Semínima (0.25). Como L: também é 1/4 (0.25), a razão é 1.
-        const nota = new Nota(altura, duracaoNota);
+        const nota = ObjectFactory.newNota(altura, duracaoNota);
 
         const resultado = nota.toAbc();
 
@@ -70,7 +70,7 @@ describe('Classe Nota', () => {
             const contexto = new Duracao(formula, lBase);
 
             // Mínima (0.5). Razão contra L(0.125) = 4.
-            const nota = new Nota(altura, contexto.MINIMA, lBase);
+            const nota = ObjectFactory.newNota(altura, contexto.MINIMA, lBase);
 
             expect(nota.toAbc()).toBe("C4");
         });
@@ -82,7 +82,7 @@ describe('Classe Nota', () => {
             const contexto = new Duracao(formula, lBase);
 
             // Colcheia (0.125). Razão contra L(0.25) = 0.5 (Representado por "/")
-            const nota = new Nota(altura, contexto.COLCHEIA, lBase);
+            const nota = ObjectFactory.newNota(altura, contexto.COLCHEIA, lBase);
 
             expect(nota.toAbc()).toBe("D/");
         });
@@ -93,7 +93,7 @@ describe('Classe Nota', () => {
             const lBase = new EstruturaTempo(1, 4);
             const contexto = new Duracao(formula, lBase);
 
-            const nota = new Nota(altura, contexto.SEMINIMA, lBase);
+            const nota = ObjectFactory.newNota(altura, contexto.SEMINIMA, lBase);
             nota.ligada = true;
 
             expect(nota.toAbc()).toBe("E-");
@@ -106,7 +106,7 @@ describe('Classe Nota', () => {
             const contexto = new Duracao(formula, lBase);
 
             // Usamos o construtor completo para ativar ghostNote
-            const nota = new Nota(altura, contexto.SEMINIMA, lBase, [], null, true);
+            const nota = ObjectFactory.newNota(altura, contexto.SEMINIMA, lBase, [], null, true);
 
             expect(nota.toAbc()).toBe("!style=x!F");
         });
@@ -123,7 +123,7 @@ describe('Classe Nota', () => {
             // Nota Semínima (0.25).
             // Se usar lLocal(0.125) -> A2
             // Se usar lFallback(0.25) -> A
-            const nota = new Nota(altura, contexto.SEMINIMA, lLocal);
+            const nota = ObjectFactory.newNota(altura, contexto.SEMINIMA, lLocal);
 
             expect(nota.toAbc(lFallback)).toBe("A2");
         });
@@ -135,7 +135,7 @@ describe('Classe Nota', () => {
             const contexto = new Duracao(formula, lFallback);
 
             // Nota sem unidadeBase no construtor
-            const nota = new Nota(altura, contexto.SEMINIMA, null);
+            const nota = ObjectFactory.newNota(altura, contexto.SEMINIMA, null);
 
             // Deve calcular contra o fallback: 0.25 / 0.125 = 2
             expect(nota.toAbc(lFallback)).toBe("B2");

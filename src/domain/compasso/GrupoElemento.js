@@ -6,12 +6,18 @@ import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 import { Tonalidade } from "@domain/compasso/Tonalidade.js";
 import { Obra } from "@domain/obra/Obra.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 /**
  * Representa um grupo visual de elementos musicais dentro de um compasso,
  * como notas conectadas por uma barra de ligação (bandeirola).
  */
 export class GrupoElemento {
+	/**
+	 * Todo dominio terá um id numérico para identificar o objeto.
+	 * @type {number}
+	 */
+	#id;
     /** @type {Array<ElementoMusical>} */
     #elements = [];
 
@@ -20,13 +26,14 @@ export class GrupoElemento {
 
     /**
      * Construtor do GrupoElemento.
-     *
+     * @param {number} id - O identificador da instância
      * @param {Array<ElementoMusical>} [elements=[]] - Array inicial de elementos musicais.
      * @param {Object} [options={}] - Configurações para o grupo.
      * @param {Compasso|null} [options.compasso=null] - Referência ao compasso pai.
      */
-    constructor(elements = [], options = {}) {
-        this.#options = {
+    constructor(id, elements = [], options = {}) {
+        this.#id = id;
+		this.#options = {
             compasso: options.compasso || null
 	        , anotacoes: options.anotacoes || []
 	        , acordes: options.acordes || []
@@ -167,4 +174,5 @@ export class GrupoElemento {
 	get pulsosOcupados() {
 		return this.elements.reduce((total, e) => total + e.pulsoElemento, 0);
 	}
+	get id() { return this.#id; }
 }

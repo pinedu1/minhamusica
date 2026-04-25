@@ -1,18 +1,23 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { PausaJson } from '@adapters/persistence/PausaJson.js';
 import { PausaAbc } from '@adapters/abcjs/PausaAbc.js';
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'Pausa Integration', () => {
   it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC', () => {
     // 1. Receber JSON
     const jsonData = {
-      duracao: '1/1',
-      options: {
-        acordes: [ 'Gm' ],
-        fermata: true,
-        breath: true,
-      }
+		id: 0,
+	    duracao: '1/1',
+	    options: {
+		    acordes: [ 'Gm' ],
+		    fermata: true,
+		    breath: true,
+	    }
     };
 
     // 2. Instanciar via PausaJson (JSON -> Domínio)
@@ -35,7 +40,8 @@ describe( 'Pausa Integration', () => {
     const jsonResult = PausaJson.toJson( pausaDominio );
     expect( jsonResult ).toEqual(
 	    {
-		    tipo: 'pausa'
+		    id: 0
+		    , tipo: 'pausa'
 		    , duracao: '4/1'
 		    , options: {
 			    acordes: [ 'D' ]

@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoMetricaAbc } from '@abcjs/TempoMetricaAbc.js';
 import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoMetricaAbc', () => {
   describe( 'fromAbc', () => {
 	  it( 'deve criar a partir de "4/4"', () => {

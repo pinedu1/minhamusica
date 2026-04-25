@@ -1,15 +1,19 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { Unissono } from '@domain/nota/Unissono.js';
 import { Nota } from '@domain/nota/Nota.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'Unissono', () => {
     it( 'deve inicializar com os valores padrão corretos para manter o estado', () => {
         const notaMock1 = Object.create( Nota.prototype );
         const notaMock2 = Object.create( Nota.prototype );
         const duracaoMock = Object.create( TempoDuracao.prototype );
         
-        const unissono = new Unissono( [ notaMock1, notaMock2 ], duracaoMock );
+        const unissono = ObjectFactory.newUnissono( [ notaMock1, notaMock2 ], duracaoMock );
 
         expect( unissono.notas.length ).toBe( 2 );
         expect( unissono.notas[ 0 ] ).toBe( notaMock1 );
@@ -38,10 +42,10 @@ describe( 'Unissono', () => {
         const duracaoMock = Object.create( TempoDuracao.prototype );
         
         // Testando array com tipo inválido
-        expect( () => new Unissono( [ {} ], duracaoMock ) ).toThrowError( "Todos os elementos do array de notas devem ser instâncias de Nota." );
+        expect( () => ObjectFactory.newUnissono( [ {} ], duracaoMock ) ).toThrowError( "Todos os elementos do array de notas devem ser instâncias de Nota." );
         
         // Testando passagem de tipo que não é array
-        expect( () => new Unissono( "não é array", duracaoMock ) ).toThrowError( "As notas de um unissono devem ser fornecidas como um array de instâncias de Nota." );
+        expect( () => ObjectFactory.newUnissono( "não é array", duracaoMock ) ).toThrowError( "As notas de um unissono devem ser fornecidas como um array de instâncias de Nota." );
     } );
 
     it( 'deve configurar corretamente as opções personalizadas recebidas no construtor', () => {
@@ -57,7 +61,7 @@ describe( 'Unissono', () => {
             , dedilhado: ['1','2', '3']
         };
         
-        const unissono = new Unissono( [ notaMock ], duracaoMock, options );
+        const unissono = ObjectFactory.newUnissono( [ notaMock ], duracaoMock, options );
 
         expect( unissono._options.ligada ).toBe( true );
         expect( unissono._options.acento ).toBe( true );
@@ -70,7 +74,7 @@ describe( 'Unissono', () => {
     it( 'deve permitir leitura e atualização da propriedade notas através de getter e setter com validação', () => {
         const notaMock1 = Object.create( Nota.prototype );
         const duracaoMock = Object.create( TempoDuracao.prototype );
-        const unissono = new Unissono( [ notaMock1 ], duracaoMock );
+        const unissono = ObjectFactory.newUnissono( [ notaMock1 ], duracaoMock );
         
         expect( unissono.notas.length ).toBe( 1 );
 
@@ -95,17 +99,17 @@ describe( 'Unissono', () => {
         const msgErroTipo = "GraceNote: deve ser um array de instâncias de Nota | Pausa | Unissono | Quialtera.";
         const msgErroElementos = "Todos os elementos do array de notas devem ser instâncias de Nota | Pausa | Unissono | Quialtera.";
         
-        expect( () => new Unissono( [ notaMock ], duracaoMock, { graceNote: true } ) ).toThrowError( msgErroTipo );
-        expect( () => new Unissono( [ notaMock ], duracaoMock, { graceNote: {} } ) ).toThrowError( msgErroTipo );
-        expect( () => new Unissono( [ notaMock ], duracaoMock, { graceNote: "nota" } ) ).toThrowError( msgErroTipo );
+        expect( () => ObjectFactory.newUnissono( [ notaMock ], duracaoMock, { graceNote: true } ) ).toThrowError( msgErroTipo );
+        expect( () => ObjectFactory.newUnissono( [ notaMock ], duracaoMock, { graceNote: {} } ) ).toThrowError( msgErroTipo );
+        expect( () => ObjectFactory.newUnissono( [ notaMock ], duracaoMock, { graceNote: "nota" } ) ).toThrowError( msgErroTipo );
         
-        expect( () => new Unissono( [ notaMock ], duracaoMock, { graceNote: [ {} ] } ) ).toThrowError( msgErroElementos );
+        expect( () => ObjectFactory.newUnissono( [ notaMock ], duracaoMock, { graceNote: [ {} ] } ) ).toThrowError( msgErroElementos );
         
         const graceNoteMock = Object.create( Nota.prototype );
-        const unissonoComGrace = new Unissono( [ notaMock ], duracaoMock, { graceNote: [ graceNoteMock ] } );
+        const unissonoComGrace = ObjectFactory.newUnissono( [ notaMock ], duracaoMock, { graceNote: [ graceNoteMock ] } );
         expect( unissonoComGrace._options.graceNote ).toEqual( [ graceNoteMock ] );
         
-        const unissonoVazio = new Unissono( [ notaMock ], duracaoMock, { graceNote: [] } );
+        const unissonoVazio = ObjectFactory.newUnissono( [ notaMock ], duracaoMock, { graceNote: [] } );
         expect( unissonoVazio._options.graceNote ).toEqual( [] );
         
     } );

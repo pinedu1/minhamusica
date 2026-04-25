@@ -4,6 +4,7 @@ import { unissonoOutputSchema, unissonoSchema } from "@schemas/unissonoSchema.js
 import { NotaJson } from "@persistence/NotaJson.js";
 import { PausaJson } from "@persistence/PausaJson.js";
 import { QuialteraJson } from "@persistence/QuialteraJson.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class UnissonoJson {
 	/**
@@ -62,6 +63,6 @@ export class UnissonoJson {
 			});
 		}
 		// 5. Retorna a nova instância de Unissono
-		return new Unissono(instanciasNotas, instanciaDuracao, optionsProcessado);
+		return ObjectFactory.newUnissono(instanciasNotas, instanciaDuracao, optionsProcessado);
 	}
 }

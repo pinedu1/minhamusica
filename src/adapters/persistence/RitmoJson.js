@@ -1,4 +1,5 @@
 import { RitmoAbc } from "@domain/obra/Ritmo.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class RitmoJson {
 	static fromJson( ritmo = 'REEL' ) {

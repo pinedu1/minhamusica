@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { tempoDuracaoSchema, tempoDuracaoOutputSchema, tempoDuracaoOutputStringSchema } from "@schemas/tempoDuracaoSchema.js";
+import { acordeOutputSchema, acordeSchema } from "@schemas/acordeSchema.js";
 
 // ============================================================================
 // SCHEMAS DE ENTRADA (INPUT)
@@ -15,7 +16,7 @@ const pausaOptionsSchema = z.object({
 	breath: z.boolean().default(false),
 	invisivel: z.boolean().default(false),
 	pausaDeCompasso: z.boolean().default(false),
-	acordes: z.union([z.string(), z.array(z.string())]).nullable().optional().default([]),
+	acordes: acordeSchema.default([]),
 	letra: z.string().nullable().default(null),
 	unidadeTempo: tempoDuracaoSchema.nullable().optional().default(null),
 	obra: z.any().nullable().default(null),
@@ -28,6 +29,7 @@ const pausaOptionsSchema = z.object({
  * Lê a duração e delega todas as outras propriedades para o options.
  */
 export const pausaSchema = z.object({
+	id: z.number(),
 	tipo: z.literal('pausa').default('pausa'),
 	duracao: tempoDuracaoSchema.transform((val) => `${val.numerador}/${val.denominador}`),
 	options: pausaOptionsSchema.default({})
@@ -47,6 +49,7 @@ export const pausaSchema = z.object({
 
 		// Retornamos um objeto simples e direto (adeus redundância e função pick!)
 		return {
+			id: val.id,
 			tipo: val.tipo,
 			duracao: val.duracao,
 			options: cleanOptions
@@ -67,7 +70,7 @@ const pausaOptionsOutputSchema = z.object({
 	breath: z.boolean().default(false),
 	invisivel: z.boolean().default(false),
 	pausaDeCompasso: z.boolean().default(false),
-	acordes: z.union([z.string(), z.array(z.string())]).default([]),
+	acordes: acordeOutputSchema.default([]),
 	letra: z.string().nullable().default(null),
 	unidadeTempo: tempoDuracaoOutputStringSchema.nullable().default(null),
 	obra: z.any().nullable().default(null),
@@ -79,6 +82,7 @@ const pausaOptionsOutputSchema = z.object({
  * Schema principal de saída da Pausa.
  */
 export const pausaOutputSchema = z.object({
+	id: z.number(),
 	tipo: z.literal('pausa').default('pausa'),
 	duracao: tempoDuracaoOutputStringSchema,
 	_options: pausaOptionsOutputSchema // Lê direto do _options interno da classe Pausa
@@ -95,6 +99,7 @@ export const pausaOutputSchema = z.object({
 	);
 
 	return {
+		id: val.id,
 		tipo: val.tipo,
 		duracao: val.duracao,
 		options: cleanOptions

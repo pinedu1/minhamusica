@@ -1,7 +1,7 @@
 import { Nota } from '@domain/nota/Nota.js';
 import { ElementoMusicalAbc } from "@adapters/abcjs/ElementoMusicalAbc.js";
-import { TempoDuracaoAbc } from "@adapters/abcjs/TempoDuracaoAbc.js";
 import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 /**
  * @file NotaAbc.js
@@ -59,6 +59,6 @@ export class NotaAbc extends ElementoMusicalAbc {
 		const duracao = this._calcularDuracaoAbcString( contextOptions, duracaoString ?? '' );
 		const frequencia = NotaFrequencia.getByAbc( alturaString );
 
-		return new Nota ( frequencia, duracao, options );
+		return ObjectFactory.newNota ( frequencia, duracao, options );
 	}
 }

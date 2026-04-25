@@ -5,9 +5,105 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ab40c7d-8ca7-49da-8c84-66e6cfead7ea" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/domain/nota/Ligadura.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/factory/IdFactory.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/factory/ObjectFactory.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/schemas/acordeSchema.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/GrupoElementoAbc.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/GrupoElementoJson.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/domain/GrupoElemento.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tests/integration/GrupoElementoIntegration.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CONTEXT.md" beforeDir="false" afterPath="$PROJECT_DIR$/CONTEXT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Compasso.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Compasso.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src/tests/Voz.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src/tests/Voz.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Acorde.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Acorde.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/model/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/model/Nota.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/parser/CompassoParser.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/parser/CompassoParser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/parser/FluxoMusicalParser.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/parser/FluxoMusicalParser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/tests/Compasso.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/tests/Compasso.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_legacy/src_old/tests/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/_legacy/src_old/tests/Nota.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/jsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/ClaveAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/ClaveAbc.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/CompassoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/ElementoMusicalAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/GrupoElementoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/NotaFrequenciaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/NotaFrequenciaAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/ObraAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/ObraAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/PausaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/PausaAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/QuialteraAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/QuialteraAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/RitmoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/RitmoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/TempoAndamentoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/TempoAndamentoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/TempoDuracaoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/TempoDuracaoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/TempoMetricaAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/TempoMetricaAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/TonalidadeAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/TonalidadeAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/UnissonoAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/abcjs/VozAbc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/abcjs/VozAbc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/ClaveJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/ClaveJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/CompassoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/CompassoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/GrupoElementoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/GrupoElementoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/NotaFrequenciaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaFrequenciaJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/NotaJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/ObraJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/ObraJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/PausaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/PausaJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/QuialteraJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/QuialteraJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/RitmoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/RitmoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/TempoAndamentoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoAndamentoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/TempoDuracaoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoDuracaoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/TempoMetricaJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/TempoMetricaJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/UnissonoJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/UnissonoJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/adapters/persistence/VozJson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/adapters/persistence/VozJson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/Compasso.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/compasso/GrupoElemento.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/compasso/GrupoElemento.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/ElementoMusical.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Nota.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Nota.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Pausa.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Pausa.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Quialtera.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Quialtera.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/nota/Unissono.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/nota/Unissono.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/compassoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/compassoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/grupoElementoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/grupoElementoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/notaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/notaSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/pausaSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/pausaSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/quialteraSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/quialteraSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/schemas/unissonoSchema.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/CompassoAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaFrequenciaAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/NotaFrequenciaAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/PausaAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/PausaAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/QuialteraAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/QuialteraAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoAndamentoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoAndamentoAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoDuracaoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoDuracaoAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoMetricaAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/TempoMetricaAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/abcjs/UnissonoAbc.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/abcjs/UnissonoAbc.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/CompassoJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/CompassoJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaFrequenciaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaFrequenciaJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/NotaJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/PausaJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/QuialteraJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/QuialteraJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoAndamentoJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoAndamentoJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoDuracaoJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoDuracaoJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoMetricaJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/TempoMetricaJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/adapters/persistence/UnissonoJson.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/adapters/persistence/UnissonoJson.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/AcordeTransposer.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/AcordeTransposer.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Compasso.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Compasso.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Nota.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Pausa.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Pausa.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Quialtera.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Quialtera.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/TempoAndamento.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/TempoAndamento.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/TempoDuracao.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/TempoDuracao.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/TempoMetrica.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/TempoMetrica.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/domain/Unissono.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/domain/Unissono.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tests/integration/CompassoIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/CompassoIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/NotaFrequenciaIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/NotaFrequenciaIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/NotaIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/NotaIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/PausaIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/PausaIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/QuialteraIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/QuialteraIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/TempoAndamentoIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/TempoAndamentoIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/TempoDuracaoIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/TempoDuracaoIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/TempoMetricaIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/TempoMetricaIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests/integration/UnissonoIntegration.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/integration/UnissonoIntegration.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,11 +174,11 @@
       <recent name="$PROJECT_DIR$/_legacy/src/model/voz" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/factory" />
       <recent name="$PROJECT_DIR$/src/tests/domain" />
       <recent name="$PROJECT_DIR$/src/tests/adapters/persistence" />
       <recent name="$PROJECT_DIR$/src/tests/adapters/abcjs" />
       <recent name="$PROJECT_DIR$/src/adapters" />
-      <recent name="$PROJECT_DIR$/src/adapters/persistence" />
     </key>
   </component>
   <component name="RunManager" selected="npm.npm test">
@@ -102,7 +198,7 @@
     <configuration name="npm test" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="test" />
-      <arguments value="CompassoAbc.test" />
+      <arguments value="GrupoElementoIntegration.test" />
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
@@ -172,7 +268,8 @@
       <workItem from="1776771838663" duration="37319000" />
       <workItem from="1776854732885" duration="64532000" />
       <workItem from="1776984481385" duration="341000" />
-      <workItem from="1777034734160" duration="23950000" />
+      <workItem from="1777034734160" duration="25338000" />
+      <workItem from="1777121631323" duration="11188000" />
     </task>
     <servers />
   </component>
@@ -192,6 +289,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/adapters/persistence/GrupoElementoJson.js</url>
+          <line>24</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="dart-exception" />
         <breakpoint log-message="true" log-stack="true" type="javascript-exception" />

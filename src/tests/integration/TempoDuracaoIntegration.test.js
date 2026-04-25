@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoDuracaoJson } from '@adapters/persistence/TempoDuracaoJson.js';
 import { TempoDuracaoAbc } from '@adapters/abcjs/TempoDuracaoAbc.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoDuracao Integration', () => {
 	it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC para: { duracao: "1/2" }', () => {
 		// 1. Receber JSON

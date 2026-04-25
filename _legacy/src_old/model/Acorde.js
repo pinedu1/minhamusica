@@ -83,7 +83,7 @@ export class Acorde {
 
         for (const match of matchesNotas) {
             const altura = Altura.resolverAltura(match[1]);
-            notasObjetos.push(new Nota(altura, duracaoFinal, unidadeBase));
+            notasObjetos.push(ObjectFactory.newNota(altura, duracaoFinal, unidadeBase));
         }
 
         return new Acorde(notasObjetos, duracaoFinal, unidadeBase);

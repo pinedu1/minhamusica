@@ -25,7 +25,7 @@ const acordeschema = z.object({
  * Schema principal do Compasso
  */
 export const compassoSchema = z.object({
-    // Elementos podem ser objetos de dados ou instâncias já criadas
+	id: z.number(),
 	elements: arrayElementosSchema.nullable().optional().default([]),
 	grupos: z.array(grupoElementoSchema).default([]),
     options: z.object({
@@ -65,7 +65,7 @@ const acordeOutputSchema = z.object({
  * Schema principal do Compasso para Output (serialização/API)
  */
 export const compassoOutputSchema = z.object({
-	// Valida o array com os 4 tipos definidos na union acima
+	id: z.number(),
 	elements: arrayElementosOutputSchema,
 	grupos: z.array(grupoElementoOutputSchema),
 

@@ -1,8 +1,8 @@
 import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
-import { Nota } from "@domain/nota/Nota.js";
 import { Quialtera } from "@domain/nota/Quialtera.js";
 import { NotaAbc } from "@abcjs/NotaAbc.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class QuialteraAbc extends ElementoMusicalAbc {
 	/**
@@ -202,7 +202,7 @@ export class QuialteraAbc extends ElementoMusicalAbc {
 
 		// 4. INSTÂNCIA ANTECIPADA (Para passar de contexto, se necessário)
 		const notas = [];
-		const quialteraInstance = new Quialtera(notas, duracaoOcupada, finalOptions);
+		const quialteraInstance = ObjectFactory.newQuialtera(notas, duracaoOcupada, finalOptions);
 		finalOptions.quialtera = quialteraInstance;
 
 		// --- 5. LOOP DE ELEMENTOS (NOTAS INTERNAS) ---

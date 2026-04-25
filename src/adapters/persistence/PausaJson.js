@@ -6,7 +6,7 @@
 import { Pausa } from '@domain/nota/Pausa.js';
 import { pausaSchema, pausaOutputSchema } from "@schemas/pausaSchema.js";
 import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
-
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 /**
  * Classe responsável por serializar e desserializar Pausas em JSON.
  */
@@ -47,6 +47,6 @@ export class PausaJson {
 	    const optionsProcessado = { ...options };
 
 	    // Retorno usando o spread para manter o DRY em todas as propriedades de options
-	    return new Pausa(instanciaDuracao, optionsProcessado);
+	    return ObjectFactory.newPausa(instanciaDuracao, optionsProcessado);
     }
 }

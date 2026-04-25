@@ -15,7 +15,7 @@ export class CompassoParser {
     static TOKEN_REGEX = /([\^=_]*[A-Ga-g][,']*?)([\d/]*)([-]?)/g;
 
     static parse(entrada, indice = 0) {
-        const compasso = new Compasso(indice);
+        const compasso = ObjectFactory.newCompasso(indice);
         let match;
 
         // Reset do regex para garantir leitura do início
@@ -31,7 +31,7 @@ export class CompassoParser {
             const valorTempo = this.#resolverDuracao(duracaoStr);
 
             // 3. Criar a Nota (aqui você pode instanciar sua classe Nota)
-            const novaNota = new Nota(alturaObj, valorTempo);
+            const novaNota = ObjectFactory.newNota(alturaObj, valorTempo);
 
             // Se houver ligadura (-), você pode marcar na nota
             if (ligaduraStr === '-') novaNota.ligada = true;

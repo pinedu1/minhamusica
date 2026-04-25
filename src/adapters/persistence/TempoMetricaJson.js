@@ -1,6 +1,7 @@
 import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 import { tempoMetricaOutputSchema, tempoMetricaSchema } from "@schemas/tempoMetricaSchema.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class TempoMetricaJson extends AdapterUtils {
 	/**

@@ -1,11 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { QuialteraAbc } from '@adapters/abcjs/QuialteraAbc.js';
 import { Quialtera } from '@domain/nota/Quialtera.js';
 import { Nota } from '@domain/nota/Nota.js';
 import { NotaFrequencia } from '@domain/nota/NotaFrequencia.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'QuialteraAbc', () => {
 	// Definimos o contexto padrão: M:4/4 e L:1/4 (Unidade de tempo é a semínima)
 	const contextoPadrao = {
@@ -57,14 +61,14 @@ describe( 'QuialteraAbc', () => {
 			const duracaoNota = new TempoDuracao( 1, 4 );
 
 			const notas = [
-				new Nota( NotaFrequencia.getByKey( 'G4' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'G5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'B5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'D5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'G4' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'G5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'B5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'D5' ), duracaoNota ),
 			];
 
 			// 3. Adicionamos a unidadeTempo no construtor para o renderizador calcular o 'q'
-			const quialtera = new Quialtera( notas, duracaoQuialtera, contextoPadrao );
+			const quialtera = ObjectFactory.newQuialtera( notas, duracaoQuialtera, contextoPadrao );
 
 			expect( QuialteraAbc.toAbc( quialtera ) ).toBe( '(4:1:4Ggbd' );
 		} );
@@ -74,17 +78,17 @@ describe( 'QuialteraAbc', () => {
 			const duracaoNota = new TempoDuracao( 1, 4 );
 
 			const notas = [
-				new Nota( NotaFrequencia.getByKey( 'C5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'D5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'E5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'F5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'G5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'A5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'B5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'C6' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'C5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'D5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'E5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'F5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'G5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'A5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'B5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'C6' ), duracaoNota ),
 			];
 
-			const quialtera = new Quialtera( notas, duracaoQuialtera, contextoPadrao );
+			const quialtera = ObjectFactory.newQuialtera( notas, duracaoQuialtera, contextoPadrao );
 			expect( QuialteraAbc.toAbc( quialtera ) ).toBe( '(8:1:8cdefgabc\'' );
 		} );
 
@@ -93,13 +97,13 @@ describe( 'QuialteraAbc', () => {
 			const duracaoNota = new TempoDuracao( 1, 4 );
 
 			const notas = [
-				new Nota( NotaFrequencia.getByKey( 'C4' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'C5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'E5' ), duracaoNota ),
-				new Nota( NotaFrequencia.getByKey( 'G5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'C4' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'C5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'E5' ), duracaoNota ),
+				ObjectFactory.newNota( NotaFrequencia.getByKey( 'G5' ), duracaoNota ),
 			];
 
-			const quialtera = new Quialtera( notas, duracaoQuialtera, contextoPadrao );
+			const quialtera = ObjectFactory.newQuialtera( notas, duracaoQuialtera, contextoPadrao );
 			expect( QuialteraAbc.toAbc( quialtera ) ).toBe( '(4:1:4Cceg' );
 		} );
 	} );

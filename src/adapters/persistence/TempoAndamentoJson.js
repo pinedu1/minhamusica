@@ -2,6 +2,7 @@ import { TempoAndamento } from "@domain/tempo/TempoAndamento.js";
 import { tempoAndamentoOutputSchema, tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 
 export class TempoAndamentoJson extends AdapterUtils {

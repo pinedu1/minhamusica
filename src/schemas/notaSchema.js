@@ -3,12 +3,14 @@ import { tempoDuracaoSchema, tempoDuracaoOutputSchema } from '@schemas/tempoDura
 import { notaFrequenciaSchema, notaFrequenciaOutputSchema } from '@schemas/notaFrequenciaSchema.js';
 import { unissonoSchema } from "@schemas/unissonoSchema.js";
 import { quialteraSchema } from "@schemas/quialteraSchema.js";
+import { acordeOutputSchema, acordeSchema } from "@schemas/acordeSchema.js";
 
 /**
  * Schema de validação para a Nota.
  * Alinhado com as propriedades da classe de domínio Nota.
  */
 export const notaSchema = z.object({
+	id: z.number(),
 	tipo: z.literal( 'nota' ).default( 'nota' ),
 	altura: notaFrequenciaSchema,
 	duracao: tempoDuracaoSchema.transform((val) => { return `${val.numerador}/${val.denominador}` }),
@@ -18,7 +20,7 @@ export const notaSchema = z.object({
 		voz: z.any().nullable().default(null),
 		compasso: z.any().nullable().default(null),
 		unidadeTempo: tempoDuracaoSchema.nullable().default(null),
-		acordes: z.union([z.string(), z.array(z.string())]).default([]),
+		acordes: acordeSchema.default([]),
 		letra: z.string().nullable().default(null),
 
 		// ACENTUAÇÃO E ARTICULAÇÃO
@@ -97,7 +99,7 @@ export const notaSchema = z.object({
  */
 const notaOptionsOutputSchema = z.object({
 	unidadeTempo: tempoDuracaoOutputSchema.nullable().optional().default(null),
-	acordes: z.union([z.string(), z.array(z.string())]),
+	acordes: acordeOutputSchema.default([]),
 	letra: z.string().nullable().default(null),
 
 	// ACENTUAÇÃO E ARTICULAÇÃO
@@ -152,6 +154,7 @@ const notaOptionsOutputSchema = z.object({
  * Serializador Principal: Converte a Instância de 'Nota' para JSON plano.
  */
 export const notaOutputSchema = z.object({
+	id: z.number(),
 	tipo: z.literal( 'nota' ).default( 'nota' ),
 	// 1. Invocamos os especialistas de saída para as classes aninhadas
 	altura: notaFrequenciaOutputSchema,
@@ -179,6 +182,7 @@ export const notaOutputSchema = z.object({
 
 	// 3. Montamos o objeto de saída final com a chave "options" limpa
 	return {
+		id: val.id,
 		tipo: val.tipo,
 		altura: val.altura,
 		duracao: val.duracao,

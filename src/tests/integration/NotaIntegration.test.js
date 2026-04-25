@@ -1,19 +1,24 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { NotaJson } from '@adapters/persistence/NotaJson.js';
 import { NotaAbc } from '@adapters/abcjs/NotaAbc.js';
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'Nota Integration', () => {
   it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC', () => {
     // 1. Receber JSON
     const jsonData = {
-      altura: { key: 'C4' },
-      duracao: { duracao: '1/4' },
-      options: {
-        acordes: [ 'C' ],
-        fermata: true,
-	      unidadeTempo: { numerador: 1, denominador: 1 }
-      }
+		id: 0,
+	    altura: { key: 'C4' },
+	    duracao: { duracao: '1/4' },
+	    options: {
+		    acordes: [ 'C' ],
+		    fermata: true,
+		    unidadeTempo: { numerador: 1, denominador: 1 }
+	    }
     };
 
     // 2. Instanciar via NotaJson (JSON -> Domínio)
@@ -35,6 +40,7 @@ describe( 'Nota Integration', () => {
     const jsonResult = NotaJson.toJson( notaDominio );
     expect( jsonResult ).toEqual(
 	    {
+		    id: 0,
 		    tipo: 'nota',
 		    altura: 'G5',
 		    duracao: '2/1',

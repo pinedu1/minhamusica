@@ -1,9 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoAndamentoJson } from '@persistence/TempoAndamentoJson.js';
 import { tempoAndamentoOutputSchema, tempoAndamentoSchema } from "@schemas/tempoAndamentoSchema.js";
 import { TempoAndamento } from '@domain/tempo/TempoAndamento.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoAndamentoJson', () => {
   describe( 'fromJson', () => {
     it( 'deve criar a partir de { andamento: { numerador: 3, denominador: 4 }, bpm: 120 }', () => {

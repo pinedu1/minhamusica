@@ -92,6 +92,7 @@ const quialteraOptionsSchema = z.object({
  * Valida a estrutura JSON e aplica os defaults antes da instanciação.
  */
 export const quialteraSchema = z.object({
+	id: z.number(),
 	tipo: z.literal( 'quialtera' ).default( 'quialtera' ),
 	notas: z.lazy(() => arrayElementosSchema).default([]),
 	duracao: tempoDuracaoSchema.transform((val) => { return `${val.numerador}/${val.denominador}` }),
@@ -118,6 +119,7 @@ export const quialteraSchema = z.object({
  * Serializa a instância da classe Unissono para um JSON plano e otimizado.
  */
 export const quialteraOutputSchema = z.object({
+	id: z.number(),
 	tipo: z.literal( 'quialtera' ).default( 'quialtera' ),
 	notas: z.lazy(() => arrayElementosOutputSchema),
 	duracao: tempoDuracaoOutputSchema.transform((val) => { return val.duracao }),
@@ -137,7 +139,7 @@ export const quialteraOutputSchema = z.object({
 	);
 
 	return {
-		// CORREÇÃO 2: Apenas repassa o valor da string, sem recriar o schema Zod
+		id: val.id,
 		tipo: val.tipo,
 		notas: val.notas,
 		duracao: val.duracao,

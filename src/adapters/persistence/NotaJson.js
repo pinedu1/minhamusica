@@ -10,6 +10,7 @@ import { TempoDuracaoJson } from "@persistence/TempoDuracaoJson.js";
 import { PausaJson } from "@persistence/PausaJson.js";
 import { UnissonoJson } from "@persistence/UnissonoJson.js";
 import { QuialteraJson } from "@persistence/QuialteraJson.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 /**
  * Classe responsável por serializar e desserializar Notas em JSON.
@@ -73,6 +74,6 @@ export class NotaJson {
 		if ( !alturaObj ) {
 			throw new TypeError(`NotaJson.fromJson: Não foi possivel encontrar a altura para a nota ${altura}.`);
 		}
-        return new Nota( alturaObj, TempoDuracaoJson.fromJson( duracao ), optionsProcessado );
+        return ObjectFactory.newNota( alturaObj, TempoDuracaoJson.fromJson( duracao ), optionsProcessado );
     }
 }

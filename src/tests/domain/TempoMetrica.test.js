@@ -1,6 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoMetrica', () => {
 	it( 'deve instanciar com valores padrão ( 4, 4 )', () => {
 		const tempo = new TempoMetrica();

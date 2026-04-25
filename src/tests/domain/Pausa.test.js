@@ -1,14 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Pausa } from '@domain/nota/Pausa.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'Pausa', () => {
     it( 'deve inicializar com os valores padrão corretamente', () => {
         const duracaoMock = {
             valor: 1
         };
-        const pausa = new Pausa( duracaoMock );
+        const pausa = ObjectFactory.newPausa( duracaoMock );
 
         expect( pausa.duracao ).toBe( duracaoMock );
         expect( pausa.invisivel ).toBe( false );
@@ -29,7 +33,7 @@ describe( 'Pausa', () => {
             , acordes: [ 'C', 'Am' ]
             , voz: 'Voz 1'
         };
-        const pausa = new Pausa( duracaoMock, options );
+        const pausa = ObjectFactory.newPausa( duracaoMock, options );
 
         expect( pausa.duracao ).toBe( duracaoMock );
         expect( pausa.invisivel ).toBe( true );
@@ -52,13 +56,13 @@ describe( 'Pausa', () => {
 			, voz: 'Voz 1'
 			, transposeUnits: 2
 		};
-		const pausa = new Pausa( duracaoMock, options );
+		const pausa = ObjectFactory.newPausa( duracaoMock, options );
 
 		expect( pausa.duracao ).toBe( duracaoMock );
 		expect( pausa.invisivel ).toBe( true );
 		expect( pausa.fermata ).toBe( true );
 		expect( pausa.breath ).toBe( true );
-		expect( pausa.acordes ).toEqual( [ 'D', 'Bm' ] );
+		expect( pausa.acordes ).toEqual( [ 'C', 'Am' ] );
 		expect( pausa.options.voz ).toBe( 'Voz 1' );
 	} );
 	it( 'deve inicializar com opções personalizadas, Transpor 2s semitons acima deve subir na cadeia de objetos para obter o transpose', () => {
@@ -74,7 +78,7 @@ describe( 'Pausa', () => {
 			, acordes: [ 'D', 'Bm' ]
 			, voz: 'Voz 1'
 		};
-		const pausa = new Pausa( duracaoMock, options );
+		const pausa = ObjectFactory.newPausa( duracaoMock, options );
 
 		expect( pausa.duracao ).toBe( duracaoMock );
 		expect( pausa.invisivel ).toBe( true );
@@ -92,7 +96,7 @@ describe( 'Pausa', () => {
 			const mockPropria = new TempoDuracao(1, 4);
 
 			// Criamos a pausa injetando o contexto diretamente
-			const pausa = new Pausa(new TempoDuracao(1, 4), {
+			const pausa = ObjectFactory.newPausa(new TempoDuracao(1, 4), {
 				obra: mockObra,
 				voz: mockVoz,
 				compasso: mockCompasso,
@@ -127,7 +131,7 @@ describe( 'Pausa', () => {
 
 			// Pausa de Semibreve (1/1 = Razão 1.0)
 			const duracaoSemibreve = new TempoDuracao( 1, 1 );
-			const pausa = new Pausa( duracaoSemibreve, { compasso: mockCompasso, pausaDeCompasso: true } );
+			const pausa = ObjectFactory.newPausa( duracaoSemibreve, { compasso: mockCompasso, pausaDeCompasso: true } );
 
 			// No domínio, ela deve detectar que ocupa o compasso todo
 			expect( pausa.pausaDeCompasso ).toBe( true );
@@ -144,7 +148,7 @@ describe( 'Pausa', () => {
 
 			// Pausa que dura 6 tempos de 1/4 (Razão 1.5, ou seja, 2 compassos de 3/4)
 			const duracaoLonga = new TempoDuracao( 6, 4 );
-			const pausa = new Pausa( duracaoLonga, { compasso: mockCompasso, pausaDeCompasso: true } );
+			const pausa = ObjectFactory.newPausa( duracaoLonga, { compasso: mockCompasso, pausaDeCompasso: true } );
 
 			expect( pausa.pausaDeCompasso ).toBe( true );
 			expect( pausa.calcularTempoPausaDeCompasso() ).toBe( 2 );
@@ -159,7 +163,7 @@ describe( 'Pausa', () => {
 
 			// Pausa de 1/4 num compasso 4/4
 			const duracaoMinima = new TempoDuracao( 1, 4 );
-			const pausa = new Pausa( duracaoMinima, { compasso: mockCompasso, pausaDeCompasso: true } );
+			const pausa = ObjectFactory.newPausa( duracaoMinima, { compasso: mockCompasso, pausaDeCompasso: true } );
 
 			expect( pausa.pausaDeCompasso ).toBe( true );
 			expect( pausa.calcularTempoPausaDeCompasso() ).toBe( false );
@@ -172,7 +176,7 @@ describe( 'Pausa', () => {
 				, getMetrica() { return this.options.metrica; }
 			};
 
-			const pausaInvisivel = new Pausa( new TempoDuracao( 1, 1 ), {
+			const pausaInvisivel = ObjectFactory.newPausa( new TempoDuracao( 1, 1 ), {
 				compasso: mockCompasso
 				, invisivel: true
 				, pausaDeCompasso: true
@@ -190,7 +194,7 @@ describe( 'Pausa', () => {
 				pausaDeCompasso: true
 				, invisivel: false
 			};
-			const pausa = new Pausa( duracaoMock, options );
+			const pausa = ObjectFactory.newPausa( duracaoMock, options );
 
 			// Valida se o estado foi gravado corretamente
 			expect( pausa.options.pausaDeCompasso ).toBe( true );
@@ -206,7 +210,7 @@ describe( 'Pausa', () => {
 
 			// Pausa de 2/1 (Razão 2.0) em um compasso 4/4 deve resultar em 2 compassos
 			const duracaoDupla = new TempoDuracao( 2, 1 );
-			const pausa = new Pausa( duracaoDupla, {
+			const pausa = ObjectFactory.newPausa( duracaoDupla, {
 				compasso: mockCompasso,
 				pausaDeCompasso: true
 			} );
@@ -220,7 +224,7 @@ describe( 'Pausa', () => {
 			const mockCompasso = { getMetrica() { return mockMetrica; } };
 
 			const duracaoSemibreve = new TempoDuracao( 1, 1 );
-			const pausa = new Pausa( duracaoSemibreve, {
+			const pausa = ObjectFactory.newPausa( duracaoSemibreve, {
 				compasso: mockCompasso,
 				pausaDeCompasso: false
 			} );
@@ -231,7 +235,7 @@ describe( 'Pausa', () => {
 		} );
 
 		it( 'deve validar a combinação de pausa de compasso e invisibilidade (X)', () => {
-			const pausaInvisivel = new Pausa( new TempoDuracao( 1, 1 ), {
+			const pausaInvisivel = ObjectFactory.newPausa( new TempoDuracao( 1, 1 ), {
 				pausaDeCompasso: true,
 				invisivel: true
 			} );

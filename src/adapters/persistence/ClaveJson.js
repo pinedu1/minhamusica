@@ -1,5 +1,6 @@
 import { ClaveTipo } from "@domain/obra/ClaveTipo.js";
 import { Clave } from "@domain/obra/Clave.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class ClaveJson {
 	/**

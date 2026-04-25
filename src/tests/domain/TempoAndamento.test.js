@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoAndamento } from '@domain/tempo/TempoAndamento.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoAndamento', () => {
   it( 'deve instanciar corretamente com valores válidos', () => {
     const duracao = new TempoDuracao( 1, 4 );

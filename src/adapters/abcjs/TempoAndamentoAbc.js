@@ -1,6 +1,7 @@
 import { TempoAndamento } from '@domain/tempo/TempoAndamento.js'
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 /**
  * Adapter para TempoAndamento para notação AbcJs.

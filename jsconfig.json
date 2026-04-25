@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-        "@adapters/*": ["src/adapters/*"]
+      "@adapters/*": ["src/adapters/*"]
+      , "@factory/*": ["src/factory/*"]
       , "@abcjs/*": ["src/adapters/abcjs/*"]
       , "@persistence/*": ["src/adapters/persistence/*"]
       , "@domain/*": ["src/domain/*"]

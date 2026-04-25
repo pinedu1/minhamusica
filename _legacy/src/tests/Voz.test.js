@@ -38,7 +38,7 @@ describe('Voz', () => {
 
     it('deve adicionar um compasso à voz', () => {
         const voz = new Voz();
-        const compasso = new Compasso();
+        const compasso = ObjectFactory.newCompasso();
         voz.addCompasso(compasso);
 
         expect(voz.compassos).toHaveLength(1);

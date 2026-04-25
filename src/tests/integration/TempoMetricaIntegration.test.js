@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoMetricaJson } from '@adapters/persistence/TempoMetricaJson.js';
 import { TempoMetricaAbc } from '@adapters/abcjs/TempoMetricaAbc.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoMetrica Integration', () => {
   it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC (toCompasso)', () => {
     // 1. Receber JSON

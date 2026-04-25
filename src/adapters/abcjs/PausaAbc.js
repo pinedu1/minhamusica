@@ -1,6 +1,7 @@
 import { ElementoMusicalAbc } from "@abcjs/ElementoMusicalAbc.js";
 import { TempoDuracaoAbc } from "@abcjs/TempoDuracaoAbc.js";
 import { Pausa } from "@domain/nota/Pausa.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 /**
  * Classe responsável por traduzir Pausas entre o modelo de domínio e o formato ABCJS.
@@ -98,7 +99,7 @@ export class PausaAbc extends ElementoMusicalAbc {
 			// Para z/x, é a duração rítmica normal baseada em L:
 			const duracao = this._calcularDuracaoAbcString( contextOptions, duracaoString ?? '');
 
-			return new Pausa( duracao , options );
+			return ObjectFactory.newPausa( duracao , options );
 		}
 
 		return null;

@@ -5,6 +5,7 @@ import { Voz } from "@domain/voz/Voz.js";
 import { Clave} from "@domain/obra/Clave.js";
 import { Compasso } from "@domain/compasso/Compasso.js";
 import { vozSchema } from "@schemas/vozSchema.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class VozJson {
 

@@ -10,6 +10,8 @@ export class Nota extends ElementoMusical {
 	tipo = 'nota';
 
 	/**
+	 * Unidade fundamental da partitura musical.
+	 * @param {number} id - O identificador da instância
 	 * @param {NotaFrequencia} altura
 	 * @param {TempoDuracao} duracao
 	 * @param {Object} [options={}] - Propriedades opcionais e ornamentos.
@@ -45,8 +47,8 @@ export class Nota extends ElementoMusical {
 	 * @property {string|null} [options.crescendo=null] - 'inicio' para !crescendo(! ou 'fim' para !crescendo)!.
 	 * @property {string|null} [options.diminuendo=null] - 'inicio' para !diminuendo(! ou 'fim' para !diminuendo)!.
 	 */
-	constructor(altura, duracao, options = {}) {
-		super(duracao, options);
+	constructor(id, altura, duracao, options = {}) {
+		super(id, duracao, options);
 
 		this.altura = altura;
 		this.duracao = duracao;
@@ -145,7 +147,6 @@ export class Nota extends ElementoMusical {
     }
 // --- GETTERS ---
 	get acento() { return this._options.acento === true; }
-	get acordes() { return this._options.acordes; } // Corrigido: Retorna o Array
 	get arpeggio() { return this._options.arpeggio === true; }
 	get bemol() { return this._options.bemol === true; }
 	get beQuad() { return this._options.beQuad === true; }
@@ -184,7 +185,6 @@ export class Nota extends ElementoMusical {
 
 	// --- SETTERS ---
 	set acento(val) { this._options.acento = !!val; }
-	set acordes(val) { this._options.acordes = val; } // Array
 	set arpeggio(val) { this._options.arpeggio = !!val; }
 	set bemol(val) { this._options.bemol = !!val; }
 	set beQuad(val) { this._options.beQuad = !!val; }

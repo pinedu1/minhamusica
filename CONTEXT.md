@@ -60,3 +60,5 @@ Para garantir consistência, eficiência e a preservação do trabalho do desenv
 3.  **Espaçamento de Chaves:** Use espaços dentro de chaves de objetos e blocos.
     -   Exemplo: `{ a: 1 }` ou `if ( true ) { ... }`
 4.  **Semicolons:** Sempre use ponto e vírgula `;` ao final das instruções.
+5.  ** Instanciamento de Domains ** Use @ObjectFactory, para instanciar todos os domains
+

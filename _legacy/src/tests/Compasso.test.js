@@ -15,7 +15,7 @@ describe('Classe Compasso', () => {
 
     describe('Funcionalidades Básicas e Construtor', () => {
         it('deve instanciar um compasso vazio com valores padrão', () => {
-            const compasso = new Compasso();
+            const compasso = ObjectFactory.newCompasso();
             expect(compasso.elements).toEqual([]);
             expect(compasso.index).toBe(0);
             expect(compasso.barraInicial).toBe(TipoBarra.NONE);
@@ -25,12 +25,12 @@ describe('Classe Compasso', () => {
 
         it('deve lançar erro se elementos não forem Nota, Pausa ou Acorde', () => {
             expect(() => {
-                new Compasso(["Não sou uma nota"]);
+                ObjectFactory.newCompasso(["Não sou uma nota"]);
             }).toThrow("Compasso: Apenas instâncias de Nota, Pausa ou Acorde são permitidas.");
         });
 
         it('deve salvar e retornar a propriedade "letra" corretamente (sem impactar o toAbc)', () => {
-            const compasso = new Compasso([], { letra: ["A","mém"] });
+            const compasso = ObjectFactory.newCompasso([], { letra: ["A","mém"] });
             expect(compasso.letra).toEqual(["A","mém"]);
             const result = compasso.toAbc();
             console.log("----------------------");
@@ -40,7 +40,7 @@ describe('Classe Compasso', () => {
         });
         
         it('deve gerar string ABC com barras, métrica e tom', () => {
-            const compasso = new Compasso([], {
+            const compasso = ObjectFactory.newCompasso([], {
                 barraInicial: TipoBarra.REPEAT_OPEN,
                 barraFinal: TipoBarra.REPEAT_CLOSE,
                 metrica: metrica44,

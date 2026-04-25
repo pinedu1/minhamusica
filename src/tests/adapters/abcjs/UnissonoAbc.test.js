@@ -1,10 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { UnissonoAbc } from '@adapters/abcjs/UnissonoAbc.js';
 import { Unissono } from '@domain/nota/Unissono.js';
 import { Nota } from '@domain/nota/Nota.js';
 import { NotaFrequencia } from '@domain/nota/NotaFrequencia.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'UnissonoAbc', () => {
   describe( 'fromAbc', () => {
     it( 'deve criar a partir de "[Ggbd]"', () => {
@@ -32,12 +36,12 @@ describe( 'UnissonoAbc', () => {
     it( 'deve exportar para "[Ggbd]"', () => {
 	    const duracao = new TempoDuracao( 1, 1 );
 	    const notas = [
-		    new Nota( NotaFrequencia.getByKey( 'G4' ), duracao ),
-		    new Nota( NotaFrequencia.getByKey( 'G5' ), duracao ),
-		    new Nota( NotaFrequencia.getByKey( 'B5' ), duracao ),
-		    new Nota( NotaFrequencia.getByKey( 'D5' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'G4' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'G5' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'B5' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'D5' ), duracao ),
 	    ];
-	    const unissono = new Unissono( notas, duracao );
+	    const unissono = ObjectFactory.newUnissono( notas, duracao );
 	    unissono.unidadeTempo = new TempoDuracao( 1, 1 );
 	    expect( UnissonoAbc.toAbc( unissono ) ).toBe( '[Ggbd]' );
     } );
@@ -45,12 +49,12 @@ describe( 'UnissonoAbc', () => {
     it( 'deve exportar para "[Cceg]"', () => {
 	    const duracao = new TempoDuracao( 1, 1 );
 	    const notas = [
-		    new Nota( NotaFrequencia.getByKey( 'C4' ), duracao ),
-		    new Nota( NotaFrequencia.getByKey( 'C5' ), duracao ),
-		    new Nota( NotaFrequencia.getByKey( 'E5' ), duracao ),
-		    new Nota( NotaFrequencia.getByKey( 'G5' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'C4' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'C5' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'E5' ), duracao ),
+		    ObjectFactory.newNota( NotaFrequencia.getByKey( 'G5' ), duracao ),
 	    ];
-	    const unissono = new Unissono( notas, duracao );
+	    const unissono = ObjectFactory.newUnissono( notas, duracao );
 	    unissono.unidadeTempo = new TempoDuracao( 1, 1 );
 	    expect( UnissonoAbc.toAbc( unissono ) ).toBe( '[Cceg]' );
     } );

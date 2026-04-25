@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { NotaFrequenciaAbc } from '@adapters/abcjs/NotaFrequenciaAbc.js';
 import { NotaFrequencia } from '@domain/nota/NotaFrequencia.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'NotaFrequenciaAbc', () => {
   describe( 'fromAbc', () => {
     it( 'deve criar a partir de "c\'"', () => {

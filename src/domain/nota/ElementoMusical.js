@@ -3,11 +3,16 @@ import { AcordeTransposer } from "@domain/nota/AcordeTransposer.js";
 import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 
 export class ElementoMusical {
+	/**
+	 * Todo dominio terá um id numérico para identificar o objeto.
+	 * @type {number}
+	 */
+	_id;
     /** @type {TempoDuracao} */
     _duracao;
     _options;
-
-    constructor(duracao, options = {}) {
+    constructor(id, duracao, options = {}) {
+	    this._id = id;
         this._duracao = duracao;
         this._options = options;
     }
@@ -97,26 +102,6 @@ export class ElementoMusical {
 			}
 		}
 		return 0;
-	}
-	getAcordes() {
-		if (this._options.acordes === undefined || this._options.acordes === null) {
-			return [];
-		}
-		if (this._options.acordes.constructor.name !== 'Array') {
-			return [];
-		}
-		if (this._options.acordes.length === 0) {
-			return this._options.acordes;
-		}
-		return this._options.acordes.map ( acorde => this.transpoeAcorde ( acorde ) );
-	}
-	setAcordes(acordes) {
-		if (acordes === undefined) return;
-		if (!acordes) {
-			this._options.acordes = [];
-			return;
-		}
-		if (!Array.isArray(acordes)) {}
 	}
     /**
      * Busca a unidade de tempo ativa na hierarquia da nota/pausa/unissono.
@@ -314,4 +299,31 @@ export class ElementoMusical {
 		}
 		this._options.letra = val;
 	}
+	addAcorde(val) {
+		if (val === undefined || val === null) { return; }
+		if (typeof val !== 'string') {
+			throw new TypeError('ElementoMusical.acorde: Deve ser uma String.');
+		}
+		this.acordes.push(val);
+	}
+	getAcordes() {
+		if ( !this._options.acordes ) {
+			this._options.acordes = [];
+		}
+		return this._options.acordes;
+	}
+	get acordes() {
+		if ( !this._options.acordes ) {
+			this._options.acordes = [];
+		}
+		return this._options.acordes;
+	}
+	set acordes(val) {
+		if (val === undefined || val === null) { return; }
+		if ( !Array.isArray(val) ) {
+			throw new TypeError('ElementoMusical.acordes: Deve ser um Array.');
+		}
+		this._options.acordes = val;
+	}
+	get id() { return this._id; }
 }

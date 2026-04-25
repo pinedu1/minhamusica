@@ -1,22 +1,27 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { PausaJson } from '@adapters/persistence/PausaJson.js';
 import { Pausa } from '@domain/nota/Pausa.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { pausaSchema } from '@schemas/pausaSchema.js';
 import { z } from "zod";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'PausaJson', () => {
   describe( 'fromJson', () => {
     it( 'deve criar uma pausa a partir de um JSON completo', () => {
       const json = {
-        duracao: { duracao: '1/4' },
-        options: {
-          invisivel: true,
-          fermata: true,
-          breath: true,
-          acordes: [ 'C', 'G' ],
-          pausaDeCompasso: true,
-        }
+	      id: 0,
+	      duracao: { duracao: '1/4' },
+	      options: {
+		      invisivel: true,
+		      fermata: true,
+		      breath: true,
+		      acordes: [ 'C', 'G' ],
+		      pausaDeCompasso: true,
+	      }
       };
       const pausa = PausaJson.fromJson( json );
       expect( pausa.duracao.toString() ).toBe( '1/4' );
@@ -28,7 +33,7 @@ describe( 'PausaJson', () => {
     } );
 
     it( 'deve criar uma pausa a partir de um JSON mínimo', () => {
-      const json = { duracao: { duracao: '1/2' } };
+      const json = { id: 0, duracao: { duracao: '1/2' } };
       const pausa = PausaJson.fromJson( json );
       expect( pausa.duracao.toString() ).toBe( '1/2' );
       expect( pausa.invisivel ).toBe( false );
@@ -40,14 +45,14 @@ describe( 'PausaJson', () => {
 
     it( 'deve rejeitar JSON inválido', () => {
       expect( () => PausaJson.fromJson( {} ) ).toThrow(); // Missing duracao
-      expect( () => PausaJson.fromJson( { duracao: 'invalid' } ) ).toThrow();
+      expect( () => PausaJson.fromJson( { id: 0, duracao: 'invalid' } ) ).toThrow();
     } );
   } );
 
   describe( 'toJson', () => {
     it( 'deve exportar para um JSON completo', () => {
 	    const duracao = new TempoDuracao( 1, 4 );
-	    const pausa = new Pausa( duracao, {
+	    const pausa = ObjectFactory.newPausa( duracao, {
 		    invisivel: true,
 		    fermata: true,
 		    fermataInvertida: false,
@@ -59,7 +64,8 @@ describe( 'PausaJson', () => {
       const parsed = pausaSchema.parse( json );
       expect( parsed ).toStrictEqual(
 	      {
-		      tipo: 'pausa'
+		      id: 0
+		      , tipo: 'pausa'
 		      , duracao: '1/4'
 		      , options: {
 			      invisivel: true,
@@ -74,12 +80,13 @@ describe( 'PausaJson', () => {
 
     it( 'deve exportar para um JSON mínimo', () => {
       const duracao = new TempoDuracao( 1, 2 );
-      const pausa = new Pausa( duracao );
+      const pausa = ObjectFactory.newPausa( duracao );
       const json = PausaJson.toJson( pausa );
       const parsed = pausaSchema.parse( json );
       expect( parsed ).toEqual(
 	      {
-		      tipo: 'pausa'
+		      id: 0
+		      , tipo: 'pausa'
 		      , duracao: '1/2'
 		      , options: {
 		      }

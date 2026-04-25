@@ -4,6 +4,7 @@ import { NotaAbc } from "@abcjs/NotaAbc.js";
 import { QuialteraAbc } from "@abcjs/QuialteraAbc.js";
 import { UnissonoAbc } from "@adapters/abcjs/UnissonoAbc.js";
 import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 /**
  * Classe responsável por orquestrar a análise léxica (Lexer) e o parsing de strings
@@ -158,7 +159,7 @@ export class GrupoElementoAbc {
 				}
 
 				if (!elemento.acorde) {
-					elemento.acorde = texto;
+					elemento.addAcorde( texto );
 					optionsGerado.acordes[idx] = null;
 				} else {
 					sucessoTotal = false;
@@ -331,7 +332,7 @@ export class GrupoElementoAbc {
 		// --- 3. SINCRONIZAÇÃO E RETORNO ---
 		this.#sincronizarAcordes(optionsGerado, elements);
 
-		return new GrupoElemento(elements, {
+		return ObjectFactory.newGrupoElemento(elements, {
 			...contextOptions,
 			...optionsGerado,
 		});

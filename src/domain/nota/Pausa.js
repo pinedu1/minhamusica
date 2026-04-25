@@ -6,11 +6,12 @@ import { ElementoMusical } from '@domain/nota/ElementoMusical.js';
  *
  * @example
  * const duracao = new TempoDuracao( 1, 4 );
- * const pausa = new Pausa( duracao, { invisivel: true } );
+ * const pausa = ObjectFactory.newPausa( duracao, { invisivel: true } );
  */
 export class Pausa extends ElementoMusical {
 	tipo = 'pausa';
     /**
+     * @param {number} id - O identificador da instância
      * @param {import('@domain/tempo/TempoDuracao').TempoDuracao} duracao - Duração da pausa.
      * @param {Object} [options={}] - Configurações opcionais.
      * @param {string|string[]|null} [options.acordes] - Acorde(s) na posição da pausa.
@@ -18,8 +19,8 @@ export class Pausa extends ElementoMusical {
      * @param {boolean} [options.invisivel=false] - Define se é pausa de espaço (x).
      * @param {Object} [options.voz] - Instância da voz a que pertence.
      */
-    constructor( duracao, options = {} ) {
-        super( duracao, options );
+    constructor( id, duracao, options = {} ) {
+        super( id, duracao, options );
         this._options = {
             obra: null
             , voz: null
@@ -34,6 +35,7 @@ export class Pausa extends ElementoMusical {
             , acordes: []
 	        , ...options
         };
+
         this._duracao = duracao;
     }
     /**

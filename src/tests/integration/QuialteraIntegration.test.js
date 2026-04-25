@@ -1,10 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { QuialteraJson } from '@adapters/persistence/QuialteraJson.js';
 import { QuialteraAbc } from '@adapters/abcjs/QuialteraAbc.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
 import { TempoMetrica } from "@domain/tempo/TempoMetrica.js";
 import { Obra } from "@domain/obra/Obra.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'Quialtera Integration', () => {
 	// Contexto musical necessário para os cálculos de renderização e parsing
 	let obraMock = new Obra(1);
@@ -16,12 +20,13 @@ describe( 'Quialtera Integration', () => {
 		// CORREÇÃO: Para a saída ABC ser 'Ggbd' sem sufixos, a duração interna das notas
 		// deve ser igual à unidade de tempo base L (1/4).
 		const jsonData = {
+			id: 0,
 			tipo: 'quialtera',
 			notas: [
-				{ tipo: 'nota', altura: { key: 'G4' }, duracao: { numerador: 1, denominador: 4 } },
-				{ tipo: 'nota', altura: { key: 'G5' }, duracao: { numerador: 1, denominador: 4 } },
-				{ tipo: 'nota', altura: { key: 'B5' }, duracao: { numerador: 1, denominador: 4 } },
-				{ tipo: 'nota', altura: { key: 'D5' }, duracao: { numerador: 1, denominador: 4 } },
+				{ id: 0, tipo: 'nota', altura: { key: 'G4' }, duracao: { numerador: 1, denominador: 4 } },
+				{ id: 0, tipo: 'nota', altura: { key: 'G5' }, duracao: { numerador: 1, denominador: 4 } },
+				{ id: 0, tipo: 'nota', altura: { key: 'B5' }, duracao: { numerador: 1, denominador: 4 } },
+				{ id: 0, tipo: 'nota', altura: { key: 'D5' }, duracao: { numerador: 1, denominador: 4 } },
 			],
 			duracao: { numerador: 1, denominador: 4 },
 			options: { ...contextoPadrao },
@@ -49,12 +54,13 @@ describe( 'Quialtera Integration', () => {
 		const jsonResult = QuialteraJson.toJson( quialteraDominio );
 
 		expect( jsonResult ).toMatchObject( {
+			id: 0,
 			tipo: 'quialtera',
 			notas: [
-				{ tipo: 'nota', altura: 'C4', duracao: '1/4' },
-				{ tipo: 'nota', altura: 'C5', duracao: '1/4' },
-				{ tipo: 'nota', altura: 'E5', duracao: '1/4' },
-				{ tipo: 'nota', altura: 'G5', duracao: '1/4' },
+				{ id: 0, tipo: 'nota', altura: 'C4', duracao: '1/4' },
+				{ id: 0, tipo: 'nota', altura: 'C5', duracao: '1/4' },
+				{ id: 0, tipo: 'nota', altura: 'E5', duracao: '1/4' },
+				{ id: 0, tipo: 'nota', altura: 'G5', duracao: '1/4' },
 			],
 			duracao: '1/4'
 		} );

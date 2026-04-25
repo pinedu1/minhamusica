@@ -1,8 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoDuracaoJson } from '@persistence/TempoDuracaoJson.js'
 import { tempoDuracaoSchema } from '@schemas/tempoDuracaoSchema.js';
 import { TempoDuracao } from '@domain/tempo/TempoDuracao.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoDuracaoJson', () => {
   describe( 'fromJson', () => {
     it( 'deve criar a partir de { numerador: 3, denominador: 4 }', () => {

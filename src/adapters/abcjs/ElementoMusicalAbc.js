@@ -1,6 +1,7 @@
 import { ElementoMusical } from "@domain/nota/ElementoMusical.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class ElementoMusicalAbc extends AdapterUtils {
 	/**
@@ -57,8 +58,14 @@ export class ElementoMusicalAbc extends AdapterUtils {
 			if (contextOptions?.unidadeTempo) {
 				return contextOptions.unidadeTempo;
 			}
+			if (contextOptions?.grupo) {
+				const grupo = contextOptions.grupo;
+				if ( grupo.getUnidadeTempo() && grupo.getUnidadeTempo() instanceof TempoDuracao ) {
+					return grupo.getUnidadeTempo();
+				}
+			}
 			if (contextOptions?.compasso) {
-				const compasso = contextOptions.voz;
+				const compasso = contextOptions.compasso;
 				if ( compasso.getUnidadeTempo() && compasso.getUnidadeTempo() instanceof TempoDuracao ) {
 					return compasso.getUnidadeTempo();
 				}

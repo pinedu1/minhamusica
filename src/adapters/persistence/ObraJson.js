@@ -7,6 +7,7 @@ import { Clave } from "@domain/obra/Clave.js";
 import { Ritmo } from "@domain/obra/Ritmo.js";
 import { GrupoInstrumento } from "@domain/obra/GrupoInstrumento.js";
 import { Voz } from "@domain/voz/Voz.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class ObraJson {
 	/**

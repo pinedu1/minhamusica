@@ -11,7 +11,7 @@ import { Pausa } from "@domain/nota/Pausa.js";
 import { TempoDuracaoAbc } from "@abcjs/TempoDuracaoAbc.js";
 import { Unissono } from "@domain/nota/Unissono.js";
 import { GrupoElementoAbc } from "@abcjs/GrupoElementoAbc.js";
-
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class CompassoAbc {
 	/**
@@ -107,7 +107,7 @@ export class CompassoAbc {
 			}
 
 			const duracaoFaltante = new TempoDuracao(num, den);
-			const pausaPreenchimento = new Pausa(duracaoFaltante, {
+			const pausaPreenchimento = ObjectFactory.newPausa(duracaoFaltante, {
 				unidadeTempo: ut,
 			});
 			abc += " " + PausaAbc.toAbc( pausaPreenchimento );
@@ -361,7 +361,7 @@ export class CompassoAbc {
 			}
 		}
 
-		const compassoInstance = new Compasso([], {
+		const compassoInstance = ObjectFactory.newCompasso([], {
 			...contextOptions,
 			...inlineHeaders,
 			barraInicial: barraInicial || contextOptions.barraInicial || TipoBarra.NONE,

@@ -7,6 +7,8 @@ import { Tonalidade } from "@domain/compasso/Tonalidade.js";
 import { Clave } from "@domain/obra/Clave.js";
 import { Ritmo } from "@domain/obra/Ritmo.js";
 import { GrupoInstrumento } from "@domain/obra/GrupoInstrumento.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
+
 export class ObraAbc {
 	/**
 	 * USAGE: Gera a notação ABC completa representando a Obra.

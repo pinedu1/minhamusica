@@ -43,12 +43,13 @@ export class Quialtera extends ElementoMusical {
 	tipo = 'quialtera';
 
 	/**
+	 * @param {number} id - O identificador da instância
 	 * @param {Array<ElementoMusical>} notas - Notas, pausas ou uníssonos que compõem a quiáltera.
 	 * @param {TempoDuracao} duracaoOcupada - A duração real que o grupo ocupa no compasso.
 	 * @param {Object} [options={}] - Atributos de expressão que afetam o grupo todo.
 	 */
-	constructor( notas = [] , duracaoOcupada , options = {} ) {
-		super( duracaoOcupada , options );
+	constructor( id, notas = [] , duracaoOcupada , options = {} ) {
+		super( id, duracaoOcupada , options );
 
 		this.notas = notas;
 

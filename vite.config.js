@@ -5,6 +5,7 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
+	    '@factory': path.resolve(__dirname, './src/factory'),
         '@domain': path.resolve(__dirname, './src/domain'),
         '@schemas': path.resolve(__dirname, './src/schemas'),
         '@services': path.resolve(__dirname, './src/services'),

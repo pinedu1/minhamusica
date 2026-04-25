@@ -1,4 +1,5 @@
 import { NotaFrequencia } from "@domain/nota/NotaFrequencia.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class NotaFrequenciaAbc {
 	/**

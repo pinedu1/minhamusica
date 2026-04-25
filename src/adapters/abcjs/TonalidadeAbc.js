@@ -1,4 +1,5 @@
 import { Tonalidade } from "@domain/compasso/Tonalidade.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class TonalidadeAbc {
 	static toAbc(tonalidade) {

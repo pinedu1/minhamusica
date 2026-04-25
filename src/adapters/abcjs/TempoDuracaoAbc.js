@@ -1,5 +1,6 @@
 import { TempoDuracao } from "@domain/tempo/TempoDuracao.js";
 import { AdapterUtils } from "@adapters/AdapterUtils.js";
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
 export class TempoDuracaoAbc extends AdapterUtils {
 	/**

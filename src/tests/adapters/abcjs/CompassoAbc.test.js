@@ -12,7 +12,11 @@ import { CompassoAbc } from '@abcjs/CompassoAbc.js';
 import { Obra } from '@domain/obra/Obra.js';
 import { Quialtera } from "@domain/nota/Quialtera.js";
 import { GrupoElemento } from "@domain/compasso/GrupoElemento.js"; // Assuming Obra exists
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe('CompassoAbc', () => {
 	describe('Sessão 1: Testes de parse de Compasso para ABC (toAbc)', () => {
 		it('a) Teste de agrupamento de notas', () => {
@@ -25,17 +29,17 @@ describe('CompassoAbc', () => {
 				},
 				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
-			const compasso = new Compasso([], {
+			const compasso = ObjectFactory.newCompasso([], {
 				barraInicial: TipoBarra.NONE,
 				barraFinal: TipoBarra.NONE
 			});
 			compasso.obra = obraMock;
-			const n1 = new Nota(NotaFrequencia.getByAbc('C'), new TempoDuracao(1, 4));
-			const n2 = new Nota(NotaFrequencia.getByAbc('D'), new TempoDuracao(1, 4));
-			const n3 = new Nota(NotaFrequencia.getByAbc('E'), new TempoDuracao(1, 4));
-			const n4 = new Nota(NotaFrequencia.getByAbc('F'), new TempoDuracao(1, 4));
-			const g1 = new GrupoElemento([n1, n2], {compasso: compasso});
-			const g2 = new GrupoElemento([n3, n4], {compasso: compasso});
+			const n1 = ObjectFactory.newNota(NotaFrequencia.getByAbc('C'), new TempoDuracao(1, 4));
+			const n2 = ObjectFactory.newNota(NotaFrequencia.getByAbc('D'), new TempoDuracao(1, 4));
+			const n3 = ObjectFactory.newNota(NotaFrequencia.getByAbc('E'), new TempoDuracao(1, 4));
+			const n4 = ObjectFactory.newNota(NotaFrequencia.getByAbc('F'), new TempoDuracao(1, 4));
+			const g1 = ObjectFactory.newGrupoElemento([n1, n2], {compasso: compasso});
+			const g2 = ObjectFactory.newGrupoElemento([n3, n4], {compasso: compasso});
 			compasso.grupos = [g1, g2];
 			//compasso.elements = [n1, n2, n3, n4];
 
@@ -58,10 +62,10 @@ describe('CompassoAbc', () => {
 				},
 				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
-			const compasso = new Compasso([], {});
+			const compasso = ObjectFactory.newCompasso([], {});
 			compasso.obra = obraMock;
-			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const g1 = new GrupoElemento([n1], {compasso: compasso});
+			const n1 = ObjectFactory.newNota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const g1 = ObjectFactory.newGrupoElemento([n1], {compasso: compasso});
 			g1.addAnotacao("dedilhado especial", 0, "^");
 			compasso.grupos = [g1];
 
@@ -69,7 +73,7 @@ describe('CompassoAbc', () => {
 			expect(abcResult).toBe('"^dedilhado especial"C z3|');
 		});
 		it('c) Teste de Barras, Métrica e Tom, saída deve ser: |:[M:4/4][K:G]:|', () => {
-			const compasso = new Compasso([], {
+			const compasso = ObjectFactory.newCompasso([], {
 				metrica: new TempoMetrica(4, 4),
 				mudancaDeTom: Tonalidade.create('G'),
 				barraInicial: TipoBarra.get('REPEAT_OPEN'),
@@ -90,18 +94,18 @@ describe('CompassoAbc', () => {
 				},
 				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
-			const compasso = new Compasso([], {
+			const compasso = ObjectFactory.newCompasso([], {
 				barraInicial: TipoBarra.get('REPEAT_OPEN')
 				, barraFinal: TipoBarra.get('REPEAT_CLOSE')
 			});
 			compasso.obra = obraMock;
 			compasso.letra = ['A','ti','rei', 'o'];
 			//:|C D E F:|\nw:A-ti-rei o
-			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const n2 = new Nota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const n3 = new Nota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const n4 = new Nota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const g1 = new GrupoElemento([n1, n2, n3, n4], {compasso: compasso});
+			const n1 = ObjectFactory.newNota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const n2 = ObjectFactory.newNota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const n3 = ObjectFactory.newNota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const n4 = ObjectFactory.newNota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const g1 = ObjectFactory.newGrupoElemento([n1, n2, n3, n4], {compasso: compasso});
 			compasso.grupos = [g1];
 
 			const abcResult = CompassoAbc.toAbc(compasso);
@@ -117,19 +121,19 @@ describe('CompassoAbc', () => {
 				},
 				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
-			const compasso = new Compasso([], {
+			const compasso = ObjectFactory.newCompasso([], {
 				barraInicial: TipoBarra.get('REPEAT_OPEN')
 				, barraFinal: TipoBarra.get('REPEAT_CLOSE')
 			});
 			compasso.obra = obraMock;
 			//:|C D E F:|\nw:A-ti-rei o
-			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const n2 = new Nota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const n3 = new Nota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const n4 = new Nota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4)); // Usando new Nota diretamente
-			const g1 = new GrupoElemento([n1, n2], {compasso: compasso});
+			const n1 = ObjectFactory.newNota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const n2 = ObjectFactory.newNota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const n3 = ObjectFactory.newNota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const n4 = ObjectFactory.newNota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4)); // Usando ObjectFactory.newNota diretamente
+			const g1 = ObjectFactory.newGrupoElemento([n1, n2], {compasso: compasso});
 			g1.letra = ['A','ti'];
-			const g2 = new GrupoElemento([n3, n4], {compasso: compasso});
+			const g2 = ObjectFactory.newGrupoElemento([n3, n4], {compasso: compasso});
 			g2.letra = ['rei', 'o'];
 			compasso.grupos = [g1, g2];
 
@@ -146,18 +150,18 @@ describe('CompassoAbc', () => {
 				},
 				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
-			const compasso = new Compasso([], {
+			const compasso = ObjectFactory.newCompasso([], {
 				barraInicial: TipoBarra.get('REPEAT_OPEN')
 				, barraFinal: TipoBarra.get('REPEAT_CLOSE')
 			});
 			compasso.obra = obraMock;
 			//:|C D E F:|\nw:A-ti-rei o
-			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4), { letra: 'A' }); // Usando new Nota diretamente
-			const n2 = new Nota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4), { letra: 'ti' }); // Usando new Nota diretamente
-			const n3 = new Nota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4), { letra: 'rei' }); // Usando new Nota diretamente
-			const n4 = new Nota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4), { letra: 'o' }); // Usando new Nota diretamente
-			const g1 = new GrupoElemento([n1, n2], {compasso: compasso});
-			const g2 = new GrupoElemento([n3, n4], {compasso: compasso});
+			const n1 = ObjectFactory.newNota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4), { letra: 'A' }); // Usando ObjectFactory.newNota diretamente
+			const n2 = ObjectFactory.newNota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4), { letra: 'ti' }); // Usando ObjectFactory.newNota diretamente
+			const n3 = ObjectFactory.newNota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4), { letra: 'rei' }); // Usando ObjectFactory.newNota diretamente
+			const n4 = ObjectFactory.newNota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4), { letra: 'o' }); // Usando ObjectFactory.newNota diretamente
+			const g1 = ObjectFactory.newGrupoElemento([n1, n2], {compasso: compasso});
+			const g2 = ObjectFactory.newGrupoElemento([n3, n4], {compasso: compasso});
 			compasso.grupos = [g1, g2];
 
 			const abcResult = CompassoAbc.toAbc(compasso);
@@ -173,18 +177,18 @@ describe('CompassoAbc', () => {
 				},
 				tonalidade: Tonalidade.create('Dm'),
 			}); // O ID ou estrutura que a classe Obra exigir
-			const compasso = new Compasso([], {
+			const compasso = ObjectFactory.newCompasso([], {
 				barraInicial: TipoBarra.get('REPEAT_OPEN')
 				, barraFinal: TipoBarra.get('REPEAT_CLOSE')
 			});
 			compasso.obra = obraMock;
 			//:|C D E F:|\nw:A-ti-rei o
-			const n1 = new Nota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4), { letra: 'A' }); // Usando new Nota diretamente
-			const n2 = new Nota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4), { letra: 'ti' }); // Usando new Nota diretamente
-			const n3 = new Nota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4), { letra: 'rei' }); // Usando new Nota diretamente
-			const n4 = new Nota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4), { letra: 'o' }); // Usando new Nota diretamente
-			const g1 = new GrupoElemento([n1, n2], {compasso: compasso});
-			const g2 = new GrupoElemento([n3, n4], {compasso: compasso});
+			const n1 = ObjectFactory.newNota(NotaFrequencia.getByAbc("C"), new TempoDuracao(1, 4), { letra: 'A' }); // Usando ObjectFactory.newNota diretamente
+			const n2 = ObjectFactory.newNota(NotaFrequencia.getByAbc("D"), new TempoDuracao(1, 4), { letra: 'ti' }); // Usando ObjectFactory.newNota diretamente
+			const n3 = ObjectFactory.newNota(NotaFrequencia.getByAbc("E"), new TempoDuracao(1, 4), { letra: 'rei' }); // Usando ObjectFactory.newNota diretamente
+			const n4 = ObjectFactory.newNota(NotaFrequencia.getByAbc("F"), new TempoDuracao(1, 4), { letra: 'o' }); // Usando ObjectFactory.newNota diretamente
+			const g1 = ObjectFactory.newGrupoElemento([n1, n2], {compasso: compasso});
+			const g2 = ObjectFactory.newGrupoElemento([n3, n4], {compasso: compasso});
 			compasso.grupos = [g1, g2];
 
 			const abcResult = CompassoAbc.toAbc(compasso);

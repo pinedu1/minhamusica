@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { Compasso } from '@domain/compasso/Compasso.js';
 import { Nota } from '@domain/nota/Nota.js';
 import { Pausa } from '@domain/nota/Pausa.js';
@@ -12,7 +12,11 @@ import { TipoBarra } from '@domain/compasso/TipoBarra.js';
 import { CompassoJson } from '@persistence/CompassoJson.js';
 import { Obra } from '@domain/obra/Obra.js';
 import { GrupoElemento } from '@domain/compasso/GrupoElemento.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe('CompassoJson', () => {
 
     const obraMock = new Obra(1, [], {
@@ -24,13 +28,13 @@ describe('CompassoJson', () => {
     describe('toJson()', () => {
 
         it('deve serializar um compasso com múltiplos grupos e notas', () => {
-            const n1 = new Nota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 4));
-            const n2 = new Nota(NotaFrequencia.getByKey('D4'), new TempoDuracao(1, 4));
-            const n3 = new Nota(NotaFrequencia.getByKey('E4'), new TempoDuracao(1, 4));
-            const n4 = new Nota(NotaFrequencia.getByKey('F4'), new TempoDuracao(1, 4));
-            const g1 = new GrupoElemento([n1, n2]);
-            const g2 = new GrupoElemento([n3, n4]);
-            const compasso = new Compasso([], { obra: obraMock });
+            const n1 = ObjectFactory.newNota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 4));
+            const n2 = ObjectFactory.newNota(NotaFrequencia.getByKey('D4'), new TempoDuracao(1, 4));
+            const n3 = ObjectFactory.newNota(NotaFrequencia.getByKey('E4'), new TempoDuracao(1, 4));
+            const n4 = ObjectFactory.newNota(NotaFrequencia.getByKey('F4'), new TempoDuracao(1, 4));
+            const g1 = ObjectFactory.newGrupoElemento([n1, n2]);
+            const g2 = ObjectFactory.newGrupoElemento([n3, n4]);
+            const compasso = ObjectFactory.newCompasso([], { obra: obraMock });
             compasso.grupos = [g1, g2];
 
             const json = CompassoJson.toJson(compasso);
@@ -41,11 +45,11 @@ describe('CompassoJson', () => {
         });
 
         it('deve serializar anotações e acordes em um grupo', () => {
-            const n1 = new Nota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 4));
-            const g1 = new GrupoElemento([n1]);
+            const n1 = ObjectFactory.newNota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 4));
+            const g1 = ObjectFactory.newGrupoElemento([n1]);
             g1.addAnotacao("dedilhado", 0, "^");
             g1.addAcorde("Cmaj7", 0);
-            const compasso = new Compasso([], { obra: obraMock });
+            const compasso = ObjectFactory.newCompasso([], { obra: obraMock });
             compasso.grupos = [g1];
 
             const json = CompassoJson.toJson(compasso);
@@ -55,7 +59,7 @@ describe('CompassoJson', () => {
         });
 
         it('deve serializar barras, métrica e mudança de tom', () => {
-            const compasso = new Compasso([], {
+            const compasso = ObjectFactory.newCompasso([], {
                 metrica: new TempoMetrica(3, 4),
                 mudancaDeTom: Tonalidade.create('G'),
                 barraInicial: TipoBarra.REPEAT_OPEN,
@@ -73,10 +77,10 @@ describe('CompassoJson', () => {
         });
 
         it('deve serializar a letra em diferentes níveis (nota, grupo, compasso)', () => {
-            const n1 = new Nota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 4), { letra: 'A' });
-            const n2 = new Nota(NotaFrequencia.getByKey('D4'), new TempoDuracao(1, 4));
-            const g1 = new GrupoElemento([n1, n2], { letra: ['ti'] });
-            const compasso = new Compasso([], { obra: obraMock, letra: ['rei', 'o'] });
+            const n1 = ObjectFactory.newNota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 4), { letra: 'A' });
+            const n2 = ObjectFactory.newNota(NotaFrequencia.getByKey('D4'), new TempoDuracao(1, 4));
+            const g1 = ObjectFactory.newGrupoElemento([n1, n2], { letra: ['ti'] });
+            const compasso = ObjectFactory.newCompasso([], { obra: obraMock, letra: ['rei', 'o'] });
             compasso.grupos = [g1];
 
             const json = CompassoJson.toJson(compasso);
@@ -87,13 +91,13 @@ describe('CompassoJson', () => {
         });
 
         it('deve serializar um uníssono com ornamentos', () => {
-            const unissono = new Unissono(
-                [new Nota(NotaFrequencia.getByKey('E4'), new TempoDuracao(1, 2))],
+            const unissono = ObjectFactory.newUnissono(
+                [ObjectFactory.newNota(NotaFrequencia.getByKey('E4'), new TempoDuracao(1, 2))],
                 new TempoDuracao(1, 2),
                 { staccato: true, acento: true }
             );
-            const grupo = new GrupoElemento([unissono]);
-            const compasso = new Compasso([], { obra: obraMock });
+            const grupo = ObjectFactory.newGrupoElemento([unissono]);
+            const compasso = ObjectFactory.newCompasso([], { obra: obraMock });
             compasso.grupos = [grupo];
 
             const json = CompassoJson.toJson(compasso);
@@ -108,9 +112,10 @@ describe('CompassoJson', () => {
     describe('fromJson()', () => {
         it('deve desserializar um JSON para um compasso com múltiplos grupos', () => {
             const json = {
+				id: 0,
                 grupos: [
-                    { elements: [{ tipo: 'nota', altura: { key: 'C4' }, duracao: '1/4' }] },
-                    { elements: [{ tipo: 'nota', altura: { key: 'D4' }, duracao: '1/4' }] }
+                    { id: 0, elements: [{ id: 0, tipo: 'nota', altura: { key: 'C4' }, duracao: '1/4' }] },
+                    { id: 0, elements: [{ id: 0, tipo: 'nota', altura: { key: 'D4' }, duracao: '1/4' }] }
                 ],
                 options: { metrica: '4/4', unidadeTempo: '1/4' }
             };
@@ -125,8 +130,10 @@ describe('CompassoJson', () => {
 
         it('deve desserializar anotações e acordes', () => {
             const json = {
-                grupos: [{
-                    elements: [{ tipo: 'nota', altura: { key: 'C4' }, duracao: '1/4' }],
+	            id: 0,
+	            grupos: [{
+	                id: 0,
+	                elements: [{ id: 0, tipo: 'nota', altura: { key: 'C4' }, duracao: '1/4' }],
                     options: {
                         anotacoes: [{ texto: "teste", posicao: 0, local: "_" }],
                         acordes: [{ texto: "Am", posicao: 0 }]
@@ -144,7 +151,8 @@ describe('CompassoJson', () => {
 
         it('deve desserializar barras, métrica e tom', () => {
             const json = {
-                grupos: [],
+	            id: 0,
+	            grupos: [],
                 options: {
                     metrica: '3/4',
                     mudancaDeTom: 'G',
@@ -165,19 +173,21 @@ describe('CompassoJson', () => {
 
         it('deve desserializar um compasso com quiáltera e uníssono', () => {
             const json = {
-                grupos: [
+	            id: 0,
+	            grupos: [
                     {
-                        elements: [
+	                    id: 0,
+	                    elements: [
                             {
-                                tipo: 'quialtera', duracao: '1/4', notas: [
-                                    { tipo: 'nota', altura: { key: 'A4' }, duracao: '1/8' },
-                                    { tipo: 'nota', altura: { key: 'B4' }, duracao: '1/8' },
-                                    { tipo: 'nota', altura: { key: 'C5' }, duracao: '1/8' },
+	                            id: 0, tipo: 'quialtera', duracao: '1/4', notas: [
+                                    { id: 0, tipo: 'nota', altura: { key: 'A4' }, duracao: '1/8' },
+                                    { id: 0, tipo: 'nota', altura: { key: 'B4' }, duracao: '1/8' },
+                                    { id: 0, tipo: 'nota', altura: { key: 'C5' }, duracao: '1/8' },
                                 ]
                             },
-                            { 
-                                tipo: 'unissono', duracao: '1/4', notas: [
-                                    { tipo: 'nota', altura: { key: 'E4' }, duracao: '1/4' }
+                            {
+	                            id: 0, tipo: 'unissono', duracao: '1/4', notas: [
+                                    { id: 0, tipo: 'nota', altura: { key: 'E4' }, duracao: '1/4' }
                                 ]
                             }
                         ]
@@ -197,9 +207,12 @@ describe('CompassoJson', () => {
 
         it('deve desserializar uma nota com staccato e roll', () => {
             const json = {
-                grupos: [{
-                    elements: [{ 
-                        tipo: 'nota', 
+	            id: 0,
+	            grupos: [{
+		            id: 0,
+		            elements: [{
+			            id: 0,
+			            tipo: 'nota',
                         altura: { key: 'G4' }, 
                         duracao: '1/4', 
                         options: { staccato: true, roll: true } 

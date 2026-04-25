@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { Compasso } from '@domain/compasso/Compasso.js';
 import { Nota } from '@domain/nota/Nota.js';
 import { Pausa } from '@domain/nota/Pausa.js';
@@ -13,7 +13,11 @@ import { CompassoAbc } from '@abcjs/CompassoAbc.js';
 import { CompassoJson } from '@persistence/CompassoJson.js';
 import { Obra } from '@domain/obra/Obra.js';
 import { GrupoElemento } from '@domain/compasso/GrupoElemento.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe('Integração de Compasso - Ciclo Completo (Domain -> ABC -> JSON)', () => {
 
     const obraMock = new Obra(1, [], {
@@ -30,31 +34,31 @@ describe('Integração de Compasso - Ciclo Completo (Domain -> ABC -> JSON)', ()
 	};
 
     const criarCompassoComplexo = () => {
-        const n1 = new Nota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 8), { letra: 'Do' });
-        const n2 = new Nota(NotaFrequencia.getByKey('D4'), new TempoDuracao(1, 8));
-        const g1 = new GrupoElemento([n1, n2], { acordes: [{texto: 'C', posicao: 0}] });
+        const n1 = ObjectFactory.newNota(NotaFrequencia.getByKey('C4'), new TempoDuracao(1, 8), { letra: 'Do' });
+        const n2 = ObjectFactory.newNota(NotaFrequencia.getByKey('D4'), new TempoDuracao(1, 8));
+        const g1 = ObjectFactory.newGrupoElemento([n1, n2], { acordes: [{texto: 'C', posicao: 0}] });
 
-        const p1 = new Pausa(new TempoDuracao(1, 4));
-        const g2 = new GrupoElemento([p1]);
+        const p1 = ObjectFactory.newPausa(new TempoDuracao(1, 4));
+        const g2 = ObjectFactory.newGrupoElemento([p1]);
 
-        const q1 = new Quialtera(
+        const q1 = ObjectFactory.newQuialtera(
             [
-                new Nota(NotaFrequencia.getByKey('A4'), new TempoDuracao(1, 8)),
-                new Nota(NotaFrequencia.getByKey('B4'), new TempoDuracao(1, 8)),
-                new Nota(NotaFrequencia.getByKey('C5'), new TempoDuracao(1, 8)),
+                ObjectFactory.newNota(NotaFrequencia.getByKey('A4'), new TempoDuracao(1, 8)),
+                ObjectFactory.newNota(NotaFrequencia.getByKey('B4'), new TempoDuracao(1, 8)),
+                ObjectFactory.newNota(NotaFrequencia.getByKey('C5'), new TempoDuracao(1, 8)),
             ],
             new TempoDuracao(1, 4)
         );
-        const g3 = new GrupoElemento([q1]);
+        const g3 = ObjectFactory.newGrupoElemento([q1]);
         
-        const u1 = new Unissono(
-            [new Nota(NotaFrequencia.getByKey('E4'), new TempoDuracao(1, 4)), new Nota(NotaFrequencia.getByKey('G4'), new TempoDuracao(1, 4))],
+        const u1 = ObjectFactory.newUnissono(
+            [ObjectFactory.newNota(NotaFrequencia.getByKey('E4'), new TempoDuracao(1, 4)), ObjectFactory.newNota(NotaFrequencia.getByKey('G4'), new TempoDuracao(1, 4))],
             new TempoDuracao(1, 4),
             { staccato: true }
         );
-        const g4 = new GrupoElemento([u1]);
+        const g4 = ObjectFactory.newGrupoElemento([u1]);
 
-        const compasso = new Compasso([], { 
+        const compasso = ObjectFactory.newCompasso([], { 
             obra: obraMock,
             barraInicial: TipoBarra.REPEAT_OPEN,
             barraFinal: TipoBarra.STANDARD,

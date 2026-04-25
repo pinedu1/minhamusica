@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { NotaFrequenciaJson } from '@adapters/persistence/NotaFrequenciaJson.js';
 import { NotaFrequenciaAbc } from '@adapters/abcjs/NotaFrequenciaAbc.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'NotaFrequencia Integration', () => {
   it( 'deve fazer o fluxo completo JSON -> Domínio -> ABC', () => {
     // 1. Receber JSON

@@ -1,8 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from "vitest";
 import { TempoMetricaJson } from '@persistence/TempoMetricaJson.js';
 import { tempoMetricaSchema } from '@schemas/tempoMetricaSchema.js';
 import { TempoMetrica } from '@domain/tempo/TempoMetrica.js';
+import { ObjectFactory } from "@factory/ObjectFactory.js";
 
+beforeEach( () => {
+	ObjectFactory.contextoTestes = true;
+})
 describe( 'TempoMetricaJson', () => {
   describe( 'fromJson', () => {
     it( 'deve criar a partir de { numerador: 3, denominador: 4 }', () => {
